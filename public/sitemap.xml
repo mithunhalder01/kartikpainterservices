@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://kartikpainterservices.com/</loc><priority>1.0</priority></url>
+  <url><loc>https://kartikpainterservices.com/services</loc><priority>0.9</priority></url>
+  <url><loc>https://kartikpainterservices.com/gallery</loc><priority>0.8</priority></url>
+  <url><loc>https://kartikpainterservices.com/about</loc><priority>0.7</priority></url>
+  <url><loc>https://kartikpainterservices.com/contact</loc><priority>0.9</priority></url>
+  <!-- Location pages — HIGH priority -->
+  <url><loc>https://kartikpainterservices.com/noida</loc><priority>0.95</priority></url>
+  <url><loc>https://kartikpainterservices.com/greater-noida</loc><priority>0.95</priority></url>
+  <url><loc>https://kartikpainterservices.com/dadri</loc><priority>0.9</priority></url>
+  <url><loc>https://kartikpainterservices.com/ghaziabad</loc><priority>0.9</priority></url>
+  <!-- Blog -->
+  <url><loc>https://kartikpainterservices.com/blog/painting-cost-noida-2025</loc><priority>0.8</priority></url>
+</urlset>
