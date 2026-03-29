@@ -129,39 +129,38 @@ function BeforeAfterSlider() {
   )
 }
 
-/* Home page JSON-LD FAQ schema */
+/* Home page FAQs + JSON-LD schema */
+const HOME_FAQS = [
+  {
+    q: 'How much does interior painting cost in Noida?',
+    a: 'Interior painting in Noida starts from ₹8 to ₹15 per square foot with Kartik Painter Services, including wall putty, primer and two top coats.',
+  },
+  {
+    q: 'Do you offer free site visits in Noida?',
+    a: 'Yes, we offer free site visits and estimates across Noida, Greater Noida, Dadri and surrounding areas. Call +91 7500770667 to book.',
+  },
+  {
+    q: 'Which paint brands do you use?',
+    a: 'We use only genuine premium brands — Asian Paints, Berger Paints, Dulux, Nippon Paint and JSW Paints.',
+  },
+]
+
 const faqSchema = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
-  mainEntity: [
-    {
-      '@type': 'Question',
-      name: 'How much does interior painting cost in Noida?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'Interior painting in Noida starts from ₹8 to ₹15 per square foot with Kartik Painter Services, including wall putty, primer and two top coats.',
-      },
+  mainEntity: HOME_FAQS.map(({ q, a }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: a,
     },
-    {
-      '@type': 'Question',
-      name: 'Do you offer free site visits in Noida?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'Yes, we offer free site visits and estimates across Noida, Greater Noida, Dadri and surrounding areas. Call +91 7500770667 to book.',
-      },
-    },
-    {
-      '@type': 'Question',
-      name: 'Which paint brands do you use?',
-      acceptedAnswer: {
-        '@type': 'Answer',
-        text: 'We use only genuine premium brands — Asian Paints, Berger Paints, Dulux, Nippon Paint and JSW Paints.',
-      },
-    },
-  ],
+  })),
 }
 
 export default function Home() {
+  const [openFaq, setOpenFaq] = useState(0)
+
   return (
     <>
       <SEO
@@ -652,7 +651,57 @@ export default function Home() {
       </section>
 
       {/* ══════════════════════════════════════════════
-          9. FINAL CTA
+          9. FAQ
+      ══════════════════════════════════════════════ */}
+      <section className="bg-white section-py px-4 sm:px-6 border-y border-border">
+        <div className="max-w-4xl mx-auto">
+          <div className="text-center mb-8 sm:mb-10">
+            <SectionLabel>FAQ</SectionLabel>
+            <h2 className="text-display-md font-black text-text-primary">
+              Common Questions
+            </h2>
+          </div>
+
+          <div className="space-y-3">
+            {HOME_FAQS.map(({ q, a }, i) => {
+              const isOpen = openFaq === i
+              return (
+                <div key={q} className="rounded-xl border border-border bg-surface overflow-hidden">
+                  <button
+                    type="button"
+                    onClick={() => setOpenFaq(isOpen ? -1 : i)}
+                    className="w-full px-4 sm:px-6 py-4 text-left flex items-center justify-between gap-3"
+                    aria-expanded={isOpen}
+                    aria-controls={`faq-panel-${i}`}
+                  >
+                    <span className="font-semibold text-text-primary text-[14px] sm:text-[16px]">
+                      {q}
+                    </span>
+                    <ChevronRight
+                      size={16}
+                      className={`text-text-muted transition-transform duration-200 ${isOpen ? 'rotate-90' : ''}`}
+                    />
+                  </button>
+
+                  <div
+                    id={`faq-panel-${i}`}
+                    className={`grid transition-all duration-300 ease-out ${isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]'}`}
+                  >
+                    <div className="overflow-hidden">
+                      <p className="px-4 sm:px-6 pb-4 sm:pb-5 text-text-muted text-[13px] sm:text-[14px] leading-relaxed">
+                        {a}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════
+          10. FINAL CTA
       ══════════════════════════════════════════════ */}
       <section className="bg-dark-900 section-py px-4 sm:px-6">
         <div className="max-w-3xl mx-auto text-center">
