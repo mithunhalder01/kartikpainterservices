@@ -62,7 +62,7 @@ export default function BlogPost({ slug }) {
     datePublished: post.published,
     author: {
       '@type': 'Person',
-      name: 'Kartik Sharma',
+      name: 'Kartik Halder',
     },
     publisher: {
       '@type': 'Organization',
@@ -90,7 +90,7 @@ export default function BlogPost({ slug }) {
               {post.title}
             </h1>
             <p className="text-white/50 text-[13px] mt-4">
-              By Kartik Sharma · Updated {post.published}
+              By Kartik Halder · Updated {post.published}
             </p>
           </div>
         </div>

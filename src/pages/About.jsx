@@ -39,7 +39,7 @@ export default function About() {
               From two workers to Noida's most trusted
             </h2>
             <p className="text-text-muted text-[15px] leading-relaxed mb-4">
-              In 2009, Kartik Sharma started with two workers and one principle: do honest work,
+              In 2009, Kartik Halder started with two workers and one principle: do honest work,
               use good materials, and treat every home as your own.
             </p>
             <p className="text-text-muted text-[15px] leading-relaxed mb-8">

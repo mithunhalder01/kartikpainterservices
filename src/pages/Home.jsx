@@ -549,9 +549,9 @@ export default function Home() {
             </Link>
           </div>
 
-          {/* 5-item asymmetric grid */}
-          <div className="grid grid-cols-12 grid-rows-2 gap-3" style={{ height: '360px' }}>
-            <div className="gallery-item col-span-12 md:col-span-5 row-span-2 rounded-xl img-zoom">
+          {/* Mobile-safe layout: explicit heights prevent Safari grid span glitches */}
+          <div className="grid grid-cols-2 md:grid-cols-12 md:grid-rows-2 gap-3 md:h-[360px]">
+            <div className="gallery-item col-span-2 md:col-span-5 md:row-span-2 h-52 md:h-auto rounded-xl img-zoom">
               <img src={gallery[0].src} alt={gallery[0].label}
                 className="w-full h-full object-cover" />
               <div className="overlay">
@@ -562,8 +562,7 @@ export default function Home() {
             </div>
             {gallery.slice(1, 5).map(g => (
               <div key={g.id}
-                className="gallery-item col-span-6 md:col-span-7
-                              md:[grid-column:span_3_/_span_3] rounded-xl img-zoom">
+                className="gallery-item col-span-1 md:col-span-3 h-36 md:h-auto rounded-xl img-zoom">
                 <img src={g.src} alt={g.label} className="w-full h-full object-cover" />
                 <div className="overlay">
                   <p>{g.label}</p>

@@ -121,7 +121,7 @@ export const testimonials = [
 ]
 
 export const team = [
-  { name:'Kartik Sharma', role:'Founder & Head Painter',   exp:'15+ yrs', img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face' },
+  { name:'Kartik Halder', role:'Founder & Head Painter',   exp:'15+ yrs', img:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&h=300&fit=crop&crop=face' },
   { name:'Suresh Kumar',  role:'Senior Painter',            exp:'10+ yrs', img:'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=300&h=300&fit=crop&crop=face' },
   { name:'Mukesh Yadav',  role:'Texture Specialist',        exp:'8+ yrs',  img:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=300&h=300&fit=crop&crop=face' },
   { name:'Ravi Singh',    role:'Waterproofing Expert',      exp:'7+ yrs',  img:'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face' },

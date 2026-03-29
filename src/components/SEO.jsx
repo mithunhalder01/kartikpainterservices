@@ -1,6 +1,6 @@
 import { Helmet } from 'react-helmet-async'
 
-const SITE_URL  = 'https://kartikpainterservices.com'
+const SITE_URL  = 'https://kartikpainterservices.vercel.app/'
 const SITE_NAME = 'Kartik Painter Services'
 const OG_IMG    = `${SITE_URL}/og-image.jpg`
 
