@@ -1,65 +1,23 @@
-// src/pages/BlogPost.jsx
-// Simple blog post template for SEO articles
 import SEO from '../components/SEO'
 import { Link } from 'react-router-dom'
 import { PHONE } from '../data/data'
+import { getBlogPostBySlug } from '../data/blogPosts'
+import { buildBreadcrumbSchema } from '../components/SEO'
 import { Phone } from 'lucide-react'
 
-const posts = {
-  'painting-cost-noida-2025': {
-    title: 'Painting Cost in Noida 2025 – Complete Price Guide',
-    desc: 'Complete guide to painting costs in Noida 2025. Interior, exterior, waterproofing prices per sq.ft. by Kartik Painter Services.',
-    published: '2025-01-15',
-    content: [
-      {
-        h2: 'How Much Does Painting Cost in Noida?',
-        p: `Painting costs in Noida vary depending on the type of work, the quality of paint, and the size of your property. Here is a complete price guide for 2025.`,
-      },
-      {
-        h2: 'Interior Painting Cost in Noida',
-        p: `Interior painting in Noida starts from ₹8 to ₹15 per square foot. This includes wall putty application, primer coat, and two finishing coats using premium brands like Asian Paints or Berger.`,
-        table: [
-          ['Work Type', 'Price Range'],
-          ['Basic Interior (2 coats)', '₹8 – ₹10 / sq.ft'],
-          ['Premium Interior (putty + primer)', '₹10 – ₹15 / sq.ft'],
-          ['Luxury / Designer Finish', '₹15 – ₹25 / sq.ft'],
-        ],
-      },
-      {
-        h2: 'Exterior Painting Cost in Noida',
-        p: `Exterior painting costs more due to the need for weather-resistant paints. Prices range from ₹12 to ₹20 per square foot including surface preparation and anti-fungal primer.`,
-        table: [
-          ['Work Type', 'Price Range'],
-          ['Standard Exterior', '₹12 – ₹15 / sq.ft'],
-          ['Weather Shield (5-year)', '₹15 – ₹20 / sq.ft'],
-        ],
-      },
-      {
-        h2: 'Waterproofing Cost in Noida',
-        p: `Waterproofing treatment for roofs, bathrooms and basements ranges from ₹30 to ₹50 per square foot depending on the area and type of treatment required.`,
-      },
-      {
-        h2: 'Texture Painting Cost in Noida',
-        p: `Texture and designer painting starts from ₹25 per square foot for basic sand texture and can go up to ₹60 per square foot for custom 3D effects.`,
-      },
-      {
-        h2: 'How to Get the Best Price in Noida?',
-        p: `Always get a written estimate before starting work. Ask for the brand of paint being used. Avoid contractors who give very low quotes — they typically use inferior paint. Kartik Painter Services offers free site visits and written estimates across Noida.`,
-      },
-    ],
-  },
-}
-
 export default function BlogPost({ slug }) {
-  const post = posts[slug]
+  const post = getBlogPostBySlug(slug)
   if (!post) return null
 
   const articleSchema = {
     '@context': 'https://schema.org',
-    '@type': 'Article',
+    '@type': 'BlogPosting',
+    mainEntityOfPage: `https://kartikpainterservices.vercel.app/blog/${slug}`,
     headline: post.title,
     description: post.desc,
     datePublished: post.published,
+    dateModified: post.updated || post.published,
+    image: `https://kartikpainterservices.vercel.app${post.image}`,
     author: {
       '@type': 'Person',
       name: 'Kartik Halder',
@@ -67,9 +25,19 @@ export default function BlogPost({ slug }) {
     publisher: {
       '@type': 'Organization',
       name: 'Kartik Painter Services',
-      url: 'https://kartikpainterservices.com',
+      url: 'https://kartikpainterservices.vercel.app',
+      logo: {
+        '@type': 'ImageObject',
+        url: 'https://kartikpainterservices.vercel.app/logo.png',
+      },
     },
   }
+
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: 'Home', path: '/' },
+    { name: 'Blog', path: '/blog' },
+    { name: post.title, path: `/blog/${slug}` },
+  ])
 
   return (
     <>
@@ -77,7 +45,8 @@ export default function BlogPost({ slug }) {
         title={post.title}
         description={post.desc}
         canonical={`/blog/${slug}`}
-        schema={articleSchema}
+        schema={[articleSchema, breadcrumbSchema]}
+        keywords={(post.tags || []).join(', ')}
         ogType="article"
       />
 
@@ -90,7 +59,7 @@ export default function BlogPost({ slug }) {
               {post.title}
             </h1>
             <p className="text-white/50 text-[13px] mt-4">
-              By Kartik Halder · Updated {post.published}
+              By Kartik Halder · Updated {post.updated || post.published}
             </p>
           </div>
         </div>
@@ -148,6 +117,11 @@ export default function BlogPost({ slug }) {
                 Send Message
               </Link>
             </div>
+          </div>
+
+          <div className="mt-8 flex flex-wrap gap-3 justify-center">
+            <Link to="/blog" className="btn-outline text-[13px]">More Guides</Link>
+            <Link to="/services" className="btn-outline text-[13px]">View Services</Link>
           </div>
         </div>
       </article>

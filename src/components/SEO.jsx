@@ -1,8 +1,15 @@
 import { Helmet } from 'react-helmet-async'
 
-const SITE_URL  = 'https://kartikpainterservices.vercel.app/'
+const SITE_URL = 'https://kartikpainterservices.vercel.app'
 const SITE_NAME = 'Kartik Painter Services'
-const OG_IMG    = `${SITE_URL}/og-image.jpg`
+
+const absoluteUrl = (path = '') => {
+  if (!path) return SITE_URL
+  if (path.startsWith('http://') || path.startsWith('https://')) return path
+  return `${SITE_URL}${path.startsWith('/') ? path : `/${path}`}`
+}
+
+const OG_IMG = absoluteUrl('/og-image.jpg')
 
 /* ─────────────────────────────────────────────────────────
    ALL SERVICE AREAS — covers every major locality/sector
@@ -96,7 +103,7 @@ const SERVICE_OFFERS = [
 const localBusinessSchema = {
   '@context': 'https://schema.org',
   '@type': ['LocalBusiness', 'HomeAndConstructionBusiness', 'ProfessionalService'],
-  '@id': `${SITE_URL}/#business`,
+  '@id': absoluteUrl('/#business'),
   name: SITE_NAME,
   alternateName: [
     'Kartik Painter',
@@ -115,8 +122,8 @@ const localBusinessSchema = {
   priceRange: '₹₹',
   currenciesAccepted: 'INR',
   paymentAccepted: 'Cash, UPI, Bank Transfer, Cheque',
-  image: [OG_IMG, `${SITE_URL}/images/interior-painting-noida.jpg`, `${SITE_URL}/images/exterior-painting-noida.jpg`],
-  logo: `${SITE_URL}/logo.png`,
+  image: [OG_IMG, absoluteUrl('/home.jpeg'), absoluteUrl('/living-room.jpeg')],
+  logo: absoluteUrl('/logo.png'),
   address: {
     '@type': 'PostalAddress',
     streetAddress: 'Near Sector 45 Metro Station',
@@ -189,20 +196,20 @@ const localBusinessSchema = {
 const websiteSchema = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
-  '@id': `${SITE_URL}/#website`,
+  '@id': absoluteUrl('/#website'),
   url: SITE_URL,
   name: SITE_NAME,
   description: 'Best painting contractor in Noida, Greater Noida, Dadri and Ghaziabad',
   potentialAction: {
     '@type': 'SearchAction',
-    target: { '@type': 'EntryPoint', urlTemplate: `${SITE_URL}/?s={search_term_string}` },
+    target: { '@type': 'EntryPoint', urlTemplate: absoluteUrl('/?s={search_term_string}') },
     'query-input': 'required name=search_term_string',
   },
   publisher: {
     '@type': 'Organization',
     name: SITE_NAME,
     url: SITE_URL,
-    logo: { '@type': 'ImageObject', url: `${SITE_URL}/logo.png` },
+    logo: { '@type': 'ImageObject', url: absoluteUrl('/logo.png') },
     contactPoint: {
       '@type': 'ContactPoint',
       telephone: '+917500770667',
@@ -224,7 +231,7 @@ export function buildBreadcrumbSchema(items) {
       '@type': 'ListItem',
       position: i + 1,
       name: item.name,
-      item: `${SITE_URL}${item.path}`,
+      item: absoluteUrl(item.path),
     })),
   }
 }
@@ -250,11 +257,11 @@ export default function SEO({
     : `${SITE_NAME} – Best Painting Contractor in Noida, Greater Noida & Ghaziabad`
 
   const metaDesc = description ||
-    'Kartik Painter Services – Noida\'s #1 painter. Interior, exterior, waterproofing & texture painting. ' +
-    '15+ years, 500+ projects, free site visit. Serving Noida, Greater Noida, Dadri, Ghaziabad. Call +91 75007 70667.'
+    'Kartik Painter Services: trusted painter in Noida for interior, exterior, waterproofing and texture painting. ' +
+    '15+ years, 500+ projects. Free estimate.'
 
-  const canonicalURL = canonical ? `${SITE_URL}${canonical}` : SITE_URL
-  const imageURL     = ogImage || OG_IMG
+  const canonicalURL = canonical ? absoluteUrl(canonical) : SITE_URL
+  const imageURL = ogImage ? absoluteUrl(ogImage) : OG_IMG
 
   const defaultKeywords =
     'painter noida, best painter noida, painting contractor noida, ' +

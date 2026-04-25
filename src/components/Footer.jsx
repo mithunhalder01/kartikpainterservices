@@ -163,6 +163,15 @@ export default function Footer() {
             </p>
             <ul className="space-y-2.5">
               <li>
+                <Link to="/blog"
+                      className="text-white/50 text-[13px] hover:text-white
+                                 transition-colors flex items-center gap-1 group">
+                  <ArrowUpRight size={10}
+                    className="opacity-0 group-hover:opacity-100 transition-opacity"/>
+                  All Painting Guides
+                </Link>
+              </li>
+              <li>
                 <Link to="/blog/painting-cost-noida-2025"
                       className="text-white/50 text-[13px] hover:text-white
                                  transition-colors flex items-center gap-1 group">

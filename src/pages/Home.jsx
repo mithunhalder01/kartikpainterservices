@@ -8,7 +8,7 @@ import {
   services, testimonials, gallery, stats, process,
   contact, areas, brands, WA_NUMBER
 } from '../data/data'
-import SEO from '../components/SEO'
+import SEO, { buildBreadcrumbSchema } from '../components/SEO'
 import TestimonialSlider from '../components/TestimonialSlider'
 import StatsCard from '../components/StatsCard'
 
@@ -158,6 +158,10 @@ const faqSchema = {
   })),
 }
 
+const homeBreadcrumbSchema = buildBreadcrumbSchema([
+  { name: 'Home', path: '/' },
+])
+
 export default function Home() {
   const [openFaq, setOpenFaq] = useState(0)
 
@@ -165,9 +169,9 @@ export default function Home() {
     <>
       <SEO
         title="Painter in Noida – Free Estimate | Kartik Painter Services"
-        description="Kartik Painter Services – Noida's #1 painting contractor. Interior, exterior, waterproofing & texture painting. 15+ years, 500+ projects. Free site visit. Call +91 7500770667."
+        description="Kartik Painter Services: trusted painter in Noida for interior, exterior, waterproofing and texture painting. 15+ years, 500+ projects. Free estimate."
         canonical="/"
-        schema={faqSchema}
+        schema={[faqSchema, homeBreadcrumbSchema]}
       />
 
       {/* ══ HERO ══ */}
@@ -541,11 +545,18 @@ export default function Home() {
               <SectionLabel>Portfolio</SectionLabel>
               <h2 className="text-display-md font-black text-text-primary">Recent Work</h2>
             </div>
-            <Link to="/gallery"
-              className="text-[13px] font-medium text-text-muted hover:text-text-primary
-                             transition-colors flex items-center gap-1 self-start md:self-auto">
-              View All <ChevronRight size={14} />
-            </Link>
+            <div className="flex gap-4 self-start md:self-auto">
+              <Link to="/gallery"
+                className="text-[13px] font-medium text-text-muted hover:text-text-primary
+                               transition-colors flex items-center gap-1">
+                View All <ChevronRight size={14} />
+              </Link>
+              <Link to="/blog/painting-cost-noida-2025"
+                className="text-[13px] font-medium text-text-muted hover:text-text-primary
+                               transition-colors flex items-center gap-1">
+                Pricing Guide <ChevronRight size={14} />
+              </Link>
+            </div>
           </div>
 
           {/* Mobile-safe layout: explicit heights prevent Safari grid span glitches */}

@@ -1,7 +1,7 @@
 // src/pages/AreaPage.jsx
 import { Link } from 'react-router-dom'
 import { Phone, MapPin, CheckCircle, ArrowRight } from 'lucide-react'
-import SEO from '../components/SEO'
+import SEO, { buildBreadcrumbSchema } from '../components/SEO'
 import { services, PHONE, WA_NUMBER } from '../data/data'
 
 const areaData = {
@@ -56,7 +56,7 @@ const localSchema = (area) => ({
   provider: {
     '@type': 'LocalBusiness',
     name: 'Kartik Painter Services',
-  telephone: '917500770667',
+    telephone: '+917500770667',
     areaServed: area.name,
   },
   serviceType: 'Painting Contractor',
@@ -67,9 +67,54 @@ const localSchema = (area) => ({
   },
 })
 
+const areaFaqs = (areaName) => [
+  {
+    q: `How much does painting cost in ${areaName}?`,
+    a: `Interior painting in ${areaName} starts from ₹8–₹15 per sq.ft. Exterior painting is ₹12–₹20 per sq.ft. We provide a free, written estimate after a free site visit with no hidden charges.`,
+  },
+  {
+    q: `Do you offer free site visits in ${areaName}?`,
+    a: `Yes, we offer completely free site visits and estimates across all areas of ${areaName}. Call +91 7500770667 or WhatsApp to book.`,
+  },
+  {
+    q: `How long does painting take in ${areaName}?`,
+    a: 'A standard 2BHK takes 3-4 days. A 3BHK takes 4-6 days. We provide a written completion date before starting work.',
+  },
+  {
+    q: `Which paint brands do you use in ${areaName}?`,
+    a: 'We use only genuine Asian Paints, Berger Paints and Dulux products with proper surface preparation and cleanup.',
+  },
+]
+
+const faqSchema = (faqs) => ({
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map(({ q, a }) => ({
+    '@type': 'Question',
+    name: q,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: a,
+    },
+  })),
+})
+
+const nearByAreaLinks = [
+  { key: 'noida', label: 'Painter in Noida' },
+  { key: 'greater-noida', label: 'Painter in Greater Noida' },
+  { key: 'dadri', label: 'Painter in Dadri' },
+  { key: 'ghaziabad', label: 'Painter in Ghaziabad' },
+]
+
 export default function AreaPage({ area: areaKey }) {
   const area = areaData[areaKey]
   if (!area) return null
+  const faqs = areaFaqs(area.name)
+
+  const breadcrumbSchema = buildBreadcrumbSchema([
+    { name: 'Home', path: '/' },
+    { name: area.h1, path: `/${areaKey}` },
+  ])
 
   return (
     <>
@@ -77,7 +122,8 @@ export default function AreaPage({ area: areaKey }) {
         title={area.title}
         description={area.desc}
         canonical={`/${areaKey}`}
-        schema={localSchema(area)}
+        schema={[localSchema(area), faqSchema(faqs), breadcrumbSchema]}
+        keywords={area.keywords.join(', ')}
       />
 
       {/* Hero */}
@@ -173,6 +219,21 @@ export default function AreaPage({ area: areaKey }) {
               </span>
             ))}
           </div>
+
+          <div className="mt-6">
+            <p className="text-text-muted text-[13px] mb-3">Also serving nearby locations:</p>
+            <div className="flex flex-wrap gap-2">
+              {nearByAreaLinks.filter((a) => a.key !== areaKey).map(({ key, label }) => (
+                <Link
+                  key={key}
+                  to={`/${key}`}
+                  className="text-[13px] font-medium text-accent border border-accent/30 bg-white px-3 py-1.5 rounded-lg hover:bg-accent hover:text-white transition-colors"
+                >
+                  {label}
+                </Link>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
@@ -183,24 +244,7 @@ export default function AreaPage({ area: areaKey }) {
             Frequently Asked Questions — Painter in {area.name}
           </h2>
           <div className="space-y-4">
-            {[
-              {
-                q: `How much does painting cost in ${area.name}?`,
-                a: `Interior painting in ${area.name} starts from ₹8–₹15 per sq.ft. Exterior painting is ₹12–₹20 per sq.ft. We provide a free, written estimate after a free site visit — no hidden charges.`,
-              },
-              {
-                q: `Do you offer free site visits in ${area.name}?`,
-                a: `Yes, we offer completely free site visits and estimates across all areas of ${area.name}. Call +91 7500770667 or WhatsApp to book.`,
-              },
-              {
-                q: `How long does painting take in ${area.name}?`,
-                a: `A standard 2BHK takes 3–4 days. A 3BHK takes 4–6 days. We give a written completion date before starting work.`,
-              },
-              {
-                q: `Which paint brands do you use in ${area.name}?`,
-                a: `We use only genuine Asian Paints, Berger Paints and Dulux — certified products, never substitutes or local brands.`,
-              },
-            ].map(({ q, a }) => (
+            {faqs.map(({ q, a }) => (
               <div key={q} className="border border-border rounded-xl p-5 bg-white">
                 <p className="font-semibold text-text-primary text-[15px] mb-2">{q}</p>
                 <p className="text-text-muted text-[14px] leading-relaxed">{a}</p>

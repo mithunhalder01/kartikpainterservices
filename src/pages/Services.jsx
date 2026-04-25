@@ -1,7 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, Phone, Check } from 'lucide-react'
 import { services, process, contact, PHONE } from '../data/data'
-import SEO from '../components/SEO'
+import SEO, { buildBreadcrumbSchema } from '../components/SEO'
 
 const servicesSchema = {
   '@context': 'https://schema.org',
@@ -12,18 +12,24 @@ const servicesSchema = {
     position: i + 1,
     name: s.title,
     description: s.desc,
-    url: `https://kartikpainterservices.com/services#${s.slug}`,
+    url: `https://kartikpainterservices.vercel.app/services#${s.slug}`,
   })),
 }
+
+const servicesBreadcrumbSchema = buildBreadcrumbSchema([
+  { name: 'Home', path: '/' },
+  { name: 'Services', path: '/services' },
+])
 
 export default function Services() {
   return (
     <>
       <SEO
         title="Painting Services in Noida – Interior, Exterior, Waterproofing"
-        description="Professional painting services in Noida: Interior painting, exterior painting, waterproofing, texture painting, commercial painting and POP work. Free estimate by Kartik Painter Services."
+        description="Painting services in Noida: interior, exterior, waterproofing, texture and commercial painting with POP work. Free estimate from Kartik Painter Services."
         canonical="/services"
-        schema={servicesSchema}
+        schema={[servicesSchema, servicesBreadcrumbSchema]}
+        keywords="interior painting noida, exterior painting noida, waterproofing noida, texture painting noida, commercial painter noida"
       />
 
       {/* Hero */}

@@ -9,6 +9,7 @@ import Gallery        from './pages/Gallery'
 import About          from './pages/About'
 import Contact        from './pages/Contact'
 import AreaPage       from './pages/AreaPage'
+import Blog           from './pages/Blog'
 import BlogPost       from './pages/BlogPost'
 import NotFound       from './pages/NotFound'
 import LeadPopup       from './components/LeadPopup'
@@ -35,6 +36,7 @@ export default function App() {
           <Route path="/greater-noida"    element={<AreaPage area="greater-noida" />} />
           <Route path="/dadri"            element={<AreaPage area="dadri" />} />
           <Route path="/ghaziabad"        element={<AreaPage area="ghaziabad" />} />
+          <Route path="/blog"             element={<Blog/>}/>
           <Route path="/blog/painting-cost-noida-2025" element={<BlogPost slug="painting-cost-noida-2025" />} />
           <Route path="*"                 element={<NotFound/>}/>
         </Routes>

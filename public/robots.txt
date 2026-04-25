@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://kartikpainterservices.com/sitemap.xml
+Sitemap: https://kartikpainterservices.vercel.app/sitemap.xml

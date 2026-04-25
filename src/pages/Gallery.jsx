@@ -2,9 +2,22 @@ import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import { Phone } from 'lucide-react'
 import { gallery, PHONE } from '../data/data'
-import SEO from '../components/SEO'
+import SEO, { buildBreadcrumbSchema } from '../components/SEO'
 
 const CATS = ['All','Interior','Exterior','Texture','Commercial']
+
+const gallerySchema = {
+  '@context': 'https://schema.org',
+  '@type': 'CollectionPage',
+  name: 'Painting Portfolio in Noida',
+  description: 'Real painting project photos by Kartik Painter Services in Noida and nearby areas.',
+  url: 'https://kartikpainterservices.vercel.app/gallery',
+}
+
+const galleryBreadcrumbSchema = buildBreadcrumbSchema([
+  { name: 'Home', path: '/' },
+  { name: 'Gallery', path: '/gallery' },
+])
 
 export default function Gallery() {
   const [active, setActive] = useState('All')
@@ -16,6 +29,7 @@ export default function Gallery() {
         title="Painting Portfolio – Real Work in Noida"
         description="Browse 500+ completed painting projects by Kartik Painter Services in Noida. Real photos of interior, exterior, texture and commercial painting work."
         canonical="/gallery"
+        schema={[gallerySchema, galleryBreadcrumbSchema]}
       />
 
       <section className="page-hero py-20 px-6">

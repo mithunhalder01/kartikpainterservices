@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { Phone, Mail, MapPin, Clock, CheckCircle, Send } from 'lucide-react'
 import { contact, PHONE, WA_NUMBER } from '../data/data'
-import SEO from '../components/SEO'
+import SEO, { buildBreadcrumbSchema } from '../components/SEO'
 
 const svcOptions = [
   'Interior Painting','Exterior Painting','Waterproofing',
@@ -14,8 +14,13 @@ const contactSchema = {
   '@type': 'ContactPage',
   name: 'Contact Kartik Painter Services',
   description: 'Get a free painting estimate in Noida. Call, WhatsApp or fill the form.',
-  url: 'https://kartikpainterservices.com/contact',
+  url: 'https://kartikpainterservices.vercel.app/contact',
 }
+
+const contactBreadcrumbSchema = buildBreadcrumbSchema([
+  { name: 'Home', path: '/' },
+  { name: 'Contact', path: '/contact' },
+])
 
 const WA = () => (
   <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
@@ -81,7 +86,8 @@ export default function Contact() {
         title="Contact – Free Painting Estimate in Noida"
         description="Get a free painting estimate in Noida. Call +91 7500770667, WhatsApp or fill the form. Kartik Painter Services responds within the hour."
         canonical="/contact"
-        schema={contactSchema}
+        schema={[contactSchema, contactBreadcrumbSchema]}
+        keywords="contact painter noida, free painting estimate noida, painter phone number noida"
       />
 
       <section className="page-hero py-20 px-6">

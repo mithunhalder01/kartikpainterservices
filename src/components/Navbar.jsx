@@ -9,6 +9,7 @@ const PHONE_RAW = '+91 75007 70667'
 
 const links = [
   { to: '/',        label: 'Home'    },
+  { to: '/blog',    label: 'Blog'    },
   { to: '/gallery', label: 'Gallery' },
   { to: '/about',   label: 'About'   },
   { to: '/contact', label: 'Contact' },

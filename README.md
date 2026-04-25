@@ -135,13 +135,13 @@ Koi problem ho toh `src/data/data.js` file pehle check karo —
 
 
 <meta name="description" content="Kartik Painter Services – Noida's most trusted painting contractor. Interior, Exterior, Waterproofing & Texture Painting. 15+ years, 500+ projects. Free estimate!" />
-    <link rel="canonical" href="https://kartikpainterservices.com/" />
+    <link rel="canonical" href="https://kartikpainterservices.vercel.app/" />
     <!-- Open Graph -->
     <meta property="og:type"        content="website" />
-    <meta property="og:url"         content="https://kartikpainterservices.com/" />
+    <meta property="og:url"         content="https://kartikpainterservices.vercel.app/" />
     <meta property="og:title"       content="Kartik Painter Services – Noida's Trusted Painter" />
     <meta property="og:description" content="15+ years, 500+ satisfied clients. Free site visit anywhere in Noida & Greater Noida." />
-    <meta property="og:image"       content="https://kartikpainterservices.com/og-image.jpg" />
+    <meta property="og:image"       content="https://kartikpainterservices.vercel.app/og-image.jpg" />
     <!-- Twitter Card -->
     <meta name="twitter:card"        content="summary_large_image" />
     <meta name="twitter:title"       content="Kartik Painter Services – Noida's Trusted Painter" />

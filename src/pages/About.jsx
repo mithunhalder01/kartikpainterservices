@@ -1,7 +1,20 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, MapPin, Shield, Award, Users } from 'lucide-react'
 import { team, brands, areas, stats } from '../data/data'
-import SEO from '../components/SEO'
+import SEO, { buildBreadcrumbSchema } from '../components/SEO'
+
+const aboutPageSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'AboutPage',
+  name: 'About Kartik Painter Services',
+  description: 'Learn about Kartik Painter Services, a Noida painting contractor serving homes and businesses since 2009.',
+  url: 'https://kartikpainterservices.vercel.app/about',
+}
+
+const aboutBreadcrumbSchema = buildBreadcrumbSchema([
+  { name: 'Home', path: '/' },
+  { name: 'About', path: '/about' },
+])
 
 export default function About() {
   return (
@@ -10,6 +23,7 @@ export default function About() {
         title="About Us – 15 Years of Painting in Noida"
         description="Kartik Painter Services has been Noida's trusted painting contractor since 2009. 15+ years, 500+ projects, honest pricing and premium materials."
         canonical="/about"
+        schema={[aboutPageSchema, aboutBreadcrumbSchema]}
       />
 
       <section className="page-hero py-20 px-6">
