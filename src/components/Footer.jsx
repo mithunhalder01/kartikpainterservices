@@ -60,6 +60,24 @@ export default function Footer() {
             <p className="text-white/40 text-[13px] leading-relaxed mb-5">
               Noida's most trusted painting contractor since 2009. Premium materials, honest pricing.
             </p>
+            {/* NAP for Local SEO */}
+            <div className="mb-4 p-3 bg-white/5 border border-white/10 rounded-lg"
+                 itemScope itemType="https://schema.org/LocalBusiness">
+              <meta itemProp="name" content="Kartik Painter Services" />
+              <meta itemProp="telephone" content="+91-7500770667" />
+              <div itemProp="address" itemScope itemType="https://schema.org/PostalAddress">
+                <meta itemProp="streetAddress" content="Near Sector 45 Metro Station" />
+                <meta itemProp="addressLocality" content="Noida" />
+                <meta itemProp="addressRegion" content="Uttar Pradesh" />
+                <meta itemProp="postalCode" content="201301" />
+                <meta itemProp="addressCountry" content="IN" />
+              </div>
+              <p className="text-white/50 text-[11px] leading-relaxed">
+                <strong className="text-white/70">NAP:</strong> Kartik Painter Services<br/>
+                Near Sector 45 Metro Station, Noida, UP – 201301<br/>
+                Phone: +91 75007 70667
+              </p>
+            </div>
             {/* Stars */}
             <div className="flex items-center gap-2">
               <div className="flex gap-0.5">
@@ -201,11 +219,60 @@ export default function Footer() {
           </div>
         </div>
 
+        {/* Pincodes — Local SEO Signal */}
+        <div className="py-5 border-b border-white/10">
+          <p className="text-white/30 text-[10px] font-semibold tracking-[0.15em] uppercase mb-3">
+            Noida Pincodes We Serve
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {['201301','201302','201303','201304','201305','201306','201307','201308','201309','201310',
+              '201313','201314','201315','201318','201319'].map(pin => (
+              <span key={pin}
+                    className="text-[10px] text-white/30 border border-white/10
+                               px-2 py-1 rounded-md cursor-default">
+                {pin}
+              </span>
+            ))}
+          </div>
+          <p className="text-white/20 text-[10px] mt-2">
+            We provide painting services across all Noida pin codes including Sector 18, 62, 78, 100, 137 & more.
+          </p>
+        </div>
+
+        {/* Directory Citations & Trust Signals */}
+        <div className="py-5 border-b border-white/10">
+          <p className="text-white/30 text-[10px] font-semibold tracking-[0.15em] uppercase mb-3">
+            Find Us On
+          </p>
+          <div className="flex flex-wrap gap-3">
+            <a href="https://www.justdial.com/Noida/Kartik-Painter-Services" target="_blank" rel="noopener noreferrer"
+               className="text-[11px] text-white/40 hover:text-white/70 transition-colors
+                          border border-white/10 px-3 py-1.5 rounded-md">
+              Justdial Noida
+            </a>
+            <a href="https://www.sulekha.com/kartik-painter-services-noida" target="_blank" rel="noopener noreferrer"
+               className="text-[11px] text-white/40 hover:text-white/70 transition-colors
+                          border border-white/10 px-3 py-1.5 rounded-md">
+              Sulekha Noida
+            </a>
+            <a href="https://www.indiamart.com/kartikpainterservices" target="_blank" rel="noopener noreferrer"
+               className="text-[11px] text-white/40 hover:text-white/70 transition-colors
+                          border border-white/10 px-3 py-1.5 rounded-md">
+              IndiaMART
+            </a>
+            <a href="https://www.google.com/search?q=Kartik+Painter+Services+Noida" target="_blank" rel="noopener noreferrer"
+               className="text-[11px] text-white/40 hover:text-white/70 transition-colors
+                          border border-white/10 px-3 py-1.5 rounded-md">
+              Google Reviews
+            </a>
+          </div>
+        </div>
+
         {/* Bottom */}
         <div className="pt-6 flex flex-col sm:flex-row justify-between gap-2
                         text-[11px] text-white/25">
           <p>© {new Date().getFullYear()} Kartik Painter Services. All rights reserved.</p>
-          <p>Professional Painting Contractor · Noida, Uttar Pradesh, India</p>
+          <p>Professional Painting Contractor · Noida, Uttar Pradesh, India · NAP Consistent</p>
         </div>
       </div>
     </footer>

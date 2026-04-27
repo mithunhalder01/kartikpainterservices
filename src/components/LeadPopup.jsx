@@ -3,10 +3,11 @@ import { useState, useEffect, useRef } from 'react'
 import { X, Phone, CheckCircle, Home } from 'lucide-react'
 import { WA_NUMBER } from '../data/data'
 
-const STORAGE_KEY = 'kps_popup'
-const MAX_SHOWS   = 2
-const SCROLL_PCT  = 40
-const RESHW_DAYS  = 7
+const STORAGE_KEY = 'kps_popup_v2'
+const MAX_SHOWS   = 3
+const SCROLL_PCT  = 30
+const RESHW_DAYS  = 3
+const TIME_DELAY  = 12000 // 12 seconds fallback trigger
 
 const WA = () => (
   <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor">
@@ -21,7 +22,7 @@ export default function LeadPopup() {
   const [sent, setSent]       = useState(false)
   const triggered             = useRef(false)
 
-  // ── Scroll trigger ──
+  // ── Scroll trigger + time fallback ──
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY)
@@ -33,15 +34,13 @@ export default function LeadPopup() {
       }
     } catch (_) {}
 
-    const onScroll = () => {
-      if (triggered.current) return
-      const total = document.body.scrollHeight - window.innerHeight
-      if (total <= 0) return
-      const pct = (window.scrollY / total) * 100
-      if (pct < SCROLL_PCT) return
+    let timerId = null
 
+    const showPopup = () => {
+      if (triggered.current) return
       triggered.current = true
       window.removeEventListener('scroll', onScroll)
+      if (timerId) clearTimeout(timerId)
       setVisible(true)
 
       try {
@@ -54,8 +53,24 @@ export default function LeadPopup() {
       } catch (_) {}
     }
 
+    const onScroll = () => {
+      const total = document.documentElement.scrollHeight - window.innerHeight
+      if (total <= 0) return
+      const pct = (window.scrollY / total) * 100
+      if (pct >= SCROLL_PCT) showPopup()
+    }
+
     window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
+
+    // Time fallback: show after 12s if scroll hasn't triggered
+    timerId = setTimeout(() => {
+      showPopup()
+    }, TIME_DELAY)
+
+    return () => {
+      window.removeEventListener('scroll', onScroll)
+      if (timerId) clearTimeout(timerId)
+    }
   }, [])
 
   // ── Lock body scroll when open ──

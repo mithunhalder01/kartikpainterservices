@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Menu, X, Phone, MapPin, ChevronDown,
          Home as HomeIcon, Layers, Droplets, Sparkles,
-         PaintBucket, ArrowRight } from 'lucide-react'
+         PaintBucket, Briefcase, ArrowRight } from 'lucide-react'
 
 const PHONE     = '+917500770667'
 const PHONE_RAW = '+91 75007 70667'
@@ -16,11 +16,15 @@ const links = [
 ]
 
 const serviceLinks = [
-  { to: '/services#interior',      icon: HomeIcon,    label: 'Interior Painting', desc: 'Rooms, halls & ceilings'   },
-  { to: '/services#exterior',      icon: Layers,      label: 'Exterior Painting', desc: 'Facades & boundary walls'  },
-  { to: '/services#waterproofing', icon: Droplets,    label: 'Waterproofing',     desc: 'Terrace, bathroom & more'  },
-  { to: '/services#texture',       icon: Sparkles,    label: 'Texture Painting',  desc: 'Designer wall finishes'    },
-  { to: '/services#wood-polish',   icon: PaintBucket, label: 'Wood Polish',        desc: 'Doors, railings & furniture' },
+  { to: '/interior-painting',      icon: HomeIcon,    label: 'Interior Painting', desc: 'Rooms, halls & ceilings'   },
+  { to: '/exterior-painting',      icon: Layers,      label: 'Exterior Painting', desc: 'Facades & boundary walls'  },
+  { to: '/waterproofing',          icon: Droplets,    label: 'Waterproofing',     desc: 'Terrace, bathroom & more'  },
+  { to: '/texture-painting',       icon: Sparkles,    label: 'Texture Painting',  desc: 'Designer wall finishes'    },
+  { to: '/wood-polish',            icon: PaintBucket, label: 'Wood Polish',       desc: 'Doors, railings & furniture' },
+  { to: '/commercial-painting',    icon: Briefcase,   label: 'Commercial Painting', desc: 'Offices & shops'         },
+  { to: '/pop-wall-putty',         icon: Layers,      label: 'POP & Wall Putty',   desc: 'False ceilings & putty'   },
+  { to: '/metal-painting',         icon: Layers,      label: 'Metal Painting',     desc: 'Gates, grills & railings' },
+  { to: '/stencil-wall-art',       icon: Sparkles,    label: 'Stencil & Wall Art',  desc: 'Custom wall designs'     },
 ]
 
 const SCROLL_DELTA      = 8

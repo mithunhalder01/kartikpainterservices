@@ -5,6 +5,7 @@ import Footer         from './components/Footer'
 import WhatsAppButton from './components/WhatsAppButton'
 import Home           from './pages/Home'
 import Services       from './pages/Services'
+import ServicePage    from './pages/ServicePage'
 import Gallery        from './pages/Gallery'
 import About          from './pages/About'
 import Contact        from './pages/Contact'
@@ -29,6 +30,15 @@ export default function App() {
         <Routes>
           <Route path="/"                 element={<Home/>}/>
           <Route path="/services"         element={<Services/>}/>
+          <Route path="/interior-painting" element={<ServicePage/>}/>
+          <Route path="/exterior-painting" element={<ServicePage/>}/>
+          <Route path="/waterproofing"     element={<ServicePage/>}/>
+          <Route path="/texture-painting"  element={<ServicePage/>}/>
+          <Route path="/commercial-painting" element={<ServicePage/>}/>
+          <Route path="/pop-wall-putty"    element={<ServicePage/>}/>
+          <Route path="/wood-polish"       element={<ServicePage/>}/>
+          <Route path="/metal-painting"    element={<ServicePage/>}/>
+          <Route path="/stencil-wall-art"  element={<ServicePage/>}/>
           <Route path="/gallery"          element={<Gallery/>}/>
           <Route path="/about"            element={<About/>}/>
           <Route path="/contact"          element={<Contact/>}/>

@@ -168,8 +168,8 @@ export default function Home() {
   return (
     <>
       <SEO
-        title="Painter in Noida – Free Estimate | Kartik Painter Services"
-        description="Kartik Painter Services: trusted painter in Noida for interior, exterior, waterproofing and texture painting. 15+ years, 500+ projects. Free estimate."
+        title="Best Painter in Noida – ₹8/sqft | FREE Site Visit | 15+ Years"
+        description="Noida mein best painting services chahiye? Kartik Painters dete hain Interior, Exterior & Waterproofing ₹8/sqft se shuru. 15+ years experience. Aaj hi FREE Inspection & Quote payein!"
         canonical="/"
         schema={[faqSchema, homeBreadcrumbSchema]}
       />
@@ -222,12 +222,12 @@ export default function Home() {
               </span>
             </div>
 
-            {/* Headline */}
+            {/* Headline — SEO Optimized H1 */}
             <h1 className="font-black text-white leading-[1.04] tracking-tight mb-4
                            text-[clamp(34px,6vw,60px)]">
-              Noida's Most<br />
+              Top-Rated House<br />
               <span className="relative inline-block">
-                <span className="relative z-10 text-amber-400">Trusted Painter.</span>
+                <span className="relative z-10 text-amber-400">Painters in Noida</span>
                 <svg className="absolute -bottom-1 left-0 w-full" height="8"
                   viewBox="0 0 300 8" preserveAspectRatio="none">
                   <path d="M0 6 Q75 1 150 5 Q225 9 300 4"
@@ -246,19 +246,22 @@ export default function Home() {
               Written quote — no surprises, no hidden costs.
             </p>
 
-            {/* CTAs */}
+            {/* CTAs — WhatsApp + Call */}
             <div className="flex flex-col sm:flex-row gap-3 mb-7">
-              <Link to="/contact"
+              <a href={`https://wa.me/${WA_NUMBER}?text=Hi%20Kartik%20Painters,%20I%20need%20a%20FREE%20quote%20for%20painting%20in%20Noida`}
+                 target="_blank" rel="noopener noreferrer"
                 className="flex items-center justify-center gap-2
-                           bg-amber-500 hover:bg-amber-400 active:scale-[0.98]
-                           text-black font-bold text-[14px] sm:text-[15px]
+                           bg-[#25D366] hover:bg-[#20b858] active:scale-[0.98]
+                           text-white font-bold text-[14px] sm:text-[15px]
                            px-6 py-4 rounded-xl transition-all duration-200
-                           shadow-[0_8px_32px_rgba(245,158,11,0.35)]
-                           hover:shadow-[0_10px_44px_rgba(245,158,11,0.55)]
+                           shadow-[0_8px_32px_rgba(37,211,102,0.35)]
+                           hover:shadow-[0_10px_44px_rgba(37,211,102,0.55)]
                            hover:-translate-y-0.5">
-                Book Free Site Visit
-                <ArrowRight size={16} />
-              </Link>
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                Get Free Quote on WhatsApp
+              </a>
               <a href={`tel:${PHONE}`}
                 className="flex items-center justify-center gap-2
                            bg-white/8 hover:bg-white/14 border border-white/15
@@ -378,6 +381,42 @@ export default function Home() {
     
 
       {/* ══════════════════════════════════════════════
+          1.5 PRICING BANNER — Competitor-style
+      ══════════════════════════════════════════════ */}
+      <div className="bg-amber-500">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4
+                        flex flex-wrap items-center justify-center sm:justify-between gap-2">
+          <div className="flex items-center gap-2">
+            <span className="text-black font-black text-[18px] sm:text-[22px]">₹8/sqft</span>
+            <span className="text-black/60 text-[12px] sm:text-[13px] font-medium">se shuru</span>
+          </div>
+          <div className="hidden sm:block w-px h-6 bg-black/20" />
+          <div className="flex items-center gap-2 text-black text-[12px] sm:text-[13px] font-semibold">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <path d="M22 11.08V12a10 10 0 11-5.93-9.14"/>
+              <polyline points="22 4 12 14.01 9 11.01"/>
+            </svg>
+            FREE Site Visit & Inspection
+          </div>
+          <div className="hidden sm:block w-px h-6 bg-black/20" />
+          <div className="flex items-center gap-2 text-black text-[12px] sm:text-[13px] font-semibold">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            Open Now — 8 AM to 8 PM
+          </div>
+          <div className="hidden sm:block w-px h-6 bg-black/20" />
+          <a href={`tel:${PHONE}`}
+             className="text-black font-bold text-[12px] sm:text-[13px]
+                        bg-white/90 hover:bg-white px-3 py-1.5 rounded-lg
+                        transition-colors">
+            {PHONE_DISPLAY}
+          </a>
+        </div>
+      </div>
+
+      {/* ══════════════════════════════════════════════
           2. TRUST BAR
       ══════════════════════════════════════════════ */}
       <div className="bg-white border-b border-border">
@@ -421,7 +460,7 @@ export default function Home() {
 
           {/* 2 cols on mobile, 3 on desktop */}
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {services.map(({ id, Icon, title, shortDesc, price }, i) => (
+            {services.map(({ id, slug, Icon, title, shortDesc, price }, i) => (
               <div key={id}
                 className={`group p-4 sm:p-6 border border-border rounded-xl bg-white
                                hover:border-dark hover:shadow-[0_4px_24px_rgba(0,0,0,0.08)]
@@ -438,10 +477,10 @@ export default function Home() {
                               hidden sm:block">{shortDesc}</p>
                 <div className="flex items-center justify-between pt-3 sm:pt-4 border-t border-border">
                   <span className="text-[11px] sm:text-[12px] font-semibold text-accent">{price}</span>
-                  <Link to="/contact"
+                  <Link to={`/${slug}`}
                     className="text-[11px] sm:text-[12px] font-semibold text-text-muted
                                    hover:text-text-primary transition-colors flex items-center gap-1">
-                    Quote <ArrowRight size={11} />
+                    Details <ArrowRight size={11} />
                   </Link>
                 </div>
               </div>
@@ -475,6 +514,66 @@ export default function Home() {
                 <p className="text-text-muted text-[12px] sm:text-[13px] leading-relaxed">{d}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ══════════════════════════════════════════════
+          5.5 NOIDA COVERAGE — Local SEO Section
+      ══════════════════════════════════════════════ */}
+      <section className="bg-surface section-py px-4 sm:px-6 border-y border-border">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-8 sm:mb-10">
+            <SectionLabel>Noida Coverage</SectionLabel>
+            <h2 className="text-display-md font-black text-text-primary">
+              Best Painter in Noida — All Sectors Covered
+            </h2>
+            <p className="text-text-muted text-[14px] sm:text-[15px] mt-3 max-w-2xl mx-auto">
+              Hum Noida Sector 18, 62, 78, aur poore Noida mein best painting services dete hain.
+              From Sector 1 to Sector 168, we cover every corner of Noida with professional painting solutions.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 mb-8">
+            {[
+              'Noida Sector 18', 'Noida Sector 62', 'Noida Sector 78',
+              'Noida Sector 100', 'Noida Sector 137', 'Noida Sector 150',
+              'Noida Sector 45', 'Noida Sector 50', 'Noida Sector 15',
+              'Noida Sector 22', 'Noida Sector 34', 'Noida Sector 44',
+              'Noida Sector 55', 'Noida Sector 63', 'Noida Sector 74',
+              'Noida Sector 120',
+            ].map(sector => (
+              <div key={sector}
+                   className="flex items-center gap-2 p-3 bg-white border border-border rounded-lg">
+                <MapPin size={13} className="text-accent flex-shrink-0"/>
+                <span className="text-[12px] sm:text-[13px] font-medium text-text-secondary">
+                  {sector}
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-white border border-border rounded-xl p-5 sm:p-6">
+            <h3 className="font-semibold text-text-primary text-[15px] sm:text-[16px] mb-3">
+              Painting Services Available Across Noida
+            </h3>
+            <p className="text-text-muted text-[13px] sm:text-[14px] leading-relaxed mb-4">
+              Kartik Painter Services is the <strong className="text-text-primary">best painter in Noida</strong> with 15+ years of experience serving residential and commercial clients. We provide interior painting, exterior painting, waterproofing, texture painting, POP work, wood polish, and metal painting across all Noida sectors including Noida Extension, Greater Noida West, and nearby areas like Indirapuram, Vaishali, and Crossings Republik.
+            </p>
+            <p className="text-text-muted text-[13px] sm:text-[14px] leading-relaxed mb-4">
+              <strong className="text-text-primary">नोएडा में बेहतरीन पेंटिंग सेवा:</strong> कार्तिक पेंटर सर्विसेज नोएडा, ग्रेटर नोएडा, दादरी और गाज़ियाबाद में 15+ सालों से पेंटिंग का काम कर रही है। हमारे पास 500+ प्रोजेक्ट्स का अनुभव है और 200+ ग्राहक हमें 5-स्टार रेटिंग दे चुके हैं। घर, ऑफिस, दुकान — हर जगह पेंटिंग सर्विस उपलब्ध। आज ही <strong>FREE साइट विज़िट</strong> बुक करें!
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {['Interior Painting Noida', 'Exterior Painting Noida', 'Waterproofing Noida',
+                'Texture Painting Noida', 'POP Work Noida', 'Wood Polish Noida',
+                'Commercial Painting Noida', 'Metal Painting Noida'].map(tag => (
+                <span key={tag}
+                      className="text-[11px] sm:text-[12px] font-medium text-accent
+                                 bg-accent/5 border border-accent/20 px-3 py-1.5 rounded-md">
+                  {tag}
+                </span>
+              ))}
+            </div>
           </div>
         </div>
       </section>

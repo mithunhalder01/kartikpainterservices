@@ -254,18 +254,18 @@ export default function SEO({
     ? (cleanTitle.toLowerCase().includes(SITE_NAME.toLowerCase())
         ? cleanTitle
         : `${cleanTitle} | ${SITE_NAME}`)
-    : `${SITE_NAME} – Best Painting Contractor in Noida, Greater Noida & Ghaziabad`
+    : `Best Painter in Noida | Professional Home Painting Services | Kartik`
 
   const metaDesc = description ||
-    'Kartik Painter Services: trusted painter in Noida for interior, exterior, waterproofing and texture painting. ' +
-    '15+ years, 500+ projects. Free estimate.'
+    'Noida mein best painting services chahiye? Kartik Painters dete hain Interior, Exterior & Waterproofing ' +
+    '100% quality ke saath. 15+ years experience. Aaj hi FREE Inspection & Quote payein!'
 
   const canonicalURL = canonical ? absoluteUrl(canonical) : SITE_URL
   const imageURL = ogImage ? absoluteUrl(ogImage) : OG_IMG
 
   const defaultKeywords =
     'painter noida, best painter noida, painting contractor noida, ' +
-    'painter near me noida, interior painting noida, exterior painting noida, ' +
+    'painter near me noida, painter near me, interior painting noida, exterior painting noida, ' +
     'waterproofing noida, texture painting noida, house painting noida, ' +
     'flat painting noida, wall painting noida, painter greater noida, ' +
     'painter ghaziabad, painter dadri, painting service noida, ' +
@@ -281,7 +281,11 @@ export default function SEO({
     'wall putty noida, wood polish noida, epoxy flooring noida, ' +
     'painting estimate noida, free site visit noida, painting cost noida, ' +
     'painter noida ncr, best painting service ncr, painting contractor ncr, ' +
-    'सबसे अच्छा पेंटर नोएडा, पेंटर नोएडा, दादरी पेंटर, गाज़ियाबाद पेंटर'
+    'painting services near me, house painters near me, home painting near me, ' +
+    'painters near me noida, painting contractor near me, best painter near me, ' +
+    'सबसे अच्छा पेंटर नोएडा, पेंटर नोएडा, दादरी पेंटर, गाज़ियाबाद पेंटर, ' +
+    'पेंटिंग ठेकेदार नोएडा, पेंटिंग सेवा नोएडा, घर पेंटिंग नोएडा, ' +
+    'नोएडा में पेंटर, नोएडा में पेंटिंग सर्विस, बेस्ट पेंटर नोएडा'
 
   return (
     <Helmet>

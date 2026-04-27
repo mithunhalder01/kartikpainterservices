@@ -83,9 +83,14 @@ export default function Services() {
                     </p>
                     <p className="font-bold text-accent text-[18px] sm:text-[20px]">{price}</p>
                   </div>
-                  <Link to="/contact" className="btn-dark w-full sm:w-auto justify-center text-[13px] px-5 py-2.5">
-                    Get Quote <ArrowRight size={13}/>
-                  </Link>
+                  <div className="flex gap-2">
+                    <Link to={`/${slug}`} className="btn-outline w-full sm:w-auto justify-center text-[13px] px-4 py-2.5">
+                      Details <ArrowRight size={13}/>
+                    </Link>
+                    <Link to="/contact" className="btn-dark w-full sm:w-auto justify-center text-[13px] px-5 py-2.5">
+                      Get Quote <ArrowRight size={13}/>
+                    </Link>
+                  </div>
                 </div>
               </div>
             </div>
