@@ -1,8 +1,8 @@
 export const blogPosts = [
   {
     slug: 'painting-cost-noida-2025',
-    title: 'Painting Cost in Noida 2025 – Complete Price Guide',
-    desc: 'Complete guide to painting costs in Noida 2025. Interior, exterior, waterproofing prices per sq.ft. by Kartik Painter Services.',
+    title: 'Painting Cost in Noida 2025 (Starting ₹8/sqft) | Full Price Guide',
+    desc: 'Noida mein painting ka kya kharcha aayega? Check latest 2025 rates for interior (₹8-15/sqft), exterior, and waterproofing. Get a FREE professional estimate today!',
     published: '2025-01-15',
     updated: '2026-04-26',
     image: '/og-image.jpg',
