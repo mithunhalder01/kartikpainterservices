@@ -253,12 +253,11 @@ export default function SEO({
   const fullTitle = cleanTitle
     ? (cleanTitle.toLowerCase().includes(SITE_NAME.toLowerCase())
         ? cleanTitle
-        : `${cleanTitle} | ${SITE_NAME}`)
-    : `Best Painter in Noida | Professional Home Painting Services | Kartik`
+        : `${cleanTitle} | ${SITE_NAME}`) // If title doesn't contain site name, append it
+    : `Best House Painting Services in Noida | Starting ₹8/sqft | Kartik Painter Services` // Default title
 
   const metaDesc = description ||
-    'Noida mein best painting services chahiye? Kartik Painters dete hain Interior, Exterior & Waterproofing ' +
-    '100% quality ke saath. 15+ years experience. Aaj hi FREE Inspection & Quote payein!'
+    'Noida mein best house painting services (interior, exterior, waterproofing, texture). Lowest charges (starting ₹8/sqft) from verified painters with 15+ years experience. Free site visit. Call +91 7500770667.'
 
   const canonicalURL = canonical ? absoluteUrl(canonical) : SITE_URL
   const imageURL = ogImage ? absoluteUrl(ogImage) : OG_IMG
@@ -279,7 +278,11 @@ export default function SEO({
     'waterproofing contractor noida, damp wall repair noida, roof waterproofing noida, ' +
     'commercial painting noida, office painting noida, pop work noida, ' +
     'wall putty noida, wood polish noida, epoxy flooring noida, ' +
-    'painting estimate noida, free site visit noida, painting cost noida, ' +
+    'painting estimate noida, free site visit noida, painting cost noida, wall painting cost per sq ft noida, ' +
+    'lowest home painting charges noida, verified painters noida, 15+ years experience painter noida, ' +
+    'painter noida sector 76, painter noida sector 121, house painters greater noida west, ' +
+    'budget painters noida extension, texture wall painting designs noida, full home painting noida, ' +
+    '2bhk painting noida, 3bhk painting noida, ' +
     'painter noida ncr, best painting service ncr, painting contractor ncr, ' +
     'painting services near me, house painters near me, home painting near me, ' +
     'painters near me noida, painting contractor near me, best painter near me, ' +
