@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, MapPin, Shield, Award, Users } from 'lucide-react'
 import { team, brands, areas, stats } from '../data/data'
+import { usePublicData } from '../hooks/usePublicData'
 import SEO, { buildBreadcrumbSchema } from '../components/SEO'
 
 const aboutPageSchema = {
@@ -16,7 +17,31 @@ const aboutBreadcrumbSchema = buildBreadcrumbSchema([
   { name: 'About', path: '/about' },
 ])
 
+const FALLBACK = {
+  hero: {
+    heading: "15 years of craft.\nOne standard.",
+    subheading: "Since 2009, we've been the name Noida families and businesses trust.",
+  },
+  story: {
+    heading: "From two workers to Noida's most trusted",
+    paragraph1: 'In 2009, Kartik Halder started with two workers and one principle: do honest work, use good materials, and treat every home as your own.',
+    paragraph2: "That reputation spread — one satisfied client at a time. Today, 15+ skilled professionals cover Noida, Greater Noida, Dadri and beyond. The principle hasn't changed.",
+    image: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&h=600&fit=crop',
+  },
+  stats,
+  team,
+  brands,
+  areas,
+}
+
 export default function About() {
+  const { data: content } = usePublicData('/about', FALLBACK)
+  const c = { ...FALLBACK, ...content, hero: { ...FALLBACK.hero, ...content?.hero }, story: { ...FALLBACK.story, ...content?.story } }
+  const displayStats = c.stats?.length ? c.stats : FALLBACK.stats
+  const displayTeam = c.team?.length ? c.team : FALLBACK.team
+  const displayBrands = c.brands?.length ? c.brands : FALLBACK.brands
+  const displayAreas = c.areas?.length ? c.areas : FALLBACK.areas
+
   return (
     <>
       <SEO
@@ -29,12 +54,11 @@ export default function About() {
       <section className="page-hero py-20 px-6">
         <div className="max-w-6xl mx-auto">
           <p className="label text-accent-300">About</p>
-          <h1 className="text-display-lg font-black text-white max-w-xl mb-4">
-            15 years of craft.
-            <br/>One standard.
+          <h1 className="text-display-lg font-black text-white max-w-xl mb-4 whitespace-pre-line">
+            {c.hero.heading}
           </h1>
           <p className="text-white/50 text-[16px] max-w-lg">
-            Since 2009, we've been the name Noida families and businesses trust for honest work.
+            {c.hero.subheading}
           </p>
         </div>
       </section>
@@ -43,25 +67,23 @@ export default function About() {
       <section className="bg-white py-20 px-6">
         <div className="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           <div className="img-zoom rounded-2xl overflow-hidden">
-            <img src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?w=800&h=600&fit=crop"
+            <img src={c.story.image}
                  alt="Kartik Painter Services team Noida"
                  className="w-full h-[460px] object-cover"/>
           </div>
           <div>
             <p className="label">Our Story</p>
             <h2 className="text-display-sm font-black text-text-primary mb-5">
-              From two workers to Noida's most trusted
+              {c.story.heading}
             </h2>
             <p className="text-text-muted text-[15px] leading-relaxed mb-4">
-              In 2009, Kartik Halder started with two workers and one principle: do honest work,
-              use good materials, and treat every home as your own.
+              {c.story.paragraph1}
             </p>
             <p className="text-text-muted text-[15px] leading-relaxed mb-8">
-              That reputation spread — one satisfied client at a time. Today, 15+ skilled
-              professionals cover Noida, Greater Noida, Dadri and beyond. The principle hasn't changed.
+              {c.story.paragraph2}
             </p>
             <div className="grid grid-cols-2 gap-3 mb-8">
-              {stats.map(({ value, label }) => (
+              {displayStats.map(({ value, label }) => (
                 <div key={label} className="bg-surface rounded-xl p-4 border border-border">
                   <p className="stat-value text-text-primary">{value}</p>
                   <p className="text-text-subtle text-[11px] font-semibold uppercase
@@ -109,7 +131,7 @@ export default function About() {
             <h2 className="text-display-sm font-black text-text-primary">Meet our people</h2>
           </div>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
-            {team.map(m => (
+            {displayTeam.map(m => (
               <div key={m.name} className="group">
                 <div className="img-zoom rounded-xl overflow-hidden aspect-square mb-4
                                 border border-border group-hover:border-dark/30 transition-colors">
@@ -134,7 +156,7 @@ export default function About() {
               Genuine certified products — never substituted.
             </p>
             <div className="flex flex-wrap gap-2">
-              {brands.map(b => (
+              {displayBrands.map(b => (
                 <span key={b} className="text-[13px] font-medium text-text-secondary
                                         border border-border bg-white px-4 py-2 rounded-lg
                                         hover:border-dark transition-colors">{b}</span>
@@ -146,7 +168,7 @@ export default function About() {
             <h2 className="text-display-sm font-black text-text-primary mb-3">Where we work</h2>
             <p className="text-text-muted text-[14px] mb-6">Not listed? Call — we likely cover your area.</p>
             <div className="flex flex-wrap gap-2">
-              {areas.map(a => (
+              {displayAreas.map(a => (
                 <span key={a}
                       className="flex items-center gap-1.5 text-[13px] font-medium text-text-secondary
                                  border border-border bg-white px-3.5 py-2 rounded-lg

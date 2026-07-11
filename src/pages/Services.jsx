@@ -1,20 +1,9 @@
 import { Link } from 'react-router-dom'
 import { ArrowRight, Phone, Check } from 'lucide-react'
-import { services, process, contact, PHONE } from '../data/data'
+import { services as staticServices, process, contact, PHONE } from '../data/data'
+import { getServiceIcon } from '../lib/serviceIcons'
+import { usePublicData } from '../hooks/usePublicData'
 import SEO, { buildBreadcrumbSchema } from '../components/SEO'
-
-const servicesSchema = {
-  '@context': 'https://schema.org',
-  '@type': 'ItemList',
-  name: 'Painting Services by Kartik Painter Services',
-  itemListElement: services.map((s, i) => ({
-    '@type': 'ListItem',
-    position: i + 1,
-    name: s.title,
-    description: s.desc,
-    url: `https://kartikpainterservices.vercel.app/services#${s.slug}`,
-  })),
-}
 
 const servicesBreadcrumbSchema = buildBreadcrumbSchema([
   { name: 'Home', path: '/' },
@@ -22,6 +11,25 @@ const servicesBreadcrumbSchema = buildBreadcrumbSchema([
 ])
 
 export default function Services() {
+  const { data: liveServices } = usePublicData('/services', [])
+  const services = (liveServices.length ? liveServices : staticServices).map((s) => ({
+    ...s,
+    Icon: s.Icon || getServiceIcon(s.iconName),
+  }))
+
+  const servicesSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    name: 'Painting Services by Kartik Painter Services',
+    itemListElement: services.map((s, i) => ({
+      '@type': 'ListItem',
+      position: i + 1,
+      name: s.title,
+      description: s.desc,
+      url: `https://kartikpainterservices.vercel.app/services#${s.slug}`,
+    })),
+  }
+
   return (
     <>
       <SEO
@@ -49,8 +57,8 @@ export default function Services() {
       {/* Services */}
       <section className="bg-white py-12 sm:py-16 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto space-y-4 sm:space-y-5">
-          {services.map(({ id, slug, Icon, title, desc, price, image }, i) => (
-            <div key={id} id={slug}
+          {services.map(({ id, _id, slug, Icon, title, desc, price, image }, i) => (
+            <div key={id || _id} id={slug}
                  className={`grid grid-cols-1 lg:grid-cols-2 overflow-hidden rounded-2xl
                              border border-border hover:border-dark
                              hover:shadow-[0_4px_32px_rgba(0,0,0,0.08)]

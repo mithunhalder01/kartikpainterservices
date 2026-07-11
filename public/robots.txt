@@ -1,4 +1,5 @@
 User-agent: *
 Allow: /
+Disallow: /admin
 
 Sitemap: https://kartikpainterservices.vercel.app/sitemap.xml

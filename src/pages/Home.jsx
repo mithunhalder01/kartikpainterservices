@@ -11,6 +11,11 @@ import {
 import SEO, { buildBreadcrumbSchema } from '../components/SEO'
 import TestimonialSlider from '../components/TestimonialSlider'
 import StatsCard from '../components/StatsCard'
+import { usePublicData } from '../hooks/usePublicData'
+import { getServiceIcon } from '../lib/serviceIcons'
+
+const FALLBACK_GALLERY = gallery.map((g) => ({ _id: g.id, imageUrl: g.src, label: g.label, category: g.cat }))
+const FALLBACK_TESTIMONIALS = testimonials.map((t) => ({ _id: t.name, name: t.name, loc: t.loc, stars: t.stars, text: t.text }))
 
 /* ─── Updated phone number ─────────────────────────── */
 const PHONE = '+91 7500770667'
@@ -164,6 +169,14 @@ const homeBreadcrumbSchema = buildBreadcrumbSchema([
 
 export default function Home() {
   const [openFaq, setOpenFaq] = useState(0)
+  const { data: liveGallery } = usePublicData('/gallery', FALLBACK_GALLERY)
+  const { data: liveTestimonials } = usePublicData('/testimonials', FALLBACK_TESTIMONIALS)
+  const { data: liveServices } = usePublicData('/services', [])
+  const displayGallery = liveGallery.length ? liveGallery : FALLBACK_GALLERY
+  const displayTestimonials = liveTestimonials.length ? liveTestimonials : FALLBACK_TESTIMONIALS
+  const displayServices = (liveServices.length ? liveServices : services).map((s) => ({
+    ...s, Icon: s.Icon || getServiceIcon(s.iconName),
+  }))
 
   return (
     <>
@@ -460,8 +473,8 @@ export default function Home() {
 
           {/* 2 cols on mobile, 3 on desktop */}
           <div className="grid grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
-            {services.map(({ id, slug, Icon, title, shortDesc, price }, i) => (
-              <div key={id}
+            {displayServices.map(({ id, _id, slug, Icon, title, shortDesc, price }, i) => (
+              <div key={id || _id}
                 className={`group p-4 sm:p-6 border border-border rounded-xl bg-white
                                hover:border-dark hover:shadow-[0_4px_24px_rgba(0,0,0,0.08)]
                                transition-all duration-200 fade-up d${Math.min(i + 1, 6)}`}>
@@ -561,7 +574,7 @@ export default function Home() {
               Kartik Painter Services is the <strong className="text-text-primary">best painter in Noida</strong> with 15+ years of experience serving residential and commercial clients. We provide interior painting, exterior painting, waterproofing, texture painting, POP work, wood polish, and metal painting across all Noida sectors including Noida Extension, Greater Noida West, and nearby areas like Indirapuram, Vaishali, and Crossings Republik.
             </p>
             <p className="text-text-muted text-[13px] sm:text-[14px] leading-relaxed mb-4">
-              <strong className="text-text-primary">नोएडा में बेहतरीन पेंटिंग सेवा:</strong> कार्तिक पेंटर सर्विसेज नोएडा, ग्रेटर नोएडा, दादरी और गाज़ियाबाद में 15+ सालों से पेंटिंग का काम कर रही है। हमारे पास 500+ प्रोजेक्ट्स का अनुभव है और 200+ ग्राहक हमें 5-स्टार रेटिंग दे चुके हैं। घर, ऑफिस, दुकान — हर जगह पेंटिंग सर्विस उपलब्ध। आज ही <strong>FREE साइट विज़िट</strong> बुक करें!
+              <strong className="text-text-primary">नोएडा में बेहतरीन पेंटिंग सेवा:</strong> कार्तिक पेंटर सर्विसेज नोएडा, ग्रेटर नोएडा, दादरी और गाज़ियाबाद में 15+ सालों से पेंटिंग का काम कर रहा है। हमारे पास 500+ प्रोजेक्ट्स का अनुभव है और 200+ ग्राहक हमें 5-स्टार रेटिंग दे चुके हैं। घर, ऑफिस, दुकान — हर जगह पेंटिंग सर्विस उपलब्ध। आज ही <strong>FREE साइट विज़िट</strong> बुक करें!
             </p>
             <div className="flex flex-wrap gap-2">
               {['Interior Painting Noida', 'Exterior Painting Noida', 'Waterproofing Noida',
@@ -660,25 +673,27 @@ export default function Home() {
 
           {/* Mobile-safe layout: explicit heights prevent Safari grid span glitches */}
           <div className="grid grid-cols-2 md:grid-cols-12 md:grid-rows-2 gap-3 md:h-[360px]">
-            <div className="gallery-item col-span-2 md:col-span-5 md:row-span-2 h-52 md:h-auto rounded-xl img-zoom">
-              <img src={gallery[0].src} alt={gallery[0].label}
-                className="w-full h-full object-cover" />
-              <div className="overlay">
-                <span className="text-[10px] font-semibold uppercase tracking-widest
-                                 text-white/60 mb-1">{gallery[0].cat}</span>
-                <p>{gallery[0].label}</p>
+            {displayGallery[0] && (
+              <div className="gallery-item col-span-2 md:col-span-5 md:row-span-2 h-52 md:h-auto rounded-xl img-zoom">
+                <img src={displayGallery[0].imageUrl} alt={displayGallery[0].label}
+                  className="w-full h-full object-cover" />
+                <div className="overlay">
+                  <span className="text-[10px] font-semibold uppercase tracking-widest
+                                   text-white/60 mb-1">{displayGallery[0].category}</span>
+                  <p>{displayGallery[0].label}</p>
+                </div>
               </div>
-            </div>
-            {gallery.slice(1, 5).map(g => (
-              <div key={g.id}
+            )}
+            {displayGallery.slice(1, 5).map(g => (
+              <div key={g._id}
                 className="gallery-item col-span-1 md:col-span-3 h-36 md:h-auto rounded-xl img-zoom">
-                <img src={g.src} alt={g.label} className="w-full h-full object-cover" />
+                <img src={g.imageUrl} alt={g.label} className="w-full h-full object-cover" />
                 <div className="overlay">
                   <p>{g.label}</p>
                 </div>
                 <div className="absolute top-2 left-2 bg-dark/75 text-white/90 text-[10px]
                                 font-semibold px-2 py-0.5 rounded-md uppercase tracking-wide">
-                  {g.cat}
+                  {g.category}
                 </div>
               </div>
             ))}
@@ -703,7 +718,7 @@ export default function Home() {
               <span className="text-text-muted text-[13px] font-medium">4.9 / 5.0</span>
             </div>
           </div>
-          <TestimonialSlider items={testimonials} />
+          <TestimonialSlider items={displayTestimonials.map(t => ({ ...t, loc: t.loc ?? t.location }))} />
         </div>
       </section>
 

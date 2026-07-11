@@ -87,6 +87,62 @@ File: `src/data/data.js` — `team` array mein real names, roles aur photos daal
 
 ---
 
+## 🔐 Backend & Admin Dashboard
+
+The site now has a Node/Express + MongoDB backend and a full admin dashboard at `/admin`
+for managing Gallery, Testimonials, About page content, and Leads (CRM) — no redeploy
+needed for content changes.
+
+### One-time setup
+
+1. Create a free **MongoDB Atlas** cluster → get the connection string.
+2. Create a free **Cloudinary** account → get cloud name, API key, API secret.
+3. Copy `.env.example` to `.env` and fill in every value:
+   ```bash
+   cp .env.example .env
+   ```
+   - `MONGODB_URI` — your Atlas connection string
+   - `JWT_SECRET` / `JWT_REFRESH_SECRET` — random strings, e.g. `openssl rand -hex 64`
+   - `ADMIN_EMAIL` / `ADMIN_PASSWORD` — the one admin login (password: 10+ characters)
+   - `CLOUDINARY_*` — from your Cloudinary dashboard
+4. Seed the single admin account (reads `ADMIN_EMAIL`/`ADMIN_PASSWORD` from `.env`):
+   ```bash
+   npm run seed:admin
+   ```
+   Safe to re-run — it updates the existing admin's password/name instead of duplicating.
+
+### Running locally
+
+Run the API and the frontend in two terminals:
+
+```bash
+npm run server:dev   # Express API on http://localhost:5050
+npm run dev          # Vite dev server on http://localhost:5173 (proxies /api to 5050)
+```
+
+Then open `http://localhost:5173/admin/login` and sign in with your `ADMIN_EMAIL` / `ADMIN_PASSWORD`.
+
+### Deploying
+
+- Push to Vercel as usual — `api/[[...path]].js` deploys the whole Express app as a single
+  serverless function, so no separate backend host is needed.
+- Add every variable from `.env.example` to the Vercel project's Environment Variables
+  (Production + Preview). Set `CORS_ORIGINS` to your real production domain.
+- Run `npm run seed:admin` once **locally, pointed at the production `MONGODB_URI`**
+  (or via `vercel env pull` + local run) to create the admin account in the production
+  database — there is no seed step in the deploy pipeline itself, by design.
+
+### Security notes
+
+- There is exactly one admin account; there is no self-registration endpoint anywhere.
+- Sessions are httpOnly/Secure/SameSite=Strict cookies (not localStorage) — a 15-minute
+  access token plus a rotating 30-day refresh token.
+- `/admin` is blocked in `public/robots.txt` and carries no public links from the rest of the site.
+- Login and public lead-submission endpoints are rate-limited; every admin write endpoint
+  validates input with `zod` and sanitizes strings against XSS/NoSQL-injection.
+
+---
+
 ## 🌐 Deploy Options
 
 ### Option 1: Netlify (Free & Easy)

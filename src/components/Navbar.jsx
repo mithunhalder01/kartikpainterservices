@@ -27,8 +27,6 @@ const serviceLinks = [
   { to: '/stencil-wall-art',       icon: Sparkles,    label: 'Stencil & Wall Art',  desc: 'Custom wall designs'     },
 ]
 
-const SCROLL_DELTA      = 8
-const HIDE_BAR_AFTER    = 120
 const SHOW_BAR_AT_TOP   = 32
 
 export default function Navbar() {
@@ -38,7 +36,6 @@ export default function Navbar() {
   const [logoFailed, setLogoFailed] = useState(false)
   const [servHover, setServHover] = useState(false)  // desktop hover
   const [servMob, setServMob]   = useState(false)    // mobile accordion
-  const lastScrollY             = useRef(0)
   const showBarRef              = useRef(true)
   const tickingRef              = useRef(false)
   const hoverTimeout            = useRef(null)
@@ -58,19 +55,10 @@ export default function Navbar() {
 
       window.requestAnimationFrame(() => {
         const current = window.scrollY <= 0 ? 0 : window.scrollY
-        const prev = lastScrollY.current
-        const delta = current - prev
 
         setScrolled(current > 40)
+        setBarVisibility(current <= SHOW_BAR_AT_TOP)
 
-        if (current <= SHOW_BAR_AT_TOP) {
-          setBarVisibility(true)
-        } else if (Math.abs(delta) >= SCROLL_DELTA) {
-          if (delta > 0 && current > HIDE_BAR_AFTER) setBarVisibility(false)
-          if (delta < 0) setBarVisibility(true)
-        }
-
-        lastScrollY.current = current
         tickingRef.current = false
       })
     }

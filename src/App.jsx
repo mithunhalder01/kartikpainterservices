@@ -1,5 +1,5 @@
-import { Routes, Route, useLocation } from 'react-router-dom'
-import { useEffect } from 'react'
+import { Routes, Route, Outlet, useLocation } from 'react-router-dom'
+import { useEffect, Suspense, lazy } from 'react'
 import Navbar         from './components/Navbar'
 import Footer         from './components/Footer'
 import WhatsAppButton from './components/WhatsAppButton'
@@ -15,19 +15,40 @@ import BlogPost       from './pages/BlogPost'
 import NotFound       from './pages/NotFound'
 import LeadPopup       from './components/LeadPopup'
 
+const AdminApp = lazy(() => import('./admin/AdminApp'))
+
 function ScrollTop() {
   const { pathname } = useLocation()
   useEffect(() => { window.scrollTo(0, 0) }, [pathname])
   return null
 }
 
-export default function App() {
+function PublicLayout() {
   return (
     <div className="flex flex-col min-h-screen">
-      <ScrollTop/>
       <Navbar/>
       <main className="flex-1">
-        <Routes>
+        <Outlet/>
+      </main>
+      <Footer/>
+      <WhatsAppButton/>
+      <LeadPopup />
+    </div>
+  )
+}
+
+export default function App() {
+  return (
+    <>
+      <ScrollTop/>
+      <Routes>
+        <Route path="/admin/*" element={
+          <Suspense fallback={<div className="min-h-screen bg-dark-950" />}>
+            <AdminApp/>
+          </Suspense>
+        }/>
+
+        <Route element={<PublicLayout/>}>
           <Route path="/"                 element={<Home/>}/>
           <Route path="/services"         element={<Services/>}/>
           <Route path="/interior-painting" element={<ServicePage/>}/>
@@ -49,11 +70,8 @@ export default function App() {
           <Route path="/blog"             element={<Blog/>}/>
           <Route path="/blog/painting-cost-noida-2025" element={<BlogPost slug="painting-cost-noida-2025" />} />
           <Route path="*"                 element={<NotFound/>}/>
-        </Routes>
-      </main>
-      <Footer/>
-      <WhatsAppButton/>
-      <LeadPopup />
-    </div>
+        </Route>
+      </Routes>
+    </>
   )
 }

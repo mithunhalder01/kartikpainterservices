@@ -1,6 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { ArrowRight, Phone, CheckCircle, MapPin, ChevronRight } from 'lucide-react'
-import { services, PHONE, WA_NUMBER } from '../data/data'
+import { services as staticServices, PHONE, WA_NUMBER } from '../data/data'
+import { usePublicData } from '../hooks/usePublicData'
 import SEO, { buildBreadcrumbSchema } from '../components/SEO'
 
 const serviceFaqs = (serviceName, areaName) => [
@@ -24,6 +25,8 @@ const serviceFaqs = (serviceName, areaName) => [
 
 export default function ServicePage() {
   const { slug } = useParams()
+  const { data: liveServices } = usePublicData('/services', [])
+  const services = liveServices.length ? liveServices : staticServices
   const service = services.find(s => s.slug === slug)
 
   if (!service) return null
@@ -206,8 +209,8 @@ export default function ServicePage() {
             Other Painting Services in Noida
           </h2>
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
-            {services.filter(s => s.id !== service.id).map(s => (
-              <Link key={s.id} to={`/${s.slug}`}
+            {services.filter(s => s.slug !== service.slug).map(s => (
+              <Link key={s.id || s._id} to={`/${s.slug}`}
                     className="p-4 border border-border rounded-xl bg-surface
                                hover:border-dark hover:shadow-[0_4px_24px_rgba(0,0,0,0.08)]
                                transition-all duration-200 group">
@@ -259,4 +262,3 @@ export default function ServicePage() {
     </>
   )
 }
-

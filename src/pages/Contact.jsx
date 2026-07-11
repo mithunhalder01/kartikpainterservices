@@ -29,7 +29,7 @@ const WA = () => (
 )
 
 export default function Contact() {
-  const [form, setForm] = useState({ name:'',phone:'',email:'',city:'',service:'',message:'' })
+  const [form, setForm] = useState({ name:'',phone:'',email:'',city:'',service:'',message:'',website:'' })
   const [errors, setErrors] = useState({})
   const [sent, setSent] = useState(false)
   const [submitError, setSubmitError] = useState('')
@@ -78,6 +78,23 @@ export default function Contact() {
       setSubmitError('WhatsApp did not open automatically. Use the button below.')
     }
     setSent(true)
+
+    fetch('/api/leads', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        name: form.name.trim(),
+        phone: form.phone.trim(),
+        email: form.email.trim(),
+        area: form.city.trim(),
+        serviceInterested: form.service.trim(),
+        message: form.message.trim(),
+        source: 'Contact Form',
+        website: form.website,
+      }),
+    }).catch(() => {
+      // WhatsApp already opened — CRM logging failure shouldn't disrupt the user's flow
+    })
   }
 
   return (
@@ -126,6 +143,9 @@ export default function Contact() {
               </div>
             ) : (
               <form onSubmit={submit} noValidate className="space-y-4">
+                <input type="text" name="website" value={form.website} onChange={handle}
+                       tabIndex={-1} autoComplete="off" aria-hidden="true"
+                       className="absolute -left-[9999px] w-px h-px opacity-0" />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-[11px] font-semibold tracking-[0.14em]

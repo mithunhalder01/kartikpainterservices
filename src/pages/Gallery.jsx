@@ -1,10 +1,9 @@
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import { Phone } from 'lucide-react'
-import { gallery, PHONE } from '../data/data'
+import { PHONE } from '../data/data'
+import { usePublicData } from '../hooks/usePublicData'
 import SEO, { buildBreadcrumbSchema } from '../components/SEO'
-
-const CATS = ['All','Interior','Exterior','Texture','Commercial']
 
 const gallerySchema = {
   '@context': 'https://schema.org',
@@ -19,9 +18,24 @@ const galleryBreadcrumbSchema = buildBreadcrumbSchema([
   { name: 'Gallery', path: '/gallery' },
 ])
 
+function SkeletonGrid() {
+  return (
+    <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-3 space-y-3">
+      {Array.from({ length: 8 }).map((_, i) => (
+        <div key={i} className="break-inside-avoid rounded-xl overflow-hidden bg-surface animate-pulse"
+          style={{ height: `${180 + (i % 3) * 60}px` }} />
+      ))}
+    </div>
+  )
+}
+
 export default function Gallery() {
   const [active, setActive] = useState('All')
-  const filtered = active==='All' ? gallery : gallery.filter(g=>g.cat===active)
+  const { data: images, loading, error } = usePublicData('/gallery', [])
+  const { data: categories } = usePublicData('/gallery/categories', [])
+
+  const cats = useMemo(() => ['All', ...categories.map((c) => c.name)], [categories])
+  const filtered = active === 'All' ? images : images.filter((g) => g.category === active)
 
   return (
     <>
@@ -45,7 +59,7 @@ export default function Gallery() {
       <section className="bg-white py-12 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-wrap gap-2 mb-10 border-b border-border pb-6 items-center">
-            {CATS.map(c => (
+            {cats.map(c => (
               <button key={c} onClick={()=>setActive(c)}
                 className={`px-4 py-2 text-[13px] font-medium rounded-lg border transition-all
                   ${active===c
@@ -54,27 +68,37 @@ export default function Gallery() {
                 {c}
               </button>
             ))}
-            <span className="ml-auto text-[13px] text-text-subtle">{filtered.length} projects</span>
+            {!loading && <span className="ml-auto text-[13px] text-text-subtle">{filtered.length} projects</span>}
           </div>
 
-          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-3 space-y-3">
-            {filtered.map((g, i) => (
-              <div key={g.id}
-                   className="gallery-item break-inside-avoid rounded-xl overflow-hidden
-                              shadow-[0_1px_4px_rgba(0,0,0,0.08)] fade-up"
-                   style={{ animationDelay:`${i*0.04}s` }}>
-                <img src={g.src} alt={`${g.label} – Kartik Painter Services Noida`}
-                     className="w-full block img-zoom"/>
-                <div className="overlay">
-                  <p>{g.label}</p>
+          {loading ? (
+            <SkeletonGrid />
+          ) : error ? (
+            <p className="text-center text-text-muted text-[14px] py-12">
+              Couldn't load the gallery right now. Please try again shortly.
+            </p>
+          ) : filtered.length === 0 ? (
+            <p className="text-center text-text-muted text-[14px] py-12">No projects in this category yet.</p>
+          ) : (
+            <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-3 space-y-3">
+              {filtered.map((g, i) => (
+                <div key={g._id}
+                     className="gallery-item break-inside-avoid rounded-xl overflow-hidden
+                                shadow-[0_1px_4px_rgba(0,0,0,0.08)] fade-up"
+                     style={{ animationDelay:`${i*0.04}s` }}>
+                  <img src={g.imageUrl} alt={`${g.label} – Kartik Painter Services Noida`}
+                       className="w-full block img-zoom" loading="lazy"/>
+                  <div className="overlay">
+                    <p>{g.label}</p>
+                  </div>
+                  <div className="absolute top-2.5 left-2.5 bg-dark/70 text-white/90 text-[10px]
+                                  font-semibold uppercase tracking-widest px-2 py-0.5 rounded-md">
+                    {g.category}
+                  </div>
                 </div>
-                <div className="absolute top-2.5 left-2.5 bg-dark/70 text-white/90 text-[10px]
-                                font-semibold uppercase tracking-widest px-2 py-0.5 rounded-md">
-                  {g.cat}
-                </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 
