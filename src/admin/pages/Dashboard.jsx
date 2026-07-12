@@ -5,6 +5,8 @@ import { api } from '../api/client'
 import { SkeletonStat, SkeletonRow } from '../components/Skeleton'
 import StatusBadge from '../components/StatusBadge'
 import EmptyState from '../components/EmptyState'
+import LeadsTrendChart from '../components/charts/LeadsTrendChart'
+import StatusBarChart from '../components/charts/StatusBarChart'
 
 function StatCard({ icon: Icon, label, value }) {
   return (
@@ -39,6 +41,32 @@ export default function Dashboard() {
             <StatCard icon={Quote} label="Testimonials" value={data?.testimonialCount ?? 0} />
           </>
         )}
+      </div>
+
+      <div className="grid grid-cols-1 lg:grid-cols-5 gap-4 mb-6">
+        <div className="lg:col-span-3 rounded-xl border border-border bg-white p-4">
+          <h2 className="text-[13px] font-semibold text-text-primary mb-3">Leads — last 14 days</h2>
+          {isLoading ? (
+            <div className="h-[180px] bg-surface rounded-md animate-pulse" />
+          ) : data?.leadsOverTime?.some((d) => d.count > 0) ? (
+            <LeadsTrendChart data={data.leadsOverTime} />
+          ) : (
+            <div className="h-[180px] flex items-center justify-center text-[13px] text-text-subtle">
+              No leads in this period yet
+            </div>
+          )}
+        </div>
+
+        <div className="lg:col-span-2 rounded-xl border border-border bg-white p-4">
+          <h2 className="text-[13px] font-semibold text-text-primary mb-4">Leads by Status</h2>
+          {isLoading ? (
+            <div className="space-y-2.5">
+              {Array.from({ length: 5 }).map((_, i) => <div key={i} className="h-5 bg-surface rounded animate-pulse" />)}
+            </div>
+          ) : (
+            <StatusBarChart statusCounts={data?.statusCounts || {}} />
+          )}
+        </div>
       </div>
 
       <div className="rounded-xl border border-border bg-white overflow-hidden">

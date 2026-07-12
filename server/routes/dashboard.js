@@ -8,19 +8,36 @@ import { requireAuth } from '../middleware/requireAuth.js'
 const router = Router()
 router.use(requireAuth)
 
+const TREND_DAYS = 14
+
 router.get('/stats', asyncHandler(async (req, res) => {
   const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)
+  const trendStart = new Date()
+  trendStart.setHours(0, 0, 0, 0)
+  trendStart.setDate(trendStart.getDate() - (TREND_DAYS - 1))
 
-  const [newLeadsThisWeek, totalLeads, byStatus, galleryCount, testimonialCount, recentLeads] = await Promise.all([
+  const [newLeadsThisWeek, totalLeads, byStatus, galleryCount, testimonialCount, recentLeads, byDay] = await Promise.all([
     Lead.countDocuments({ createdAt: { $gte: weekAgo } }),
     Lead.countDocuments(),
     Lead.aggregate([{ $group: { _id: '$status', count: { $sum: 1 } } }]),
     GalleryImage.countDocuments(),
     Testimonial.countDocuments(),
     Lead.find().sort({ createdAt: -1 }).limit(5),
+    Lead.aggregate([
+      { $match: { createdAt: { $gte: trendStart } } },
+      { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, count: { $sum: 1 } } },
+    ]),
   ])
 
   const statusCounts = byStatus.reduce((acc, { _id, count }) => ({ ...acc, [_id]: count }), {})
+  const countByDate = byDay.reduce((acc, { _id, count }) => ({ ...acc, [_id]: count }), {})
+
+  const leadsOverTime = Array.from({ length: TREND_DAYS }, (_, i) => {
+    const d = new Date(trendStart)
+    d.setDate(d.getDate() + i)
+    const dateKey = d.toISOString().slice(0, 10)
+    return { date: dateKey, count: countByDate[dateKey] || 0 }
+  })
 
   res.json({
     newLeadsThisWeek,
@@ -29,6 +46,7 @@ router.get('/stats', asyncHandler(async (req, res) => {
     galleryCount,
     testimonialCount,
     recentLeads,
+    leadsOverTime,
   })
 }))
 
