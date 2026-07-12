@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, Trash2, Pencil } from 'lucide-react'
+import { Plus, Trash2, Pencil, X } from 'lucide-react'
 import toast from 'react-hot-toast'
 import {
   DndContext, closestCenter, PointerSensor, useSensor, useSensors,
@@ -112,6 +112,7 @@ export default function Gallery() {
   const [modalOpen, setModalOpen] = useState(false)
   const [editing, setEditing] = useState(null)
   const [deleteTarget, setDeleteTarget] = useState(null)
+  const [deleteCategoryTarget, setDeleteCategoryTarget] = useState(null)
   const [newCategory, setNewCategory] = useState('')
   const queryClient = useQueryClient()
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }))
@@ -150,6 +151,17 @@ export default function Gallery() {
     onError: (err) => toast.error(err.message || 'Failed to add category'),
   })
 
+  const deleteCategoryMutation = useMutation({
+    mutationFn: (id) => api.delete(`/admin/categories/${id}`),
+    onSuccess: (_, id) => {
+      queryClient.invalidateQueries({ queryKey: ['admin-categories'] })
+      if (deleteCategoryTarget?.name === filterCategory) setFilterCategory('')
+      setDeleteCategoryTarget(null)
+      toast.success('Category deleted')
+    },
+    onError: (err) => toast.error(err.message || 'Failed to delete category'),
+  })
+
   const handleDragEnd = (event) => {
     const { active, over } = event
     if (!over || active.id === over.id) return
@@ -180,11 +192,23 @@ export default function Gallery() {
           All
         </button>
         {categories.map((c) => (
-          <button key={c._id} onClick={() => setFilterCategory(c.name)}
-            className={`px-3 py-1.5 text-[12.5px] rounded-full border transition-colors
-              ${filterCategory === c.name ? 'bg-dark text-white border-dark' : 'border-border text-text-muted hover:bg-surface'}`}>
-            {c.name}
-          </button>
+          <div key={c._id} className="group relative">
+            <button onClick={() => setFilterCategory(c.name)}
+              className={`pl-3 pr-2 py-1.5 text-[12.5px] rounded-full border transition-colors flex items-center gap-1.5
+                ${filterCategory === c.name ? 'bg-dark text-white border-dark' : 'border-border text-text-muted hover:bg-surface'}`}>
+              {c.name}
+              <span
+                role="button"
+                tabIndex={0}
+                onClick={(e) => { e.stopPropagation(); setDeleteCategoryTarget(c) }}
+                onKeyDown={(e) => { if (e.key === 'Enter') { e.stopPropagation(); setDeleteCategoryTarget(c) } }}
+                className={`w-4 h-4 rounded-full flex items-center justify-center shrink-0 transition-opacity
+                  opacity-0 group-hover:opacity-100 hover:bg-black/10
+                  ${filterCategory === c.name ? 'hover:bg-white/20' : ''}`}>
+                <X size={11} />
+              </span>
+            </button>
+          </div>
         ))}
         <div className="flex items-center gap-1.5 ml-2">
           <input value={newCategory} onChange={(e) => setNewCategory(e.target.value)}
@@ -229,6 +253,15 @@ export default function Gallery() {
         loading={deleteMutation.isPending}
         title="Delete this image?"
         description="This will permanently remove it from Cloudinary and the site."
+      />
+
+      <ConfirmDialog
+        open={!!deleteCategoryTarget}
+        onClose={() => setDeleteCategoryTarget(null)}
+        onConfirm={() => deleteCategoryMutation.mutate(deleteCategoryTarget._id)}
+        loading={deleteCategoryMutation.isPending}
+        title={`Delete "${deleteCategoryTarget?.name}"?`}
+        description="Images already in this category won't be deleted, but they'll no longer have a valid category until you reassign them."
       />
     </div>
   )
