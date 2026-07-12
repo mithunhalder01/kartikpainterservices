@@ -7,6 +7,7 @@ import AdminLayout from './layout/AdminLayout'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Leads from './pages/Leads'
+import HomeEditor from './pages/HomeEditor'
 import Services from './pages/Services'
 import Gallery from './pages/Gallery'
 import Testimonials from './pages/Testimonials'
@@ -27,6 +28,7 @@ export default function AdminApp() {
           <Route path="" element={<ProtectedRoute><AdminLayout /></ProtectedRoute>}>
             <Route index element={<Dashboard />} />
             <Route path="leads" element={<Leads />} />
+            <Route path="home" element={<HomeEditor />} />
             <Route path="services" element={<Services />} />
             <Route path="gallery" element={<Gallery />} />
             <Route path="testimonials" element={<Testimonials />} />

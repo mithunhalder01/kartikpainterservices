@@ -5,6 +5,9 @@ import toast from 'react-hot-toast'
 import { api } from '../api/client'
 import TagList from '../components/TagList'
 import ImageDropzone from '../components/ImageDropzone'
+import Section from '../components/EditorSection'
+import Field from '../components/EditorField'
+import { move } from '../utils/arrayMove'
 
 const emptySections = {
   hero: { heading: '', subheading: '' },
@@ -13,32 +16,6 @@ const emptySections = {
   team: [],
   brands: [],
   areas: [],
-}
-
-function move(arr, from, to) {
-  const copy = [...arr]
-  const [item] = copy.splice(from, 1)
-  copy.splice(to, 0, item)
-  return copy
-}
-
-function Section({ title, children }) {
-  return (
-    <div className="rounded-xl border border-border bg-white p-5">
-      <h2 className="text-[14px] font-semibold text-text-primary mb-4">{title}</h2>
-      {children}
-    </div>
-  )
-}
-
-function Field({ label, ...props }) {
-  return (
-    <div>
-      <label className="block text-[12px] font-medium text-text-muted mb-1.5">{label}</label>
-      <input {...props}
-        className="w-full px-3 py-2 text-[13px] border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent/30" />
-    </div>
-  )
 }
 
 async function uploadImage(file) {

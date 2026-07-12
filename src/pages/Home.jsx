@@ -17,6 +17,19 @@ import { getServiceIcon } from '../lib/serviceIcons'
 const FALLBACK_GALLERY = gallery.map((g) => ({ _id: g.id, imageUrl: g.src, label: g.label, category: g.cat }))
 const FALLBACK_TESTIMONIALS = testimonials.map((t) => ({ _id: t.name, name: t.name, loc: t.loc, stars: t.stars, text: t.text }))
 
+const FALLBACK_WHY_CHOOSE_US = {
+  heading: "Quality you can see.\nHonesty you can trust.",
+  paragraph: "We don't cut corners, use inferior materials, or surprise you with extra bills. Every project gets the same level of care — whether it's one room or an entire building.",
+  image: '/why-chose.jpeg',
+  ctaLabel: 'Book Free Site Visit',
+  points: [
+    { title: 'On-Time Delivery', desc: 'The date we commit to is the date we deliver. No excuses.' },
+    { title: 'Premium Brands Only', desc: 'Genuine Asian Paints, Berger and Dulux — verified, never substituted.' },
+    { title: 'Transparent Quotes', desc: 'Full written estimate before work starts. No hidden charges.' },
+    { title: 'Clean Site Guarantee', desc: 'We protect your furniture and leave the space spotless.' },
+  ],
+}
+
 /* ─── Updated phone number ─────────────────────────── */
 const PHONE = '+91 7500770667'
 const PHONE_DISPLAY = '+91 75007 70667'
@@ -172,11 +185,17 @@ export default function Home() {
   const { data: liveGallery } = usePublicData('/gallery', FALLBACK_GALLERY)
   const { data: liveTestimonials } = usePublicData('/testimonials', FALLBACK_TESTIMONIALS)
   const { data: liveServices } = usePublicData('/services', [])
+  const { data: liveWhyChooseUs } = usePublicData('/home', {})
   const displayGallery = liveGallery.length ? liveGallery : FALLBACK_GALLERY
   const displayTestimonials = liveTestimonials.length ? liveTestimonials : FALLBACK_TESTIMONIALS
   const displayServices = (liveServices.length ? liveServices : services).map((s) => ({
     ...s, Icon: s.Icon || getServiceIcon(s.iconName),
   }))
+  const whyChooseUs = {
+    ...FALLBACK_WHY_CHOOSE_US,
+    ...liveWhyChooseUs?.whyChooseUs,
+    points: liveWhyChooseUs?.whyChooseUs?.points?.length ? liveWhyChooseUs.whyChooseUs.points : FALLBACK_WHY_CHOOSE_US.points,
+  }
 
   return (
     <>
@@ -599,7 +618,7 @@ export default function Home() {
           {/* Image */}
           <div className="img-zoom rounded-2xl overflow-hidden">
             <img
-              src="/why-chose.jpeg"
+              src={whyChooseUs.image}
               alt="Professional painting work by Kartik Painter Services"
               className="w-full h-[280px] sm:h-[360px] lg:h-[420px] object-cover"
             />
@@ -608,21 +627,14 @@ export default function Home() {
           {/* Content */}
           <div>
             <SectionLabel>Why Choose Us</SectionLabel>
-            <h2 className="text-display-md font-black text-text-primary mb-4">
-              Quality you can see.
-              <br />Honesty you can trust.
+            <h2 className="text-display-md font-black text-text-primary mb-4 whitespace-pre-line">
+              {whyChooseUs.heading}
             </h2>
             <p className="text-text-muted text-[14px] sm:text-[15px] leading-relaxed mb-6 sm:mb-8">
-              We don't cut corners, use inferior materials, or surprise you with extra bills.
-              Every project gets the same level of care — whether it's one room or an entire building.
+              {whyChooseUs.paragraph}
             </p>
             <div className="space-y-3 sm:space-y-4 mb-6 sm:mb-8">
-              {[
-                ['On-Time Delivery', 'The date we commit to is the date we deliver. No excuses.'],
-                ['Premium Brands Only', 'Genuine Asian Paints, Berger and Dulux — verified, never substituted.'],
-                ['Transparent Quotes', 'Full written estimate before work starts. No hidden charges.'],
-                ['Clean Site Guarantee', 'We protect your furniture and leave the space spotless.'],
-              ].map(([t, d]) => (
+              {whyChooseUs.points.map(({ title: t, desc: d }) => (
                 <div key={t} className="flex gap-3">
                   <CheckCircle size={15} className="text-accent flex-shrink-0 mt-0.5" />
                   <div>
@@ -634,7 +646,7 @@ export default function Home() {
             </div>
             <div className="flex flex-wrap gap-3">
               <Link to="/contact" className="btn-dark text-[14px]">
-                Book Free Site Visit <ArrowRight size={14} />
+                {whyChooseUs.ctaLabel} <ArrowRight size={14} />
               </Link>
               <Link to="/about"
                 className="text-[14px] font-medium text-text-muted hover:text-text-primary

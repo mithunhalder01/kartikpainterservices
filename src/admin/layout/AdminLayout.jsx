@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import {
-  LayoutDashboard, Users, Images, Quote, FileText, Settings, Wrench,
+  LayoutDashboard, Users, Images, Quote, FileText, Settings, Wrench, Home,
   ChevronLeft, ChevronRight, LogOut, Bell, ChevronDown,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
@@ -11,6 +11,7 @@ import { api } from '../api/client'
 const NAV = [
   { to: '/admin',              label: 'Dashboard',     icon: LayoutDashboard, end: true },
   { to: '/admin/leads',        label: 'Leads',         icon: Users },
+  { to: '/admin/home',         label: 'Home Page',     icon: Home },
   { to: '/admin/services',     label: 'Services',      icon: Wrench },
   { to: '/admin/gallery',      label: 'Gallery',       icon: Images },
   { to: '/admin/testimonials', label: 'Testimonials',  icon: Quote },
