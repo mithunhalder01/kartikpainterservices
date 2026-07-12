@@ -48,6 +48,7 @@ export default {
         'wa-ring':   'wa-ring 2.4s ease-out infinite',
         'fade-up':   'fade-up 0.5s ease forwards',
         'slide-in':  'slide-in 0.4s ease forwards',
+        'marquee':   'marquee var(--marquee-duration, 32s) linear infinite',
       },
       keyframes: {
         'wa-ring': {
@@ -61,6 +62,10 @@ export default {
         'slide-in': {
           from: { opacity:'0', transform:'translateX(-8px)' },
           to:   { opacity:'1', transform:'translateX(0)' },
+        },
+        'marquee': {
+          from: { transform: 'translateX(0)' },
+          to:   { transform: 'translateX(-50%)' },
         },
       },
     },
