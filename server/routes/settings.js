@@ -32,4 +32,29 @@ router.put('/password', asyncHandler(async (req, res) => {
   res.json({ ok: true })
 }))
 
+router.get('/admins', asyncHandler(async (req, res) => {
+  const admins = await Admin.find().select('name email lastLoginAt createdAt').sort({ createdAt: 1 })
+  res.json(admins)
+}))
+
+const createAdminSchema = z.object({
+  name: z.string().trim().min(1).max(100),
+  email: z.string().trim().toLowerCase().email(),
+  password: z.string().min(10).max(200),
+})
+
+router.post('/admins', asyncHandler(async (req, res) => {
+  const parsed = createAdminSchema.safeParse(req.body)
+  if (!parsed.success) return res.status(400).json({ error: 'Check name, email and password (10+ characters)' })
+
+  const existing = await Admin.findOne({ email: parsed.data.email })
+  if (existing) return res.status(409).json({ error: 'An admin with this email already exists' })
+
+  const passwordHash = await bcrypt.hash(parsed.data.password, 12)
+  const admin = await Admin.create({ name: parsed.data.name, email: parsed.data.email, passwordHash })
+
+  await logActivity('create', 'Admin', admin._id, req.admin.id)
+  res.status(201).json({ _id: admin._id, name: admin.name, email: admin.email, createdAt: admin.createdAt })
+}))
+
 export default router

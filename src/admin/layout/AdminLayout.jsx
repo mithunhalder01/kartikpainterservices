@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { NavLink, Outlet, useNavigate } from 'react-router-dom'
+import { NavLink, Link, Outlet, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Users, Images, Quote, FileText, Settings, Wrench, Home,
-  ChevronLeft, ChevronRight, LogOut, Bell, ChevronDown,
+  ArrowLeft, LogOut, Bell, ChevronDown,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useQuery } from '@tanstack/react-query'
@@ -16,8 +16,13 @@ const NAV = [
   { to: '/admin/gallery',      label: 'Gallery',       icon: Images },
   { to: '/admin/testimonials', label: 'Testimonials',  icon: Quote },
   { to: '/admin/about',        label: 'About Page',    icon: FileText },
-  { to: '/admin/settings',     label: 'Settings',      icon: Settings },
 ]
+
+const navItemClass = ({ isActive }) => `flex items-center gap-3 h-10 px-[19px] rounded-xl text-[13px] font-medium
+  whitespace-nowrap overflow-hidden transition-colors shrink-0
+  ${isActive ? 'bg-white/10 text-white' : 'text-white/55 hover:text-white hover:bg-white/5'}`
+
+const labelClass = 'opacity-0 group-hover:opacity-100 transition-opacity duration-150'
 
 function greeting() {
   const h = new Date().getHours()
@@ -27,7 +32,6 @@ function greeting() {
 }
 
 export default function AdminLayout() {
-  const [collapsed, setCollapsed] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [bellOpen, setBellOpen] = useState(false)
   const { admin, logout } = useAuth()
@@ -45,40 +49,56 @@ export default function AdminLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-base flex">
-      {/* Sidebar */}
-      <aside className={`bg-dark-950 text-white flex flex-col transition-all duration-200
-        ${collapsed ? 'w-[68px]' : 'w-60'} shrink-0`}>
-        <div className="h-16 flex items-center px-4 border-b border-white/10">
-          <div className="w-8 h-8 bg-white rounded-md flex items-center justify-center shrink-0">
-            <span className="text-dark font-bold text-[12px]">KP</span>
+    <div className="h-screen bg-base flex overflow-hidden">
+      {/* Spacer reserves layout width for the fixed, collapsed sidebar */}
+      <div className="w-[88px] shrink-0" aria-hidden="true" />
+
+      <aside className="group fixed left-3 top-3 bottom-3 z-40 flex flex-col
+                        w-16 hover:w-60 bg-dark-950 rounded-2xl shadow-xl
+                        transition-[width] duration-200 ease-out overflow-hidden">
+        <div className="h-16 flex items-center px-[19px] shrink-0">
+          <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center shrink-0">
+            <span className="text-dark font-bold text-[11px]">KP</span>
           </div>
-          {!collapsed && <span className="ml-2.5 text-[13px] font-semibold truncate">Kartik Admin</span>}
+          <span className={`ml-3 text-[13px] font-semibold text-white whitespace-nowrap ${labelClass}`}>Kartik Admin</span>
         </div>
 
-        <nav className="flex-1 py-3 px-2 space-y-0.5">
+        <nav className="flex-1 overflow-y-auto py-2 px-2 space-y-0.5">
           {NAV.map(({ to, label, icon: Icon, end }) => (
-            <NavLink key={to} to={to} end={end}
-              className={({ isActive }) => `flex items-center gap-3 px-3 py-2.5 rounded-lg text-[13px] font-medium transition-colors
-                ${isActive ? 'bg-white/10 text-white' : 'text-white/60 hover:text-white hover:bg-white/5'}`}>
-              <Icon size={17} className="shrink-0" />
-              {!collapsed && <span className="truncate">{label}</span>}
+            <NavLink key={to} to={to} end={end} className={navItemClass}>
+              <Icon size={18} className="shrink-0" />
+              <span className={labelClass}>{label}</span>
             </NavLink>
           ))}
         </nav>
 
-        <button onClick={() => setCollapsed((c) => !c)}
-          className="h-12 flex items-center justify-center text-white/50 hover:text-white border-t border-white/10 transition-colors">
-          {collapsed ? <ChevronRight size={16} /> : <ChevronLeft size={16} />}
-        </button>
+        <div className="mt-auto border-t border-white/10 py-2 px-2 space-y-0.5 shrink-0">
+          <Link to="/" className={navItemClass({ isActive: false })}>
+            <ArrowLeft size={18} className="shrink-0" />
+            <span className={labelClass}>Back to Site</span>
+          </Link>
+          <NavLink to="/admin/settings" className={navItemClass}>
+            <Settings size={18} className="shrink-0" />
+            <span className={labelClass}>Settings</span>
+          </NavLink>
+          <button onClick={handleLogout}
+            className="flex items-center gap-3 h-10 px-[19px] rounded-xl text-[13px] font-medium
+                       whitespace-nowrap overflow-hidden transition-colors shrink-0 w-full
+                       text-red-300/80 hover:text-red-200 hover:bg-red-500/10">
+            <LogOut size={18} className="shrink-0" />
+            <span className={labelClass}>Logout</span>
+          </button>
+        </div>
       </aside>
 
       {/* Main column */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Topbar */}
-        <header className="h-16 bg-white border-b border-border flex items-center justify-between px-6 shrink-0">
+        <header className="sticky top-3 z-30 mx-4 mb-4 rounded-2xl bg-white border border-border
+                           shadow-[0_1px_3px_rgba(0,0,0,0.04)] h-16 flex items-center justify-between px-5 shrink-0">
           <div>
-            <p className="text-[14px] font-semibold text-text-primary">
+            <p className="text-[10px] font-semibold text-text-subtle uppercase tracking-wider mb-0.5">Admin</p>
+            <p className="text-[14px] font-semibold text-text-primary leading-none">
               {greeting()}{admin?.name ? `, ${admin.name.split(' ')[0]}` : ''}
             </p>
           </div>
@@ -87,7 +107,7 @@ export default function AdminLayout() {
             {/* Notification bell */}
             <div className="relative">
               <button onClick={() => { setBellOpen((o) => !o); setProfileOpen(false) }}
-                className="relative p-2 text-text-muted hover:text-text-primary hover:bg-surface rounded-md transition-colors">
+                className="relative p-2 text-text-muted hover:text-text-primary hover:bg-surface rounded-full transition-colors">
                 <Bell size={18} />
                 {notif?.count > 0 && (
                   <span className="absolute top-1 right-1 w-4 h-4 bg-red-500 text-white text-[9px] font-bold
@@ -98,7 +118,7 @@ export default function AdminLayout() {
               </button>
 
               {bellOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-white border border-border rounded-xl shadow-xl z-50 overflow-hidden">
+                <div className="absolute right-0 mt-2 w-80 bg-white border border-border rounded-2xl shadow-xl z-50 overflow-hidden">
                   <div className="px-4 py-3 border-b border-border">
                     <p className="text-[13px] font-semibold text-text-primary">New Leads</p>
                   </div>
@@ -127,7 +147,7 @@ export default function AdminLayout() {
             {/* Profile dropdown */}
             <div className="relative">
               <button onClick={() => { setProfileOpen((o) => !o); setBellOpen(false) }}
-                className="flex items-center gap-2 pl-2 pr-2.5 py-1.5 hover:bg-surface rounded-md transition-colors">
+                className="flex items-center gap-2 pl-2 pr-2.5 py-1.5 hover:bg-surface rounded-full transition-colors">
                 <div className="w-7 h-7 rounded-full bg-accent/15 text-accent flex items-center justify-center text-[12px] font-bold">
                   {admin?.name?.[0]?.toUpperCase() || 'A'}
                 </div>
@@ -135,8 +155,9 @@ export default function AdminLayout() {
               </button>
 
               {profileOpen && (
-                <div className="absolute right-0 mt-2 w-56 bg-white border border-border rounded-xl shadow-xl z-50 overflow-hidden">
+                <div className="absolute right-0 mt-2 w-56 bg-white border border-border rounded-2xl shadow-xl z-50 overflow-hidden">
                   <div className="px-4 py-3 border-b border-border">
+                    <p className="text-[10px] font-semibold text-text-subtle uppercase tracking-wider mb-1">Admin</p>
                     <p className="text-[13px] font-semibold text-text-primary truncate">{admin?.name}</p>
                     <p className="text-[12px] text-text-muted truncate">{admin?.email}</p>
                   </div>
@@ -144,6 +165,10 @@ export default function AdminLayout() {
                     className="flex items-center gap-2 px-4 py-2.5 text-[13px] text-text-muted hover:text-text-primary hover:bg-surface transition-colors">
                     <Settings size={14} /> Settings
                   </NavLink>
+                  <Link to="/" onClick={() => setProfileOpen(false)}
+                    className="flex items-center gap-2 px-4 py-2.5 text-[13px] text-text-muted hover:text-text-primary hover:bg-surface transition-colors">
+                    <ArrowLeft size={14} /> Back to Site
+                  </Link>
                   <button onClick={handleLogout}
                     className="w-full flex items-center gap-2 px-4 py-2.5 text-[13px] text-red-600 hover:bg-red-50 transition-colors">
                     <LogOut size={14} /> Logout
@@ -154,7 +179,7 @@ export default function AdminLayout() {
           </div>
         </header>
 
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="flex-1 px-4 pb-4 overflow-y-auto">
           <Outlet />
         </main>
       </div>
