@@ -20,7 +20,7 @@ const NAV = [
 
 const navItemClass = ({ isActive }) => `flex items-center gap-3 h-10 px-[19px] rounded-xl text-[13px] font-medium
   whitespace-nowrap overflow-hidden transition-colors shrink-0
-  ${isActive ? 'bg-white/10 text-white' : 'text-white/55 hover:text-white hover:bg-white/5'}`
+  ${isActive ? 'bg-accent/10 text-accent' : 'text-text-muted hover:text-text-primary hover:bg-surface'}`
 
 const labelClass = 'opacity-0 group-hover:opacity-100 transition-opacity duration-150'
 
@@ -50,17 +50,14 @@ export default function AdminLayout() {
 
   return (
     <div className="h-screen bg-base flex overflow-hidden">
-      {/* Spacer reserves layout width for the fixed, collapsed sidebar */}
-      <div className="w-[88px] shrink-0" aria-hidden="true" />
-
-      <aside className="group fixed left-3 top-3 bottom-3 z-40 flex flex-col
-                        w-16 hover:w-60 bg-dark-950 rounded-2xl shadow-xl
+      <aside className="group my-3 ml-3 flex flex-col shrink-0
+                        w-16 hover:w-60 bg-white border border-border rounded-2xl shadow-sm
                         transition-[width] duration-200 ease-out overflow-hidden">
         <div className="h-16 flex items-center px-[19px] shrink-0">
-          <div className="w-7 h-7 bg-white rounded-lg flex items-center justify-center shrink-0">
-            <span className="text-dark font-bold text-[11px]">KP</span>
+          <div className="w-7 h-7 bg-dark rounded-lg flex items-center justify-center shrink-0">
+            <span className="text-white font-bold text-[11px]">KP</span>
           </div>
-          <span className={`ml-3 text-[13px] font-semibold text-white whitespace-nowrap ${labelClass}`}>Kartik Admin</span>
+          <span className={`ml-3 text-[13px] font-semibold text-text-primary whitespace-nowrap ${labelClass}`}>Kartik Admin</span>
         </div>
 
         <nav className="flex-1 overflow-y-auto py-2 px-2 space-y-0.5">
@@ -72,7 +69,7 @@ export default function AdminLayout() {
           ))}
         </nav>
 
-        <div className="mt-auto border-t border-white/10 py-2 px-2 space-y-0.5 shrink-0">
+        <div className="mt-auto border-t border-border py-2 px-2 space-y-0.5 shrink-0">
           <Link to="/" className={navItemClass({ isActive: false })}>
             <ArrowLeft size={18} className="shrink-0" />
             <span className={labelClass}>Back to Site</span>
@@ -84,7 +81,7 @@ export default function AdminLayout() {
           <button onClick={handleLogout}
             className="flex items-center gap-3 h-10 px-[19px] rounded-xl text-[13px] font-medium
                        whitespace-nowrap overflow-hidden transition-colors shrink-0 w-full
-                       text-red-300/80 hover:text-red-200 hover:bg-red-500/10">
+                       text-red-600 hover:bg-red-50">
             <LogOut size={18} className="shrink-0" />
             <span className={labelClass}>Logout</span>
           </button>
@@ -94,7 +91,7 @@ export default function AdminLayout() {
       {/* Main column */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Topbar */}
-        <header className="sticky top-3 z-30 mx-4 mb-4 rounded-2xl bg-white border border-border
+        <header className="mx-4 mt-3 mb-4 rounded-2xl bg-white border border-border
                            shadow-[0_1px_3px_rgba(0,0,0,0.04)] h-16 flex items-center justify-between px-5 shrink-0">
           <div>
             <p className="text-[10px] font-semibold text-text-subtle uppercase tracking-wider mb-0.5">Admin</p>
@@ -179,7 +176,7 @@ export default function AdminLayout() {
           </div>
         </header>
 
-        <main className="flex-1 px-4 pb-4 overflow-y-auto">
+        <main className="flex-1 px-4 pt-2 pb-4 overflow-y-auto">
           <Outlet />
         </main>
       </div>
