@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { z } from 'zod'
-import sanitizeHtml from 'sanitize-html'
+import { stripHtml } from '../utils/sanitize.js'
 import Lead from '../models/Lead.js'
 import { asyncHandler } from '../utils/asyncHandler.js'
 import { requireAuth } from '../middleware/requireAuth.js'
@@ -8,7 +8,7 @@ import { leadSubmitLimiter } from '../middleware/rateLimiters.js'
 import { logActivity } from '../utils/activityLog.js'
 
 const router = Router()
-const clean = (text = '') => sanitizeHtml(text, { allowedTags: [], allowedAttributes: {} })
+const clean = stripHtml
 
 const leadSchema = z.object({
   name: z.string().trim().min(1).max(100),

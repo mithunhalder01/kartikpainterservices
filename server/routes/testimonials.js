@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { z } from 'zod'
-import sanitizeHtml from 'sanitize-html'
+import { stripHtml } from '../utils/sanitize.js'
 import Testimonial from '../models/Testimonial.js'
 import { asyncHandler } from '../utils/asyncHandler.js'
 import { requireAuth } from '../middleware/requireAuth.js'
@@ -18,7 +18,7 @@ const upsertSchema = z.object({
   isActive: z.coerce.boolean().optional(),
 })
 
-const clean = (text) => sanitizeHtml(text, { allowedTags: [], allowedAttributes: {} })
+const clean = stripHtml
 
 /* ── Public ── */
 router.get('/', asyncHandler(async (req, res) => {

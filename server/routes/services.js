@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { z } from 'zod'
-import sanitizeHtml from 'sanitize-html'
+import { stripHtml } from '../utils/sanitize.js'
 import Service from '../models/Service.js'
 import { asyncHandler } from '../utils/asyncHandler.js'
 import { requireAuth } from '../middleware/requireAuth.js'
@@ -9,7 +9,7 @@ import { uploadBuffer, destroyAsset } from '../utils/cloudinary.js'
 import { logActivity } from '../utils/activityLog.js'
 
 const router = Router()
-const clean = (text = '') => sanitizeHtml(text, { allowedTags: [], allowedAttributes: {} })
+const clean = stripHtml
 
 const csv = z.union([z.array(z.string()), z.string()]).transform((v) => {
   const arr = Array.isArray(v) ? v : (v ? JSON.parse(v) : [])

@@ -1,6 +1,6 @@
 import { Router } from 'express'
 import { z } from 'zod'
-import sanitizeHtml from 'sanitize-html'
+import { stripHtml } from '../utils/sanitize.js'
 import SiteContent from '../models/SiteContent.js'
 import { asyncHandler } from '../utils/asyncHandler.js'
 import { requireAuth } from '../middleware/requireAuth.js'
@@ -12,7 +12,7 @@ const router = Router()
 const PAGE_KEY = 'about'
 
 function sanitizeDeep(value) {
-  if (typeof value === 'string') return sanitizeHtml(value, { allowedTags: [], allowedAttributes: {} })
+  if (typeof value === 'string') return stripHtml(value)
   if (Array.isArray(value)) return value.map(sanitizeDeep)
   if (value && typeof value === 'object') {
     const out = {}
