@@ -4,6 +4,7 @@ import { Phone } from 'lucide-react'
 import { PHONE } from '../data/data'
 import { usePublicData } from '../hooks/usePublicData'
 import SEO, { buildBreadcrumbSchema } from '../components/SEO'
+import Lightbox from '../components/Lightbox'
 
 const gallerySchema = {
   '@context': 'https://schema.org',
@@ -31,6 +32,7 @@ function SkeletonGrid() {
 
 export default function Gallery() {
   const [active, setActive] = useState('All')
+  const [lightboxIndex, setLightboxIndex] = useState(null)
   const { data: images, loading, error } = usePublicData('/gallery', [])
   const { data: categories } = usePublicData('/gallery/categories', [])
 
@@ -82,9 +84,9 @@ export default function Gallery() {
           ) : (
             <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-3 space-y-3">
               {filtered.map((g, i) => (
-                <div key={g._id}
-                     className="gallery-item break-inside-avoid rounded-xl overflow-hidden
-                                shadow-[0_1px_4px_rgba(0,0,0,0.08)] fade-up"
+                <button key={g._id} type="button" onClick={() => setLightboxIndex(i)}
+                     className="gallery-item break-inside-avoid rounded-xl overflow-hidden w-full text-left block
+                                shadow-[0_1px_4px_rgba(0,0,0,0.08)] fade-up cursor-zoom-in"
                      style={{ animationDelay:`${i*0.04}s` }}>
                   <img src={g.imageUrl} alt={`${g.label} – Kartik Painter Services Noida`}
                        className="w-full block img-zoom" loading="lazy"/>
@@ -95,7 +97,7 @@ export default function Gallery() {
                                   font-semibold uppercase tracking-widest px-2 py-0.5 rounded-md">
                     {g.category}
                   </div>
-                </div>
+                </button>
               ))}
             </div>
           )}
@@ -112,6 +114,15 @@ export default function Gallery() {
           <Link to="/contact" className="btn-outline text-[14px]">Request Quote</Link>
         </div>
       </section>
+
+      {lightboxIndex !== null && (
+        <Lightbox
+          images={filtered}
+          index={lightboxIndex}
+          onClose={() => setLightboxIndex(null)}
+          onNavigate={setLightboxIndex}
+        />
+      )}
     </>
   )
 }
