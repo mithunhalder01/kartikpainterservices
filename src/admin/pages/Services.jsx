@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
-  Plus, Trash2, Pencil, ImageOff, Home, Building2, Droplets,
+  Plus, Trash2, Pencil, Home, Building2, Droplets,
   Sparkles, Briefcase, Layers, PaintBucket, Wrench, Hammer, Palette,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
@@ -11,6 +11,7 @@ import EmptyState from '../components/EmptyState'
 import Modal from '../components/Modal'
 import ConfirmDialog from '../components/ConfirmDialog'
 import TagList from '../components/TagList'
+import ImageDropzone from '../components/ImageDropzone'
 
 const ICONS = { Home, Building2, Droplets, Sparkles, Briefcase, Layers, PaintBucket, Wrench, Hammer, Palette }
 
@@ -105,17 +106,7 @@ function ServiceFormModal({ open, onClose, editing }) {
 
         <div>
           <label className="block text-[12px] font-medium text-text-muted mb-1.5">Image</label>
-          <label className="flex items-center gap-3 border border-border rounded-md p-3 cursor-pointer hover:bg-surface transition-colors w-fit">
-            {preview ? <img src={preview} alt="" className="w-16 h-16 rounded-md object-cover" /> : <ImageOff size={18} className="text-text-subtle" />}
-            <span className="text-[12.5px] text-text-muted">Change image (max 5MB)</span>
-            <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden"
-              onChange={(e) => {
-                const f = e.target.files?.[0]
-                if (!f) return
-                setFile(f)
-                setPreview(URL.createObjectURL(f))
-              }} />
-          </label>
+          <ImageDropzone preview={preview} onFile={(f) => { setFile(f); setPreview(URL.createObjectURL(f)) }} />
         </div>
 
         <div>

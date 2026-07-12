@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, Trash2, ChevronUp, ChevronDown, User, ImageOff } from 'lucide-react'
+import { Plus, Trash2, ChevronUp, ChevronDown, User } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { api } from '../api/client'
 import TagList from '../components/TagList'
+import ImageDropzone from '../components/ImageDropzone'
 
 const emptySections = {
   hero: { heading: '', subheading: '' },
@@ -83,8 +84,7 @@ export default function AboutEditor() {
     })
   }
 
-  const handleHeroImage = async (e) => {
-    const file = e.target.files?.[0]
+  const handleHeroImage = async (file) => {
     if (!file) return
     setUploading('hero')
     try {
@@ -151,15 +151,10 @@ export default function AboutEditor() {
           </div>
           <div>
             <label className="block text-[12px] font-medium text-text-muted mb-1.5">Story Image</label>
-            <label className="flex items-center gap-3 border border-border rounded-md p-3 cursor-pointer hover:bg-surface transition-colors w-fit">
-              {sections.story.image ? (
-                <img src={sections.story.image} alt="" className="w-16 h-16 rounded-md object-cover" />
-              ) : (
-                <ImageOff size={18} className="text-text-subtle" />
-              )}
-              <span className="text-[12.5px] text-text-muted">{uploading === 'hero' ? 'Uploading…' : 'Change image'}</span>
-              <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden" onChange={handleHeroImage} />
-            </label>
+            <ImageDropzone
+              preview={sections.story.image}
+              onFile={handleHeroImage}
+              label={uploading === 'hero' ? 'Uploading…' : 'Drag & drop an image, or click to browse (max 5MB)'} />
           </div>
         </div>
       </Section>

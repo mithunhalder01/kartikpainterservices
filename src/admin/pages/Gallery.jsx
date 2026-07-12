@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, Trash2, Pencil, ImageOff } from 'lucide-react'
+import { Plus, Trash2, Pencil } from 'lucide-react'
 import toast from 'react-hot-toast'
 import {
   DndContext, closestCenter, PointerSensor, useSensor, useSensors,
@@ -12,6 +12,7 @@ import { SkeletonCard } from '../components/Skeleton'
 import EmptyState from '../components/EmptyState'
 import Modal from '../components/Modal'
 import ConfirmDialog from '../components/ConfirmDialog'
+import ImageDropzone from '../components/ImageDropzone'
 
 function SortableCard({ image, onEdit, onDelete }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: image._id })
@@ -73,23 +74,7 @@ function ImageFormModal({ open, onClose, categories, editing }) {
         {!editing && (
           <div>
             <label className="block text-[12px] font-medium text-text-muted mb-1.5">Image</label>
-            <label className="flex flex-col items-center justify-center gap-2 border-2 border-dashed border-border rounded-lg py-8 cursor-pointer hover:bg-surface transition-colors">
-              {preview ? (
-                <img src={preview} alt="" className="max-h-32 rounded-md object-contain" />
-              ) : (
-                <>
-                  <ImageOff size={20} className="text-text-subtle" />
-                  <span className="text-[12px] text-text-muted">Click to select an image (max 5MB)</span>
-                </>
-              )}
-              <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden"
-                onChange={(e) => {
-                  const f = e.target.files?.[0]
-                  if (!f) return
-                  setFile(f)
-                  setPreview(URL.createObjectURL(f))
-                }} />
-            </label>
+            <ImageDropzone preview={preview} onFile={(f) => { setFile(f); setPreview(URL.createObjectURL(f)) }} />
           </div>
         )}
 
