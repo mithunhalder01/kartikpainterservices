@@ -1,0 +1,16 @@
+{
+  "name": "Kartik Painter Services",
+  "short_name": "Kartik Painter",
+  "description": "Best painting contractor in Noida, Greater Noida, Dadri and Ghaziabad — interior, exterior, waterproofing and texture painting.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#f59e0b",
+  "lang": "en-IN",
+  "categories": ["business", "home improvement", "services"],
+  "icons": [
+    { "src": "/favicon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "any" },
+    { "src": "/logo.png", "type": "image/png", "sizes": "512x512", "purpose": "any maskable" }
+  ]
+}

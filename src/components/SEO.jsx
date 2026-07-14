@@ -151,13 +151,11 @@ const localBusinessSchema = {
       closes: '17:00',
     },
   ],
-  aggregateRating: {
-    '@type': 'AggregateRating',
-    ratingValue: '4.9',
-    reviewCount: '200',
-    bestRating: '5',
-    worstRating: '1',
-  },
+  // NOTE: aggregateRating intentionally omitted. Google only allows review/rating
+  // rich-result markup that is sourced from genuine, verifiable user reviews shown
+  // on the page — self-declared ratings risk a "spammy structured markup" manual
+  // action. Real star ratings surface via your Google Business Profile instead.
+  // Re-add here ONLY with real Review items backed by on-page testimonials.
   areaServed: ALL_AREAS.map(area => ({
     '@type': 'City',
     name: area,
@@ -177,11 +175,14 @@ const localBusinessSchema = {
       },
     })),
   },
+  // Add your REAL, live profile URLs here (Google Business Profile, Justdial,
+  // Sulekha, Instagram, Facebook). Wrong/placeholder URLs weaken entity trust —
+  // better to list only verified links. Filtered so empty strings are dropped.
   sameAs: [
-    'https://g.co/kgs/kartikpainterservices',
-    'https://www.justdial.com/Noida/Kartik-Painter-Services',
-    'https://www.sulekha.com/kartik-painter-services-noida',
-  ],
+    // 'https://www.google.com/maps/place/?q=place_id:YOUR_PLACE_ID',
+    // 'https://www.justdial.com/Noida/Kartik-Painter-Services',
+    // 'https://www.instagram.com/your_handle',
+  ].filter(Boolean),
   keywords:
     'painter noida, painting contractor noida, best painter noida, ' +
     'interior painting noida, exterior painting noida, waterproofing noida, ' +
@@ -293,7 +294,7 @@ export default function SEO({
   return (
     <Helmet>
       {/* ── Core ── */}
-      <html lang="hi-IN" />
+      <html lang="en-IN" />
       <title>{fullTitle}</title>
       <meta name="description"        content={metaDesc} />
       <meta name="keywords"           content={keywords || defaultKeywords} />
@@ -318,8 +319,10 @@ export default function SEO({
       <meta property="og:description"  content={metaDesc} />
       <meta property="og:url"          content={canonicalURL} />
       <meta property="og:image"        content={imageURL} />
-      <meta property="og:image:width"  content="1200" />
-      <meta property="og:image:height" content="630" />
+      {/* Dimensions match the actual og-image.jpg (736×414). For best social display,
+          replace it with a 1200×630 image and update these values. */}
+      <meta property="og:image:width"  content="736" />
+      <meta property="og:image:height" content="414" />
       <meta property="og:image:alt"    content="Kartik Painter Services – Best Painter in Noida" />
       <meta property="og:type"         content={ogType} />
       <meta property="og:site_name"    content={SITE_NAME} />
