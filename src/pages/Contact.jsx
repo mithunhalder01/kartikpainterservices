@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Phone, Mail, MapPin, Clock, CheckCircle, Send } from 'lucide-react'
 import { contact, PHONE, WA_NUMBER } from '../data/data'
 import SEO, { buildBreadcrumbSchema } from '../components/SEO'
+import PageNav from '../components/PageNav'
 
 const svcOptions = [
   'Interior Painting','Exterior Painting','Waterproofing',
@@ -109,6 +110,7 @@ export default function Contact() {
 
       <section className="page-hero py-20 px-6">
         <div className="max-w-6xl mx-auto">
+          <PageNav />
           <p className="label text-accent-300">Contact</p>
           <h1 className="text-display-lg font-black text-white max-w-xl mb-4">
             Let's discuss

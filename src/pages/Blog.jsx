@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import { CalendarDays, ArrowRight } from 'lucide-react'
 import SEO, { buildBreadcrumbSchema } from '../components/SEO'
+import PageNav from '../components/PageNav'
 import { blogPosts } from '../data/blogPosts'
 
 const blogListSchema = {
@@ -29,6 +30,7 @@ export default function Blog() {
 
       <section className="page-hero py-20 px-6">
         <div className="max-w-6xl mx-auto">
+          <PageNav />
           <p className="label text-accent-300">Blog</p>
           <h1 className="text-display-lg font-black text-white mb-4">
             Painting Guides for

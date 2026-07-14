@@ -2,6 +2,7 @@
 import { Link } from 'react-router-dom'
 import { Phone, MapPin, CheckCircle, ArrowRight } from 'lucide-react'
 import SEO, { buildBreadcrumbSchema } from '../components/SEO'
+import PageNav from '../components/PageNav'
 import { services, PHONE, WA_NUMBER } from '../data/data'
 import { areaData, areaKeys } from '../data/areas'
 
@@ -85,6 +86,7 @@ export default function AreaPage({ area: areaKey }) {
       {/* Hero */}
       <section className="page-hero py-16 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
+          <PageNav />
           <div className="flex items-center gap-2 text-accent text-[12px] font-semibold
                           uppercase tracking-widest mb-4">
             <MapPin size={13}/> {area.name}, Uttar Pradesh

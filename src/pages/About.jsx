@@ -3,6 +3,7 @@ import { ArrowRight, MapPin, Shield, Award, Users } from 'lucide-react'
 import { team, brands, areas, stats } from '../data/data'
 import { usePublicData } from '../hooks/usePublicData'
 import SEO, { buildBreadcrumbSchema } from '../components/SEO'
+import PageNav from '../components/PageNav'
 
 const aboutPageSchema = {
   '@context': 'https://schema.org',
@@ -53,6 +54,7 @@ export default function About() {
 
       <section className="page-hero py-20 px-6">
         <div className="max-w-6xl mx-auto">
+          <PageNav />
           <p className="label text-accent-300">About</p>
           <h1 className="text-display-lg font-black text-white max-w-xl mb-4 whitespace-pre-line">
             {c.hero.heading}

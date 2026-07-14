@@ -4,6 +4,7 @@ import { Phone } from 'lucide-react'
 import { PHONE } from '../data/data'
 import { usePublicData } from '../hooks/usePublicData'
 import SEO, { buildBreadcrumbSchema } from '../components/SEO'
+import PageNav from '../components/PageNav'
 import Lightbox from '../components/Lightbox'
 
 const gallerySchema = {
@@ -50,6 +51,7 @@ export default function Gallery() {
 
       <section className="page-hero py-20 px-6">
         <div className="max-w-6xl mx-auto">
+          <PageNav />
           <p className="label text-accent-300">Portfolio</p>
           <h1 className="text-display-lg font-black text-white mb-3">Our Work</h1>
           <p className="text-white/50 text-[16px]">

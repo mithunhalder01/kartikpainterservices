@@ -4,6 +4,7 @@ import { services as staticServices, process, contact, PHONE } from '../data/dat
 import { getServiceIcon } from '../lib/serviceIcons'
 import { usePublicData } from '../hooks/usePublicData'
 import SEO, { buildBreadcrumbSchema } from '../components/SEO'
+import PageNav from '../components/PageNav'
 
 const servicesBreadcrumbSchema = buildBreadcrumbSchema([
   { name: 'Home', path: '/' },
@@ -43,6 +44,7 @@ export default function Services() {
       {/* Hero */}
       <section className="page-hero py-16 sm:py-20 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
+          <PageNav />
           <p className="label text-accent-300">Services</p>
           <h1 className="text-display-lg font-black text-white max-w-xl mb-3 sm:mb-4">
             Every surface,

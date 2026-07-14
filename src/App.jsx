@@ -3,7 +3,6 @@ import { useEffect, Suspense, lazy } from 'react'
 import Navbar         from './components/Navbar'
 import Footer         from './components/Footer'
 import WhatsAppButton from './components/WhatsAppButton'
-import PageNav        from './components/PageNav'
 import Home           from './pages/Home'
 import Services       from './pages/Services'
 import ServicePage    from './pages/ServicePage'
@@ -29,7 +28,6 @@ function PublicLayout() {
   return (
     <div className="flex flex-col min-h-screen">
       <Navbar/>
-      <PageNav/>
       <main className="flex-1">
         <Outlet/>
       </main>

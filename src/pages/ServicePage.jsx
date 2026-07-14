@@ -3,6 +3,7 @@ import { ArrowRight, Phone, CheckCircle, MapPin, ChevronRight } from 'lucide-rea
 import { services as staticServices, PHONE, WA_NUMBER } from '../data/data'
 import { usePublicData } from '../hooks/usePublicData'
 import SEO, { buildBreadcrumbSchema } from '../components/SEO'
+import PageNav from '../components/PageNav'
 
 const serviceFaqs = (serviceName, areaName) => [
   {
@@ -96,6 +97,7 @@ export default function ServicePage() {
       {/* ══ HERO ══ */}
       <section className="page-hero py-16 sm:py-20 px-4 sm:px-6">
         <div className="max-w-6xl mx-auto">
+          <PageNav />
           <div className="flex items-center gap-2 text-accent text-[12px] font-semibold
                           uppercase tracking-widest mb-4">
             <MapPin size={13}/> Noida, Greater Noida, Ghaziabad

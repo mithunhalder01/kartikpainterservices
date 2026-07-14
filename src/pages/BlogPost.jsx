@@ -1,4 +1,5 @@
 import SEO from '../components/SEO'
+import PageNav from '../components/PageNav'
 import { Link, useParams } from 'react-router-dom'
 import { PHONE } from '../data/data'
 import { getBlogPostBySlug } from '../data/blogPosts'
@@ -55,6 +56,7 @@ export default function BlogPost() {
         {/* Header */}
         <div className="page-hero py-16 px-4 sm:px-6">
           <div className="max-w-3xl mx-auto">
+            <PageNav />
             <p className="label text-accent-300 mb-3">Guide</p>
             <h1 className="text-[clamp(24px,4vw,40px)] font-black text-white leading-tight">
               {post.title}
