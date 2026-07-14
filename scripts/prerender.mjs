@@ -27,38 +27,13 @@ const OG_IMAGE = `${SITE}/og-image.jpg`
 // ── Pull dynamic route metadata from the real data sources (DRY, no drift) ──
 const { services } = await import('../src/data/data.js')
 const { blogPosts } = await import('../src/data/blogPosts.js')
+const { areaData, areaKeys } = await import('../src/data/areas.js')
 
-// Area metadata mirrors src/pages/AreaPage.jsx (kept intentionally in sync).
-const AREAS = [
-  {
-    path: '/noida',
-    title: 'Painter in Noida – Best Painting Contractor | Kartik Painter Services',
-    desc: 'Best painter in Noida. Professional interior, exterior & waterproofing painting services. 15+ years, 500+ projects. Free site visit. Call +91 7500770667.',
-    h1: 'Painter in Noida',
-    intro: 'Professional painting contractor serving all sectors of Noida — Sector 45, 62, 78, 100, 137 and more. Interior, exterior, waterproofing and texture painting with a free site visit.',
-  },
-  {
-    path: '/greater-noida',
-    title: 'Painter in Greater Noida – Trusted Painting Contractor | Kartik Painter Services',
-    desc: 'Professional painter in Greater Noida. Interior, exterior, waterproofing & texture painting. Free estimate. Call +91 7500770667.',
-    h1: 'Painter in Greater Noida',
-    intro: 'Trusted painting contractor in Greater Noida West, Alpha, Beta, Gamma sectors and Knowledge Park. Free written estimate, premium brands only.',
-  },
-  {
-    path: '/dadri',
-    title: 'Painter in Dadri – Professional Painting Services | Kartik Painter Services',
-    desc: 'Best painter in Dadri. Interior, exterior & waterproofing painting services. 15+ years experience. Free site visit. Call +91 7500770667.',
-    h1: 'Painter in Dadri',
-    intro: 'Professional painting contractor serving Dadri, GB Nagar and surrounding areas with interior, exterior and waterproofing work.',
-  },
-  {
-    path: '/ghaziabad',
-    title: 'Painter in Ghaziabad – Professional Painting Contractor | Kartik Painter Services',
-    desc: 'Trusted painter in Ghaziabad. Interior, exterior, waterproofing & texture painting. 15+ years experience. Free estimate. Call +91 7500770667.',
-    h1: 'Painter in Ghaziabad',
-    intro: 'Professional painting services across Ghaziabad — Indirapuram, Vaishali, Crossings Republik, Raj Nagar and more.',
-  },
-]
+// Every locality page, sourced from the shared areas data.
+const AREAS = areaKeys.map((key) => {
+  const a = areaData[key]
+  return { path: `/${key}`, title: a.title, desc: a.desc, h1: a.h1, intro: a.sub }
+})
 
 // Static, hand-authored pages.
 const STATIC_PAGES = [

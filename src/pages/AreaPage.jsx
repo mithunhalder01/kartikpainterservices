@@ -3,51 +3,7 @@ import { Link } from 'react-router-dom'
 import { Phone, MapPin, CheckCircle, ArrowRight } from 'lucide-react'
 import SEO, { buildBreadcrumbSchema } from '../components/SEO'
 import { services, PHONE, WA_NUMBER } from '../data/data'
-
-const areaData = {
-  noida: {
-    name: 'Noida',
-    title: 'Painter in Noida – Best Painting Contractor | Kartik Painter Services',
-    desc: 'Best painter in Noida. Professional interior, exterior & waterproofing painting services. 15+ years, 500+ projects. Free site visit. Call +91 7500770667.',
-    h1: 'Painter in Noida',
-    sub: 'Professional painting contractor serving all sectors of Noida — Sector 45, 62, 78, 100, 137 and more.',
-    keywords: ['painter in noida', 'painting contractor noida', 'best painter noida',
-               'interior painter noida', 'house painter noida'],
-    sectors: ['Sector 45','Sector 62','Sector 78','Sector 100','Sector 137',
-              'Sector 18','Sector 15','Sector 27','Noida Extension','Sector 50'],
-  },
-  'greater-noida': {
-    name: 'Greater Noida',
-    title: 'Painter in Greater Noida – Trusted Painting Contractor | Kartik Painter Services',
-    desc: 'Professional painter in Greater Noida. Interior, exterior, waterproofing & texture painting. Free estimate. Call +91 7500770667.',
-    h1: 'Painter in Greater Noida',
-    sub: 'Trusted painting contractor in Greater Noida West, Alpha, Beta, Gamma sectors and Knowledge Park.',
-    keywords: ['painter in greater noida', 'painting contractor greater noida',
-               'best painter greater noida', 'house painter greater noida'],
-    sectors: ['Greater Noida West','Alpha I','Alpha II','Beta I','Beta II',
-              'Gamma I','Knowledge Park','Omicron','Chi','Psi'],
-  },
-  dadri: {
-    name: 'Dadri',
-    title: 'Painter in Dadri – Professional Painting Services | Kartik Painter Services',
-    desc: 'Best painter in Dadri. Interior, exterior & waterproofing painting services. 15+ years experience. Free site visit. Call +91 7500770667.',
-    h1: 'Painter in Dadri',
-    sub: 'Professional painting contractor serving Dadri, GB Nagar and surrounding areas.',
-    keywords: ['painter in dadri', 'painting contractor dadri', 'best painter dadri'],
-    sectors: ['Dadri Town','GB Nagar','Sorkha','Bhangel','Barna','Saidpur'],
-  },
-  ghaziabad: {
-    name: 'Ghaziabad',
-    title: 'Painter in Ghaziabad – Professional Painting Contractor | Kartik Painter Services',
-    desc: 'Trusted painter in Ghaziabad. Interior, exterior, waterproofing & texture painting. 15+ years experience. Free estimate. Call +91 7500770667.',
-    h1: 'Painter in Ghaziabad',
-    sub: 'Professional painting services across Ghaziabad — Indirapuram, Vaishali, Crossings Republik and more.',
-    keywords: ['painter in ghaziabad', 'painting contractor ghaziabad',
-               'best painter ghaziabad', 'house painter ghaziabad'],
-    sectors: ['Indirapuram','Vaishali','Crossings Republik','Raj Nagar',
-              'Kaushambi','Vasundhara','Mohan Nagar'],
-  },
-}
+import { areaData, areaKeys } from '../data/areas'
 
 const localSchema = (area) => ({
   '@context': 'https://schema.org',
@@ -99,12 +55,12 @@ const faqSchema = (faqs) => ({
   })),
 })
 
-const nearByAreaLinks = [
-  { key: 'noida', label: 'Painter in Noida' },
-  { key: 'greater-noida', label: 'Painter in Greater Noida' },
-  { key: 'dadri', label: 'Painter in Dadri' },
-  { key: 'ghaziabad', label: 'Painter in Ghaziabad' },
-]
+// Internal-link hub across every locality page — helps new pages get
+// discovered and pass link equity.
+const nearByAreaLinks = areaKeys.map((key) => ({
+  key,
+  label: `Painter in ${areaData[key].name}`,
+}))
 
 export default function AreaPage({ area: areaKey }) {
   const area = areaData[areaKey]
