@@ -68,7 +68,7 @@ export default function App() {
             <Route key={key} path={`/${key}`} element={<AreaPage area={key} />} />
           ))}
           <Route path="/blog"             element={<Blog/>}/>
-          <Route path="/blog/painting-cost-noida-2025" element={<BlogPost slug="painting-cost-noida-2025" />} />
+          <Route path="/blog/:slug"       element={<BlogPost/>}/>
           <Route path="*"                 element={<NotFound/>}/>
         </Route>
       </Routes>

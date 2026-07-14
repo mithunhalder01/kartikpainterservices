@@ -1,11 +1,12 @@
 import SEO from '../components/SEO'
-import { Link } from 'react-router-dom'
+import { Link, useParams } from 'react-router-dom'
 import { PHONE } from '../data/data'
 import { getBlogPostBySlug } from '../data/blogPosts'
 import { buildBreadcrumbSchema } from '../components/SEO'
 import { Phone } from 'lucide-react'
 
-export default function BlogPost({ slug }) {
+export default function BlogPost() {
+  const { slug } = useParams()
   const post = getBlogPostBySlug(slug)
   if (!post) return null
 

@@ -133,7 +133,7 @@ export default function About() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5">
             {displayTeam.map(m => (
               <div key={m.name} className="group">
-                <div className="img-zoom rounded-xl overflow-hidden aspect-square mb-4
+                <div className="img-zoom rounded-xl overflow-hidden aspect-[3/4] mb-4
                                 border border-border group-hover:border-dark/30 transition-colors">
                   <img src={m.img} alt={m.name} className="w-full h-full object-cover"/>
                 </div>
