@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus, Trash2, Pencil, X } from 'lucide-react'
+import { Plus, Trash2, Pencil, X, UploadCloud } from 'lucide-react'
 import toast from 'react-hot-toast'
 import {
   DndContext, closestCenter, PointerSensor, useSensor, useSensors,
@@ -8,11 +8,85 @@ import {
 import { SortableContext, arrayMove, useSortable, rectSortingStrategy } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { api } from '../api/client'
+import { prepareImageFile } from '../utils/prepareImageFile'
 import { SkeletonCard } from '../components/Skeleton'
 import EmptyState from '../components/EmptyState'
 import Modal from '../components/Modal'
 import ConfirmDialog from '../components/ConfirmDialog'
 import ImageDropzone from '../components/ImageDropzone'
+
+// Drop one or more images anywhere on this area and they upload straight to the
+// target category — no modal, no per-image clicking.
+function QuickUpload({ category, disabled }) {
+  const [dragging, setDragging] = useState(false)
+  const [busy, setBusy] = useState(null) // { done, total }
+  const inputRef = useRef(null)
+  const queryClient = useQueryClient()
+
+  const uploadAll = async (fileList) => {
+    const files = Array.from(fileList || []).filter((f) => f.type.startsWith('image/') || /\.hei[cf]$/i.test(f.name || ''))
+    if (!files.length) return
+    if (!category) {
+      toast.error('Add a category first, then drop images here')
+      return
+    }
+
+    let done = 0
+    let failed = 0
+    setBusy({ done: 0, total: files.length })
+    for (const file of files) {
+      try {
+        const prepared = await prepareImageFile(file)
+        const form = new FormData()
+        form.append('category', category)
+        form.append('label', '')
+        form.append('isActive', true)
+        form.append('image', prepared)
+        await api.post('/admin/gallery', form, { isForm: true })
+      } catch (err) {
+        failed += 1
+        toast.error(`${file.name || 'Image'}: ${err.message || 'upload failed'}`)
+      } finally {
+        done += 1
+        setBusy({ done, total: files.length })
+      }
+    }
+    setBusy(null)
+    queryClient.invalidateQueries({ queryKey: ['admin-gallery'] })
+    const ok = files.length - failed
+    if (ok > 0) toast.success(`${ok} image${ok > 1 ? 's' : ''} added to ${category}`)
+  }
+
+  return (
+    <div
+      onClick={() => !busy && inputRef.current?.click()}
+      onDragOver={(e) => { e.preventDefault(); if (!disabled) setDragging(true) }}
+      onDragLeave={() => setDragging(false)}
+      onDrop={(e) => {
+        e.preventDefault()
+        setDragging(false)
+        if (!disabled && !busy) uploadAll(e.dataTransfer.files)
+      }}
+      className={`flex flex-col items-center justify-center gap-1.5 border-2 border-dashed rounded-xl py-6 mb-5 transition-colors
+        ${disabled ? 'opacity-50 cursor-not-allowed border-border' : 'cursor-pointer'}
+        ${dragging ? 'border-accent bg-accent/5' : 'border-border hover:bg-surface'}`}>
+      <UploadCloud size={22} className="text-text-subtle" />
+      {busy ? (
+        <span className="text-[12.5px] text-text-muted">Uploading {busy.done}/{busy.total}…</span>
+      ) : (
+        <>
+          <span className="text-[13px] font-medium text-text-primary">Drop images here to upload instantly</span>
+          <span className="text-[11.5px] text-text-muted">
+            {category ? `They'll be added to "${category}" — you can edit labels later` : 'Add a category first'}
+          </span>
+        </>
+      )}
+      <input ref={inputRef} type="file" multiple
+        accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" className="hidden"
+        onChange={(e) => { uploadAll(e.target.files); e.target.value = '' }} />
+    </div>
+  )
+}
 
 function SortableCard({ image, onEdit, onDelete }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: image._id })
@@ -220,6 +294,10 @@ export default function Gallery() {
 
       {!categories.length && !isLoading && (
         <EmptyState title="Add a category first" description="Create at least one category above before uploading images." />
+      )}
+
+      {categories.length > 0 && (
+        <QuickUpload category={filterCategory || categories[0]?.name} disabled={!categories.length} />
       )}
 
       {isLoading ? (
