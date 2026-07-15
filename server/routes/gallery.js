@@ -5,7 +5,7 @@ import Category from '../models/Category.js'
 import { asyncHandler } from '../utils/asyncHandler.js'
 import { requireAuth } from '../middleware/requireAuth.js'
 import { handleUpload } from '../middleware/upload.js'
-import { uploadBuffer, destroyAsset } from '../utils/cloudinary.js'
+import { uploadImageFile, destroyAsset } from '../utils/cloudinary.js'
 import { logActivity } from '../utils/activityLog.js'
 
 const router = Router()
@@ -45,7 +45,7 @@ adminRouter.post('/', handleUpload, asyncHandler(async (req, res) => {
   if (!parsed.success) return res.status(400).json({ error: 'Invalid input', details: parsed.error.flatten() })
   if (!req.file) return res.status(400).json({ error: 'Image file is required' })
 
-  const result = await uploadBuffer(req.file.buffer, 'kartik-painter/gallery')
+  const result = await uploadImageFile(req.file, 'kartik-painter/gallery')
 
   const count = await GalleryImage.countDocuments({ category: parsed.data.category })
   const image = await GalleryImage.create({

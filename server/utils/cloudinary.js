@@ -7,14 +7,22 @@ cloudinary.config({
   secure: true,
 })
 
-export function uploadBuffer(buffer, folder) {
+export function uploadBuffer(buffer, folder, options = {}) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder, resource_type: 'image' },
+      { folder, resource_type: 'image', ...options },
       (err, result) => (err ? reject(err) : resolve(result)),
     )
     stream.end(buffer)
   })
+}
+
+// Uploads a multer file, converting HEIC/HEIF (iPhone) photos to JPEG so the
+// delivered URL is displayable in every browser.
+export function uploadImageFile(file, folder) {
+  const isHeic =
+    /image\/hei(c|f)/i.test(file.mimetype || '') || /\.hei[cf]$/i.test(file.originalname || '')
+  return uploadBuffer(file.buffer, folder, isHeic ? { format: 'jpg' } : {})
 }
 
 export function destroyAsset(publicId) {

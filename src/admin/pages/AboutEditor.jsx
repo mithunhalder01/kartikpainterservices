@@ -164,7 +164,7 @@ export default function AboutEditor() {
             <div key={i} className="flex items-center gap-3 border border-border rounded-lg p-3">
               <label className="w-12 h-12 rounded-full bg-surface border border-border overflow-hidden flex items-center justify-center cursor-pointer shrink-0">
                 {m.img ? <img src={m.img} alt="" className="w-full h-full object-cover" /> : <User size={16} className="text-text-subtle" />}
-                <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden"
+                <input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" className="hidden"
                   onChange={(e) => e.target.files?.[0] && handleTeamPhoto(i, e.target.files[0])} />
               </label>
               <div className="flex-1 grid grid-cols-3 gap-2">

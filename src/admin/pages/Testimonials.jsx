@@ -46,7 +46,7 @@ function TestimonialFormModal({ open, onClose, editing }) {
         <div className="flex items-center gap-3">
           <label className="w-14 h-14 rounded-full bg-surface border border-border overflow-hidden flex items-center justify-center cursor-pointer shrink-0">
             {preview ? <img src={preview} alt="" className="w-full h-full object-cover" /> : <User size={18} className="text-text-subtle" />}
-            <input type="file" accept="image/jpeg,image/png,image/webp" className="hidden"
+            <input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" className="hidden"
               onChange={(e) => {
                 const f = e.target.files?.[0]
                 if (!f) return

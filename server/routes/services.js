@@ -5,7 +5,7 @@ import Service from '../models/Service.js'
 import { asyncHandler } from '../utils/asyncHandler.js'
 import { requireAuth } from '../middleware/requireAuth.js'
 import { handleUpload } from '../middleware/upload.js'
-import { uploadBuffer, destroyAsset } from '../utils/cloudinary.js'
+import { uploadImageFile, destroyAsset } from '../utils/cloudinary.js'
 import { logActivity } from '../utils/activityLog.js'
 
 const router = Router()
@@ -63,7 +63,7 @@ adminRouter.post('/', handleUpload, asyncHandler(async (req, res) => {
   let image = ''
   let cloudinaryId = ''
   if (req.file) {
-    const result = await uploadBuffer(req.file.buffer, 'kartik-painter/services')
+    const result = await uploadImageFile(req.file, 'kartik-painter/services')
     image = result.secure_url
     cloudinaryId = result.public_id
   }
@@ -98,7 +98,7 @@ adminRouter.put('/:id', handleUpload, asyncHandler(async (req, res) => {
   }
 
   if (req.file) {
-    const result = await uploadBuffer(req.file.buffer, 'kartik-painter/services')
+    const result = await uploadImageFile(req.file, 'kartik-painter/services')
     await destroyAsset(existing.cloudinaryId)
     update.image = result.secure_url
     update.cloudinaryId = result.public_id

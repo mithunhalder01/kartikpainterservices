@@ -1,7 +1,12 @@
 import multer from 'multer'
 
-const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp']
+const ALLOWED_MIME_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif']
 const MAX_SIZE_BYTES = 5 * 1024 * 1024
+
+// Some clients send HEIC/HEIF photos with an empty or generic mimetype, so we
+// also accept them based on the file extension.
+const isAllowed = (file) =>
+  ALLOWED_MIME_TYPES.includes(file.mimetype) || /\.hei[cf]$/i.test(file.originalname || '')
 
 const storage = multer.memoryStorage()
 
@@ -9,8 +14,8 @@ export const uploadImage = multer({
   storage,
   limits: { fileSize: MAX_SIZE_BYTES },
   fileFilter(req, file, cb) {
-    if (!ALLOWED_MIME_TYPES.includes(file.mimetype)) {
-      return cb(new Error('Only JPEG, PNG, or WEBP images are allowed'))
+    if (!isAllowed(file)) {
+      return cb(new Error('Only JPEG, PNG, WEBP, or HEIC images are allowed'))
     }
     cb(null, true)
   },

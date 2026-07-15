@@ -5,7 +5,7 @@ import SiteContent from '../models/SiteContent.js'
 import { asyncHandler } from '../utils/asyncHandler.js'
 import { requireAuth } from '../middleware/requireAuth.js'
 import { handleUpload } from '../middleware/upload.js'
-import { uploadBuffer } from '../utils/cloudinary.js'
+import { uploadImageFile } from '../utils/cloudinary.js'
 import { logActivity } from '../utils/activityLog.js'
 
 function sanitizeDeep(value) {
@@ -58,7 +58,7 @@ export function createSiteContentRouter(pageKey, cloudinaryFolder) {
 
   adminRouter.post('/upload', handleUpload, asyncHandler(async (req, res) => {
     if (!req.file) return res.status(400).json({ error: 'Image file is required' })
-    const result = await uploadBuffer(req.file.buffer, cloudinaryFolder)
+    const result = await uploadImageFile(req.file, cloudinaryFolder)
     res.json({ url: result.secure_url, cloudinaryId: result.public_id })
   }))
 
