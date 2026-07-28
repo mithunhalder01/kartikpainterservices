@@ -1,4 +1,4 @@
-import { Link, useParams } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import { ArrowRight, Phone, CheckCircle, MapPin, ChevronRight } from 'lucide-react'
 import { services as staticServices, PHONE, WA_NUMBER } from '../data/data'
 import { usePublicData } from '../hooks/usePublicData'
@@ -25,7 +25,9 @@ const serviceFaqs = (serviceName, areaName) => [
 ]
 
 export default function ServicePage() {
-  const { slug } = useParams()
+  // Each service has its own literal route in App.jsx (no :slug param) so the
+  // pre-render script can emit real HTML per URL — derive the slug from the path.
+  const slug = useLocation().pathname.replace(/^\/|\/$/g, '')
   const { data: liveServices } = usePublicData('/services', [])
   const services = liveServices.length ? liveServices : staticServices
   const service = services.find(s => s.slug === slug)
