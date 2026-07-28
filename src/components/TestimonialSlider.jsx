@@ -21,9 +21,11 @@ function Card({ t }) {
         "{t.text}"
       </p>
       <div className="flex items-center gap-3 pt-4 border-t border-border">
-        <div className="w-8 h-8 bg-surface rounded-full flex items-center justify-center
+        <div className="w-8 h-8 bg-surface rounded-full overflow-hidden flex items-center justify-center
                         font-semibold text-[13px] text-text-muted flex-shrink-0">
-          {t.name.charAt(0)}
+          {t.photoUrl
+            ? <img src={t.photoUrl} alt={t.name} loading="lazy" className="w-full h-full object-cover" />
+            : t.name.charAt(0)}
         </div>
         <div>
           <p className="font-semibold text-text-primary text-[13px]">{t.name}</p>
