@@ -1,10 +1,11 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { Plus } from 'lucide-react'
+import { Plus, KeyRound, Trash2, ShieldAlert } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { api } from '../api/client'
 import { useAuth } from '../context/AuthContext'
 import Modal from '../components/Modal'
+import ConfirmDialog from '../components/ConfirmDialog'
 
 function AddAdminModal({ open, onClose }) {
   const [name, setName] = useState('')
@@ -51,12 +52,76 @@ function AddAdminModal({ open, onClose }) {
   )
 }
 
+function ResetPasswordModal({ target, onClose }) {
+  const [password, setPassword] = useState('')
+  const [confirm, setConfirm] = useState('')
+  const queryClient = useQueryClient()
+
+  useEffect(() => { setPassword(''); setConfirm('') }, [target])
+
+  const mutation = useMutation({
+    mutationFn: () => api.put(`/admin/settings/admins/${target._id}/password`, { newPassword: password }),
+    onSuccess: (res) => {
+      queryClient.invalidateQueries({ queryKey: ['admins'] })
+      toast.success(`New password set for ${res.email}`)
+      onClose()
+    },
+    onError: (err) => toast.error(err.message || 'Could not reset password'),
+  })
+
+  const submit = () => {
+    if (password.length < 10) return toast.error('Password must be at least 10 characters')
+    if (password !== confirm) return toast.error('Passwords do not match')
+    mutation.mutate()
+  }
+
+  return (
+    <Modal open={!!target} onClose={onClose} title="Reset password" width="max-w-sm">
+      <p className="text-[13px] text-text-muted mb-4">
+        Set a new password for <b className="text-text-primary">{target?.name}</b> ({target?.email}).
+        They will be signed out everywhere and must use the new password.
+      </p>
+
+      <div className="space-y-4">
+        <div>
+          <label className="block text-[12px] font-medium text-text-muted mb-1.5">New password</label>
+          <input type="text" value={password} onChange={(e) => setPassword(e.target.value)}
+            placeholder="At least 10 characters" autoFocus
+            className="w-full px-3 py-2 text-[13px] border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent/30" />
+        </div>
+        <div>
+          <label className="block text-[12px] font-medium text-text-muted mb-1.5">Confirm password</label>
+          <input type="text" value={confirm} onChange={(e) => setConfirm(e.target.value)}
+            className="w-full px-3 py-2 text-[13px] border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent/30" />
+        </div>
+        <button onClick={submit} disabled={mutation.isPending}
+          className="w-full btn-accent justify-center py-2.5 text-[13px] disabled:opacity-60">
+          {mutation.isPending ? 'Saving…' : 'Set New Password'}
+        </button>
+      </div>
+    </Modal>
+  )
+}
+
 export default function Settings() {
   const { admin } = useAuth()
   const [currentPassword, setCurrentPassword] = useState('')
   const [newPassword, setNewPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [addAdminOpen, setAddAdminOpen] = useState(false)
+  const [resetTarget, setResetTarget] = useState(null)
+  const [deleteTarget, setDeleteTarget] = useState(null)
+  const queryClient = useQueryClient()
+
+  const deleteAdminMutation = useMutation({
+    mutationFn: (id) => api.delete(`/admin/settings/admins/${id}`),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['admins'] })
+      setDeleteTarget(null)
+      toast.success('Admin account deleted')
+    },
+    onError: (err) => toast.error(err.message || 'Could not delete admin'),
+  })
 
   const { data: admins = [] } = useQuery({
     queryKey: ['admins'],
@@ -112,13 +177,30 @@ export default function Settings() {
                 <p className="text-[12px] text-text-muted truncate">{a.email}</p>
               </div>
               {a.lastLoginAt && (
-                <p className="text-[11px] text-text-subtle shrink-0">
+                <p className="text-[11px] text-text-subtle shrink-0 hidden sm:block">
                   Last seen {new Date(a.lastLoginAt).toLocaleDateString()}
                 </p>
               )}
+              <div className="flex items-center gap-1 shrink-0">
+                <button onClick={() => setResetTarget(a)} title="Reset this admin's password"
+                  className="p-1.5 rounded-md text-text-muted hover:text-accent hover:bg-accent/10 transition-colors">
+                  <KeyRound size={15} />
+                </button>
+                {a.email !== admin?.email && (
+                  <button onClick={() => setDeleteTarget(a)} title="Delete this admin"
+                    className="p-1.5 rounded-md text-text-muted hover:text-red-700 hover:bg-red-50 transition-colors">
+                    <Trash2 size={15} />
+                  </button>
+                )}
+              </div>
             </div>
           ))}
         </div>
+        <p className="flex items-start gap-1.5 text-[11.5px] text-text-subtle mt-3 pt-3 border-t border-border">
+          <ShieldAlert size={13} className="mt-px shrink-0" />
+          Forgot your password? Ask the other admin to sign in and use the key icon next to your
+          name to set a new one for you.
+        </p>
       </div>
 
       <form onSubmit={handleSubmit} className="rounded-xl border border-border bg-white p-5 space-y-4">
@@ -153,6 +235,16 @@ export default function Settings() {
       </form>
 
       {addAdminOpen && <AddAdminModal open={addAdminOpen} onClose={() => setAddAdminOpen(false)} />}
+      {resetTarget && <ResetPasswordModal target={resetTarget} onClose={() => setResetTarget(null)} />}
+
+      <ConfirmDialog
+        open={!!deleteTarget}
+        onClose={() => setDeleteTarget(null)}
+        onConfirm={() => deleteAdminMutation.mutate(deleteTarget._id)}
+        loading={deleteAdminMutation.isPending}
+        title={`Delete ${deleteTarget?.name}?`}
+        description={`${deleteTarget?.email} will lose access to the admin panel immediately. This cannot be undone.`}
+      />
     </div>
   )
 }

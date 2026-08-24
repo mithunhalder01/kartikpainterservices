@@ -157,6 +157,22 @@ their **email**). A labour session can only reach *My Attendance* — a read-onl
 their own month, with their own totals and earnings. They can never mark or edit attendance,
 and every other admin route rejects their token server-side, not just in the UI.
 
+### Locked out of the admin panel
+
+There is no email-based reset link (no mail provider is wired up), so recovery is either
+admin-to-admin or done against the database:
+
+- **Two admins, one forgot** — the other one signs in, opens **Settings → Admins** and clicks
+  the key icon next to that account to set a new password. The reset account is signed out
+  everywhere immediately.
+- **Nobody can get in** — point a local `.env` at the production `MONGODB_URI` and run
+  `npm run reset:admin`. With no `ADMIN_EMAIL`/`ADMIN_PASSWORD` set it just lists the admin
+  accounts; fill those two in and run it again to reset one.
+- **`npm run seed:dummy-admin`** creates a throwaway `admin@admin.com` / `admin123` account
+  as a way back in. **These credentials are in this public repository, so treat that account
+  as compromised from the moment it exists** — sign in, reset the real password, then delete
+  it from Settings → Admins.
+
 ### Security notes
 
 - Admin accounts are created only by an existing admin (Settings) or the seed script;

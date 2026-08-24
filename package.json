@@ -10,7 +10,9 @@
     "server": "node server/local.js",
     "server:dev": "node --watch server/local.js",
     "seed:admin": "node server/scripts/seedAdmin.js",
-    "seed:content": "node server/scripts/seedContent.js"
+    "seed:content": "node server/scripts/seedContent.js",
+    "reset:admin": "node server/scripts/resetAdminPassword.js",
+    "seed:dummy-admin": "node server/scripts/seedDummyAdmin.js"
   },
   "dependencies": {
     "@dnd-kit/core": "^6.3.1",

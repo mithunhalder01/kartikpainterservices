@@ -57,4 +57,39 @@ router.post('/admins', asyncHandler(async (req, res) => {
   res.status(201).json({ _id: admin._id, name: admin.name, email: admin.email, createdAt: admin.createdAt })
 }))
 
+/* ── Recovery: any signed-in admin can set another admin's password ──
+   This is the "forgot password" path for a small two-person team — there is no
+   email provider wired up, so the other admin does the reset from Settings. */
+const resetSchema = z.object({ newPassword: z.string().min(10).max(200) })
+
+router.put('/admins/:id/password', asyncHandler(async (req, res) => {
+  const parsed = resetSchema.safeParse(req.body)
+  if (!parsed.success) return res.status(400).json({ error: 'New password must be at least 10 characters' })
+
+  const target = await Admin.findById(req.params.id)
+  if (!target) return res.status(404).json({ error: 'Admin not found' })
+
+  target.passwordHash = await bcrypt.hash(parsed.data.newPassword, 12)
+  target.refreshTokenHash = null   // sign that account out everywhere
+  await target.save()
+
+  await logActivity('reset-password', 'Admin', target._id, req.admin.id)
+  res.json({ ok: true, email: target.email })
+}))
+
+router.delete('/admins/:id', asyncHandler(async (req, res) => {
+  if (req.params.id === req.admin.id) {
+    return res.status(400).json({ error: 'You cannot delete the account you are signed in with' })
+  }
+
+  const total = await Admin.countDocuments()
+  if (total <= 1) return res.status(400).json({ error: 'At least one admin account must remain' })
+
+  const removed = await Admin.findByIdAndDelete(req.params.id)
+  if (!removed) return res.status(404).json({ error: 'Admin not found' })
+
+  await logActivity('delete', 'Admin', req.params.id, req.admin.id)
+  res.json({ ok: true })
+}))
+
 export default router

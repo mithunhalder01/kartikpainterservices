@@ -85,6 +85,11 @@ export default function Login() {
             </div>
           </div>
 
+          <p className="text-[11.5px] text-text-subtle leading-relaxed">
+            Forgot your password? Ask the other admin to sign in and reset it for you from
+            Settings → Admins. Labour should ask the office.
+          </p>
+
           <button type="submit" disabled={submitting}
             className="w-full btn-accent justify-center py-2.5 text-[13px] disabled:opacity-70">
             {submitting ? <Loader2 size={15} className="animate-spin" /> : 'Sign In'}
