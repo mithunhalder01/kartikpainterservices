@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import {
   Plus, Search, Pencil, Trash2, Ban, CheckCircle2, PauseCircle,
-  KeyRound, Phone, HardHat, IndianRupee,
+  KeyRound, Phone, HardHat, IndianRupee, Users, HandCoins,
 } from 'lucide-react'
 import toast from 'react-hot-toast'
 import { api } from '../api/client'
@@ -10,6 +10,7 @@ import { SkeletonRow } from '../components/Skeleton'
 import EmptyState from '../components/EmptyState'
 import Modal from '../components/Modal'
 import ConfirmDialog from '../components/ConfirmDialog'
+import LabourPayments from './LabourPayments'
 
 const STATUS_META = {
   active:   { label: 'Active',   cls: 'bg-green-50 text-green-700 border-green-200' },
@@ -23,7 +24,7 @@ const label = 'block text-[12px] font-medium text-text-muted mb-1.5'
 const todayISO = () => new Date().toISOString().slice(0, 10)
 
 const EMPTY = {
-  name: '', phone: '', altPhone: '', designation: 'Painter', dailyWage: '',
+  name: '', phone: '', altPhone: '', designation: 'Painter', dailyWage: '', overtimeRate: '',
   joinedOn: todayISO(), address: '', idProof: '', notes: '',
   status: 'active', canLogin: false, password: '',
 }
@@ -52,6 +53,7 @@ function LabourForm({ open, onClose, editing }) {
           ...EMPTY,
           ...editing,
           dailyWage: editing.dailyWage ?? '',
+          overtimeRate: editing.overtimeRate ?? '',
           joinedOn: editing.joinedOn ? editing.joinedOn.slice(0, 10) : todayISO(),
           password: '',
         }
@@ -93,6 +95,7 @@ function LabourForm({ open, onClose, editing }) {
       altPhone: form.altPhone.replace(/\D/g, ''),
       designation: form.designation.trim(),
       dailyWage: Number(form.dailyWage) || 0,
+      overtimeRate: Number(form.overtimeRate) || 0,
       joinedOn: form.joinedOn,
       address: form.address.trim(),
       idProof: form.idProof.trim(),
@@ -124,6 +127,11 @@ function LabourForm({ open, onClose, editing }) {
         <div>
           <label className={label}>Daily wage (₹)</label>
           <input value={form.dailyWage} onChange={set('dailyWage')} className={field} placeholder="700" inputMode="numeric" />
+        </div>
+        <div>
+          <label className={label}>Overtime rate (₹ per hour)</label>
+          <input value={form.overtimeRate} onChange={set('overtimeRate')} className={field} placeholder="0" inputMode="numeric" />
+          <p className="text-[11px] text-text-subtle mt-1">Leave 0 if overtime is not paid separately.</p>
         </div>
         <div>
           <label className={label}>Joined on</label>
@@ -237,6 +245,8 @@ export default function LabourPage() {
     [data],
   )
 
+  const [tab, setTab] = useState('crew')
+
   const openAdd = () => { setEditing(null); setFormOpen(true) }
   const openEdit = (labour) => { setEditing(labour); setFormOpen(true) }
 
@@ -247,10 +257,28 @@ export default function LabourPage() {
           <h1 className="text-[20px] font-bold text-text-primary">Labour</h1>
           <p className="text-[12.5px] text-text-muted mt-0.5">Your crew — add workers, control their access, and keep records.</p>
         </div>
-        <button onClick={openAdd} className="btn-accent px-4 py-2 text-[13px] shrink-0">
-          <Plus size={15} /> Add Labour
-        </button>
+        {tab === 'crew' && (
+          <button onClick={openAdd} className="btn-accent px-4 py-2 text-[13px] shrink-0">
+            <Plus size={15} /> Add Labour
+          </button>
+        )}
       </div>
+
+      <div className="flex items-center gap-1 mb-4 p-1 bg-surface rounded-xl w-full sm:w-fit">
+        {[
+          { key: 'crew', label: 'Crew', icon: Users },
+          { key: 'pay', label: 'Payments', icon: HandCoins },
+        ].map(({ key, label: text, icon: Icon }) => (
+          <button key={key} onClick={() => setTab(key)}
+            className={`flex-1 sm:flex-none flex items-center justify-center gap-1.5 px-4 py-2 text-[13px] font-medium rounded-lg transition-colors
+              ${tab === key ? 'bg-white text-text-primary shadow-sm' : 'text-text-muted hover:text-text-primary'}`}>
+            <Icon size={15} /> {text}
+          </button>
+        ))}
+      </div>
+
+      {tab === 'pay' ? <LabourPayments /> : (
+      <>
 
       <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-5">
         {[
@@ -363,6 +391,9 @@ export default function LabourPage() {
           />
         )}
       </div>
+
+      </>
+      )}
 
       <LabourForm open={formOpen} onClose={() => setFormOpen(false)} editing={editing} />
 

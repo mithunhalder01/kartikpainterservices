@@ -34,7 +34,7 @@ function monthRange(year, month) {
 }
 
 function emptyTotals() {
-  return { P: 0, H: 0, A: 0, marked: 0, payableDays: 0, overtimeHours: 0, wage: 0 }
+  return { P: 0, H: 0, A: 0, marked: 0, payableDays: 0, overtimeHours: 0, dayWage: 0, overtimePay: 0, wage: 0 }
 }
 
 /* ── GET /month — the whole register for one month ── */
@@ -69,7 +69,7 @@ router.get('/month', asyncHandler(async (req, res) => {
   }
 
   const labours = await Labour.find(labourFilter)
-    .select('name phone designation dailyWage status joinedOn')
+    .select('name phone designation dailyWage overtimeRate status joinedOn')
     .sort({ status: 1, name: 1 })
     .lean()
 
@@ -97,7 +97,10 @@ router.get('/month', asyncHandler(async (req, res) => {
   }
 
   for (const l of labours) {
-    totals[l._id].wage = Math.round(totals[l._id].payableDays * (l.dailyWage || 0))
+    const t = totals[l._id]
+    t.overtimePay = Math.round(t.overtimeHours * (l.overtimeRate || 0))
+    t.dayWage = Math.round(t.payableDays * (l.dailyWage || 0))
+    t.wage = t.dayWage + t.overtimePay
   }
 
   res.json({
@@ -118,7 +121,7 @@ router.get('/day', asyncHandler(async (req, res) => {
 
   const isLabour = req.user.role === 'labour'
   const labours = await Labour.find(isLabour ? { _id: req.user.id } : { status: 'active' })
-    .select('name phone designation dailyWage status')
+    .select('name phone designation dailyWage overtimeRate status')
     .sort({ name: 1 })
     .lean()
 

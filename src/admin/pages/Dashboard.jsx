@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { Users, Images, Quote, TrendingUp, CalendarCheck, ArrowRight } from 'lucide-react'
+import { Users, Images, Quote, TrendingUp, CalendarCheck, ArrowRight, Wallet } from 'lucide-react'
 import { api } from '../api/client'
 import { SkeletonStat, SkeletonRow } from '../components/Skeleton'
 import StatusBadge from '../components/StatusBadge'
@@ -26,6 +26,11 @@ export default function Dashboard() {
     queryFn: () => api.get('/admin/dashboard/stats'),
   })
 
+  const { data: khata } = useQuery({
+    queryKey: ['khata', 'summary'],
+    queryFn: () => api.get('/admin/payments/ledger?show=pending'),
+  })
+
   const { data: attendance } = useQuery({
     queryKey: ['attendance', 'overview'],
     queryFn: () => api.get('/admin/attendance/overview'),
@@ -35,6 +40,24 @@ export default function Dashboard() {
   return (
     <div className="max-w-6xl">
       <h1 className="text-[20px] font-bold text-text-primary mb-5">Dashboard</h1>
+
+      {/* the one number a contractor checks first */}
+      <Link to="/admin/khata"
+        className="flex flex-wrap items-end justify-between gap-3 rounded-xl border border-border bg-white px-5 py-4 mb-4
+                   hover:border-accent/40 hover:shadow-sm transition-all group">
+        <div>
+          <p className="flex items-center gap-1.5 text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-1">
+            <Wallet size={13} className="text-accent" /> Paisa bahar hai
+          </p>
+          <p className="text-[30px] font-bold text-text-primary leading-none">
+            ₹{Math.round(khata?.summary?.balance ?? 0).toLocaleString('en-IN')}
+          </p>
+        </div>
+        <span className="flex items-center gap-1 text-[12.5px] font-semibold text-accent">
+          {khata?.summary?.pendingJobs ?? 0} pending {khata?.summary?.pendingJobs === 1 ? 'job' : 'jobs'}
+          <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+        </span>
+      </Link>
 
       {/* today's crew — a nudge to mark attendance before the day ends */}
       <Link to="/admin/attendance"

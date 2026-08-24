@@ -8,6 +8,7 @@ const labourSchema = new mongoose.Schema({
   altPhone:    { type: String, default: '', trim: true },
   designation: { type: String, default: 'Painter', trim: true },
   dailyWage:   { type: Number, default: 0, min: 0 },
+  overtimeRate:{ type: Number, default: 0, min: 0 },   // per hour; 0 = OT not paid separately
   joinedOn:    { type: Date, default: Date.now },
   address:     { type: String, default: '', trim: true },
   idProof:     { type: String, default: '', trim: true },

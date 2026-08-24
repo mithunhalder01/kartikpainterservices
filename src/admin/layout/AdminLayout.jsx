@@ -3,6 +3,7 @@ import { NavLink, Link, Outlet, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Users, Images, Quote, FileText, Settings, Wrench, Home,
   ArrowLeft, LogOut, Bell, ChevronDown, HardHat, CalendarCheck, ScrollText, Menu, X,
+  ReceiptText, Wallet,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useQuery } from '@tanstack/react-query'
@@ -11,6 +12,8 @@ import { api } from '../api/client'
 const ADMIN_NAV = [
   { to: '/admin',              label: 'Dashboard',     icon: LayoutDashboard, end: true },
   { to: '/admin/leads',        label: 'Leads',         icon: Users },
+  { to: '/admin/quotations',   label: 'Quotations',    icon: ReceiptText },
+  { to: '/admin/khata',        label: 'Khata',         icon: Wallet },
   { to: '/admin/labour',       label: 'Labour',        icon: HardHat },
   { to: '/admin/attendance',   label: 'Attendance',    icon: CalendarCheck },
   { to: '/admin/letterpad',    label: 'Letter Pad',    icon: ScrollText },

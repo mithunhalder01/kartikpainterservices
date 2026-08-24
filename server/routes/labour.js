@@ -22,6 +22,7 @@ const baseSchema = {
   altPhone:    z.string().trim().max(20).optional().default(''),
   designation: z.string().trim().max(60).optional().default('Painter'),
   dailyWage:   z.coerce.number().min(0).max(100000).optional().default(0),
+  overtimeRate:z.coerce.number().min(0).max(10000).optional().default(0),
   joinedOn:    z.string().trim().optional(),
   address:     z.string().trim().max(300).optional().default(''),
   idProof:     z.string().trim().max(60).optional().default(''),
@@ -39,6 +40,7 @@ function applyFields(labour, data) {
   for (const key of map) if (data[key] !== undefined) labour[key] = clean(data[key])
   if (data.phone !== undefined) labour.phone = digits(data.phone)
   if (data.dailyWage !== undefined) labour.dailyWage = data.dailyWage
+  if (data.overtimeRate !== undefined) labour.overtimeRate = data.overtimeRate
   if (data.status !== undefined) labour.status = data.status
   if (data.joinedOn) {
     const d = new Date(data.joinedOn)

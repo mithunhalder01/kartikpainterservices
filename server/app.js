@@ -17,6 +17,9 @@ import settingsRoutes from './routes/settings.js'
 import labourRoutes from './routes/labour.js'
 import attendanceRoutes from './routes/attendance.js'
 import lettersRoutes from './routes/letters.js'
+import quotationsRoutes from './routes/quotations.js'
+import paymentsRoutes from './routes/payments.js'
+import labourPaymentsRoutes from './routes/labourPayments.js'
 
 const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5173')
   .split(',')
@@ -62,6 +65,9 @@ app.use('/api/admin/settings', settingsRoutes)
 app.use('/api/admin/labour', labourRoutes)
 app.use('/api/admin/attendance', attendanceRoutes)
 app.use('/api/admin/letters', lettersRoutes)
+app.use('/api/admin/quotations', quotationsRoutes)
+app.use('/api/admin/payments', paymentsRoutes)
+app.use('/api/admin/labour-payments', labourPaymentsRoutes)
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found' })

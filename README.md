@@ -150,6 +150,28 @@ Three admin-only pages sit alongside the site editors:
   and social handles. *Download PDF* produces the same A4 page as a real, text-based PDF.
   Letterhead details and the logo are edited on the *Letterhead* tab and saved in the database.
 
+### Quotations, khata and wages
+
+The three money pages work off one chain, so a figure is only ever typed once:
+
+- **Quotations** — line items priced from a saved rate card, optional discount and
+  GST, and a printed A4 estimate on the same letterhead. An internal cost box
+  (never printed) shows what the job actually leaves behind. WhatsApp downloads
+  the PDF and opens the customer's chat with the message ready — the file still
+  has to be attached by hand, since a link cannot carry one.
+- **Khata** — once a quotation is marked *Approved* it becomes a job in the
+  ledger. Payments recorded against it drive the balance, the ageing badge, and
+  the "paisa bahar hai" figure on the dashboard. Oldest unpaid money sorts first.
+- **Labour → Payments** — wages come from the attendance register at each
+  worker's current daily rate (plus overtime, if a per-hour rate is set), and
+  advances or settlements are subtracted from it. The wage slip PDF is the sheet
+  a worker signs at settlement. The same breakdown appears in that worker's own
+  login, which is what ends the argument about how much advance was taken.
+
+Quotation numbers run `PREFIX/FY/serial` on the Indian financial year, e.g.
+`KPS/2026-27/001`. Totals are computed on the server (`server/utils/quoteTotals.js`)
+and mirrored in the browser only to keep the editor live while typing.
+
 ### Labour logins
 
 Workers sign in on the same `/admin/login` page using their **phone number** (admins use

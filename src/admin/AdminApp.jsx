@@ -17,6 +17,8 @@ import Labour from './pages/Labour'
 import Attendance from './pages/Attendance'
 import MyAttendance from './pages/MyAttendance'
 import Letterpad from './pages/Letterpad'
+import Quotations from './pages/Quotations'
+import Khata from './pages/Khata'
 
 const queryClient = new QueryClient({
   defaultOptions: { queries: { retry: 1, refetchOnWindowFocus: false } },
@@ -46,6 +48,8 @@ export default function AdminApp() {
             {/* admin only */}
             <Route path="leads"        element={adminOnly(<Leads />)} />
             <Route path="labour"       element={adminOnly(<Labour />)} />
+            <Route path="quotations"   element={adminOnly(<Quotations />)} />
+            <Route path="khata"        element={adminOnly(<Khata />)} />
             <Route path="attendance"   element={adminOnly(<Attendance />)} />
             <Route path="letterpad"    element={adminOnly(<Letterpad />)} />
             <Route path="home"         element={adminOnly(<HomeEditor />)} />

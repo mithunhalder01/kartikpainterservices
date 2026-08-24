@@ -5,6 +5,7 @@ import { api } from '../api/client'
 import { useAuth } from '../context/AuthContext'
 import { SkeletonRow } from '../components/Skeleton'
 import { isoFor, monthName } from '../utils/attendanceExport'
+import { rupee as inr } from '../utils/money'
 import { ExportMenu, monthValue, rupee } from './Attendance'
 
 const CELL = {
@@ -27,9 +28,18 @@ export default function MyAttendance() {
     enabled: !!year && !!month,
   })
 
+  // the same ledger the admin sees, scoped to this worker by the server
+  const { data: ledger } = useQuery({
+    queryKey: ['labour-ledger', 'self', year, month],
+    queryFn: () => api.get(`/admin/labour-payments/ledger?year=${year}&month=${month}`),
+    enabled: !!year && !!month,
+  })
+
   const me = data?.labours?.[0]
   const marks = me ? data.records[me._id] || {} : {}
   const totals = me ? data.totals[me._id] || {} : {}
+  const myLedger = me && ledger?.rows ? ledger.rows[me._id] : null
+  const myEntries = ledger?.entries || []
 
   // leading blanks so the 1st lands on the right weekday
   const cells = useMemo(() => {
@@ -78,18 +88,72 @@ export default function MyAttendance() {
         ))}
       </div>
 
-      {me?.dailyWage > 0 && (
-        <div className="rounded-xl border border-border bg-white px-4 py-3 mb-5 flex items-center justify-between">
-          <div>
-            <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-1">
-              Earnings — {monthName(month)} {year}
-            </p>
-            <p className="text-[12px] text-text-subtle">
-              {totals.payableDays || 0} days × {rupee(me.dailyWage)}
-              {totals.overtimeHours ? ` · ${totals.overtimeHours}h overtime (paid separately)` : ''}
-            </p>
+      {me?.dailyWage > 0 && myLedger && (
+        <div className="rounded-xl border border-border bg-white p-4 mb-5">
+          <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-3">
+            Hisaab — {monthName(month)} {year}
+          </p>
+
+          <div className="space-y-1.5 text-[13px]">
+            <div className="flex justify-between">
+              <span className="text-text-muted">{myLedger.payableDays || 0} days × {inr(me.dailyWage)}</span>
+              <span className="font-medium">{inr(myLedger.dayWage)}</span>
+            </div>
+            {myLedger.overtimeHours > 0 && (
+              <div className="flex justify-between">
+                <span className="text-text-muted">{myLedger.overtimeHours}h overtime</span>
+                <span className="font-medium">{inr(myLedger.overtimePay)}</span>
+              </div>
+            )}
+            {myLedger.bonus > 0 && (
+              <div className="flex justify-between">
+                <span className="text-text-muted">Bonus</span>
+                <span className="font-medium text-green-700">{inr(myLedger.bonus)}</span>
+              </div>
+            )}
+            {myLedger.advance > 0 && (
+              <div className="flex justify-between">
+                <span className="text-text-muted">Advance liya</span>
+                <span className="font-medium text-red-600">− {inr(myLedger.advance)}</span>
+              </div>
+            )}
+            {myLedger.payment > 0 && (
+              <div className="flex justify-between">
+                <span className="text-text-muted">Payment mila</span>
+                <span className="font-medium text-red-600">− {inr(myLedger.payment)}</span>
+              </div>
+            )}
+            {myLedger.deduction > 0 && (
+              <div className="flex justify-between">
+                <span className="text-text-muted">Deduction</span>
+                <span className="font-medium text-red-600">− {inr(myLedger.deduction)}</span>
+              </div>
+            )}
           </div>
-          <p className="text-[22px] font-bold text-text-primary">{rupee(totals.wage)}</p>
+
+          <div className="flex items-baseline justify-between mt-3 pt-3 border-t border-border">
+            <span className="text-[13px] font-semibold text-text-primary">Baaki</span>
+            <span className={`text-[24px] font-bold ${myLedger.balance > 0 ? 'text-green-700' : 'text-text-primary'}`}>
+              {inr(myLedger.balance)}
+            </span>
+          </div>
+
+          {myEntries.length > 0 && (
+            <div className="mt-4 pt-3 border-t border-border">
+              <p className="text-[11px] font-semibold text-text-muted uppercase tracking-wide mb-2">Entries</p>
+              <div className="space-y-1.5">
+                {myEntries.map((e) => (
+                  <div key={e._id} className="flex items-center justify-between text-[12.5px]">
+                    <span className="text-text-muted">
+                      {new Date(e.date).toLocaleDateString('en-IN')} · <span className="capitalize">{e.type}</span>
+                      {e.note ? ` · ${e.note}` : ''}
+                    </span>
+                    <span className="font-medium text-text-primary">{inr(e.amount)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
