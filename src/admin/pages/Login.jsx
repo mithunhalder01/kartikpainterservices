@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { Lock, Mail, Eye, EyeOff, Loader2 } from 'lucide-react'
+import { Lock, User, Eye, EyeOff, Loader2 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 
 export default function Login() {
   const { login } = useAuth()
   const navigate = useNavigate()
   const location = useLocation()
-  const [email, setEmail] = useState('')
+  const [identifier, setIdentifier] = useState('')
   const [password, setPassword] = useState('')
   const [showPassword, setShowPassword] = useState(false)
   const [error, setError] = useState('')
@@ -18,10 +18,11 @@ export default function Login() {
     setError('')
     setSubmitting(true)
     try {
-      await login(email, password)
-      navigate(location.state?.from?.pathname || '/admin', { replace: true })
+      const me = await login(identifier, password)
+      const fallback = me.role === 'labour' ? '/admin/my-attendance' : '/admin'
+      navigate(location.state?.from?.pathname || fallback, { replace: true })
     } catch (err) {
-      setError(err.status === 429 ? err.message : 'Invalid email or password')
+      setError(err.status === 429 || err.status === 403 ? err.message : 'Invalid login details')
     } finally {
       setSubmitting(false)
     }
@@ -34,7 +35,8 @@ export default function Login() {
           <div className="w-11 h-11 bg-white rounded-lg flex items-center justify-center mb-4">
             <span className="text-dark font-bold text-[15px] tracking-tight">KP</span>
           </div>
-          <h1 className="text-white text-[18px] font-semibold">Admin Sign In</h1>
+          <h1 className="text-white text-[18px] font-semibold">Sign In</h1>
+          <p className="text-white/50 text-[12.5px] mt-1">Admin — email · Labour — phone number</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 shadow-2xl space-y-4">
@@ -45,18 +47,18 @@ export default function Login() {
           )}
 
           <div>
-            <label className="block text-[12px] font-medium text-text-muted mb-1.5">Email</label>
+            <label className="block text-[12px] font-medium text-text-muted mb-1.5">Email or phone number</label>
             <div className="relative">
-              <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-subtle" />
+              <User size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-text-subtle" />
               <input
-                type="email"
+                type="text"
                 required
                 autoFocus
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                value={identifier}
+                onChange={(e) => setIdentifier(e.target.value)}
                 className="w-full pl-9 pr-3 py-2.5 text-[13px] border border-border rounded-md
                            focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
-                placeholder="you@example.com"
+                placeholder="you@example.com  or  9876543210"
                 autoComplete="username"
               />
             </div>

@@ -2,20 +2,28 @@ import { useState } from 'react'
 import { NavLink, Link, Outlet, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Users, Images, Quote, FileText, Settings, Wrench, Home,
-  ArrowLeft, LogOut, Bell, ChevronDown,
+  ArrowLeft, LogOut, Bell, ChevronDown, HardHat, CalendarCheck, ScrollText,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useQuery } from '@tanstack/react-query'
 import { api } from '../api/client'
 
-const NAV = [
+const ADMIN_NAV = [
   { to: '/admin',              label: 'Dashboard',     icon: LayoutDashboard, end: true },
   { to: '/admin/leads',        label: 'Leads',         icon: Users },
+  { to: '/admin/labour',       label: 'Labour',        icon: HardHat },
+  { to: '/admin/attendance',   label: 'Attendance',    icon: CalendarCheck },
+  { to: '/admin/letterpad',    label: 'Letter Pad',    icon: ScrollText },
   { to: '/admin/home',         label: 'Home Page',     icon: Home },
   { to: '/admin/services',     label: 'Services',      icon: Wrench },
   { to: '/admin/gallery',      label: 'Gallery',       icon: Images },
   { to: '/admin/testimonials', label: 'Testimonials',  icon: Quote },
   { to: '/admin/about',        label: 'About Page',    icon: FileText },
+]
+
+// labour sign-ins only ever get their own attendance
+const LABOUR_NAV = [
+  { to: '/admin/my-attendance', label: 'My Attendance', icon: CalendarCheck },
 ]
 
 const navItemClass = ({ isActive }) => `flex items-center gap-3 h-10 px-[19px] rounded-xl text-[13px] font-medium
@@ -34,13 +42,15 @@ function greeting() {
 export default function AdminLayout() {
   const [profileOpen, setProfileOpen] = useState(false)
   const [bellOpen, setBellOpen] = useState(false)
-  const { admin, logout } = useAuth()
+  const { user, isAdmin, logout } = useAuth()
+  const NAV = isAdmin ? ADMIN_NAV : LABOUR_NAV
   const navigate = useNavigate()
 
   const { data: notif } = useQuery({
     queryKey: ['notifications'],
     queryFn: () => api.get('/admin/dashboard/notifications'),
     refetchInterval: 30000,
+    enabled: isAdmin,
   })
 
   const handleLogout = async () => {
@@ -57,7 +67,9 @@ export default function AdminLayout() {
           <div className="w-7 h-7 bg-dark rounded-lg flex items-center justify-center shrink-0">
             <span className="text-white font-bold text-[11px]">KP</span>
           </div>
-          <span className={`ml-3 text-[13px] font-semibold text-text-primary whitespace-nowrap ${labelClass}`}>Kartik Admin</span>
+          <span className={`ml-3 text-[13px] font-semibold text-text-primary whitespace-nowrap ${labelClass}`}>
+            {isAdmin ? 'Kartik Admin' : 'Kartik Crew'}
+          </span>
         </div>
 
         <nav className="flex-1 overflow-y-auto py-2 px-2 space-y-0.5">
@@ -74,10 +86,12 @@ export default function AdminLayout() {
             <ArrowLeft size={18} className="shrink-0" />
             <span className={labelClass}>Back to Site</span>
           </Link>
-          <NavLink to="/admin/settings" className={navItemClass}>
-            <Settings size={18} className="shrink-0" />
-            <span className={labelClass}>Settings</span>
-          </NavLink>
+          {isAdmin && (
+            <NavLink to="/admin/settings" className={navItemClass}>
+              <Settings size={18} className="shrink-0" />
+              <span className={labelClass}>Settings</span>
+            </NavLink>
+          )}
           <button onClick={handleLogout}
             className="flex items-center gap-3 h-10 px-[19px] rounded-xl text-[13px] font-medium
                        whitespace-nowrap overflow-hidden transition-colors shrink-0 w-full
@@ -94,15 +108,17 @@ export default function AdminLayout() {
         <header className="mx-4 mt-3 mb-4 rounded-2xl bg-white border border-border
                            shadow-[0_1px_3px_rgba(0,0,0,0.04)] h-16 flex items-center justify-between px-5 shrink-0">
           <div>
-            <p className="text-[10px] font-semibold text-text-subtle uppercase tracking-wider mb-0.5">Admin</p>
+            <p className="text-[10px] font-semibold text-text-subtle uppercase tracking-wider mb-0.5">
+              {isAdmin ? 'Admin' : 'Labour'}
+            </p>
             <p className="text-[14px] font-semibold text-text-primary leading-none">
-              {greeting()}{admin?.name ? `, ${admin.name.split(' ')[0]}` : ''}
+              {greeting()}{user?.name ? `, ${user.name.split(' ')[0]}` : ''}
             </p>
           </div>
 
           <div className="flex items-center gap-2">
             {/* Notification bell */}
-            <div className="relative">
+            <div className={`relative ${isAdmin ? '' : 'hidden'}`}>
               <button onClick={() => { setBellOpen((o) => !o); setProfileOpen(false) }}
                 className="relative p-2 text-text-muted hover:text-text-primary hover:bg-surface rounded-full transition-colors">
                 <Bell size={18} />
@@ -146,7 +162,7 @@ export default function AdminLayout() {
               <button onClick={() => { setProfileOpen((o) => !o); setBellOpen(false) }}
                 className="flex items-center gap-2 pl-2 pr-2.5 py-1.5 hover:bg-surface rounded-full transition-colors">
                 <div className="w-7 h-7 rounded-full bg-accent/15 text-accent flex items-center justify-center text-[12px] font-bold">
-                  {admin?.name?.[0]?.toUpperCase() || 'A'}
+                  {user?.name?.[0]?.toUpperCase() || 'A'}
                 </div>
                 <ChevronDown size={14} className="text-text-muted" />
               </button>
@@ -154,14 +170,18 @@ export default function AdminLayout() {
               {profileOpen && (
                 <div className="absolute right-0 mt-2 w-56 bg-white border border-border rounded-2xl shadow-xl z-50 overflow-hidden">
                   <div className="px-4 py-3 border-b border-border">
-                    <p className="text-[10px] font-semibold text-text-subtle uppercase tracking-wider mb-1">Admin</p>
-                    <p className="text-[13px] font-semibold text-text-primary truncate">{admin?.name}</p>
-                    <p className="text-[12px] text-text-muted truncate">{admin?.email}</p>
+                    <p className="text-[10px] font-semibold text-text-subtle uppercase tracking-wider mb-1">
+                      {isAdmin ? 'Admin' : user?.designation || 'Labour'}
+                    </p>
+                    <p className="text-[13px] font-semibold text-text-primary truncate">{user?.name}</p>
+                    <p className="text-[12px] text-text-muted truncate">{user?.email || user?.phone}</p>
                   </div>
-                  <NavLink to="/admin/settings" onClick={() => setProfileOpen(false)}
-                    className="flex items-center gap-2 px-4 py-2.5 text-[13px] text-text-muted hover:text-text-primary hover:bg-surface transition-colors">
-                    <Settings size={14} /> Settings
-                  </NavLink>
+                  {isAdmin && (
+                    <NavLink to="/admin/settings" onClick={() => setProfileOpen(false)}
+                      className="flex items-center gap-2 px-4 py-2.5 text-[13px] text-text-muted hover:text-text-primary hover:bg-surface transition-colors">
+                      <Settings size={14} /> Settings
+                    </NavLink>
+                  )}
                   <Link to="/" onClick={() => setProfileOpen(false)}
                     className="flex items-center gap-2 px-4 py-2.5 text-[13px] text-text-muted hover:text-text-primary hover:bg-surface transition-colors">
                     <ArrowLeft size={14} /> Back to Site

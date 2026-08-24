@@ -14,6 +14,9 @@ import homeRoutes, { homeAdminRouter } from './routes/home.js'
 import leadsRoutes, { leadsAdminRouter } from './routes/leads.js'
 import dashboardRoutes from './routes/dashboard.js'
 import settingsRoutes from './routes/settings.js'
+import labourRoutes from './routes/labour.js'
+import attendanceRoutes from './routes/attendance.js'
+import lettersRoutes from './routes/letters.js'
 
 const allowedOrigins = (process.env.CORS_ORIGINS || 'http://localhost:5173')
   .split(',')
@@ -56,6 +59,9 @@ app.use('/api/admin/home', homeAdminRouter)
 app.use('/api/admin/leads', leadsAdminRouter)
 app.use('/api/admin/dashboard', dashboardRoutes)
 app.use('/api/admin/settings', settingsRoutes)
+app.use('/api/admin/labour', labourRoutes)
+app.use('/api/admin/attendance', attendanceRoutes)
+app.use('/api/admin/letters', lettersRoutes)
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Not found' })

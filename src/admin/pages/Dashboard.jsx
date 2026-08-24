@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import { Link } from 'react-router-dom'
-import { Users, Images, Quote, TrendingUp } from 'lucide-react'
+import { Users, Images, Quote, TrendingUp, CalendarCheck, ArrowRight } from 'lucide-react'
 import { api } from '../api/client'
 import { SkeletonStat, SkeletonRow } from '../components/Skeleton'
 import StatusBadge from '../components/StatusBadge'
@@ -26,9 +26,36 @@ export default function Dashboard() {
     queryFn: () => api.get('/admin/dashboard/stats'),
   })
 
+  const { data: attendance } = useQuery({
+    queryKey: ['attendance', 'overview'],
+    queryFn: () => api.get('/admin/attendance/overview'),
+    refetchInterval: 60000,
+  })
+
   return (
     <div className="max-w-6xl">
       <h1 className="text-[20px] font-bold text-text-primary mb-5">Dashboard</h1>
+
+      {/* today's crew — a nudge to mark attendance before the day ends */}
+      <Link to="/admin/attendance"
+        className="flex flex-wrap items-center gap-x-6 gap-y-3 rounded-xl border border-border bg-white px-4 py-3.5 mb-4
+                   hover:border-accent/40 hover:shadow-sm transition-all group">
+        <div className="flex items-center gap-2">
+          <CalendarCheck size={16} className="text-accent" />
+          <span className="text-[13px] font-semibold text-text-primary">Today's attendance</span>
+        </div>
+        <div className="flex items-center gap-5 text-[13px]">
+          <span className="text-text-muted">Crew <b className="text-text-primary">{attendance?.activeCrew ?? '—'}</b></span>
+          <span className="text-text-muted">Present <b className="text-green-700">{attendance?.today?.P ?? 0}</b></span>
+          <span className="text-text-muted">Half day <b className="text-amber-700">{attendance?.today?.H ?? 0}</b></span>
+          <span className="text-text-muted">Absent <b className="text-red-600">{attendance?.today?.A ?? 0}</b></span>
+        </div>
+        <span className={`ml-auto flex items-center gap-1 text-[12.5px] font-semibold
+          ${attendance?.pending ? 'text-amber-700' : 'text-green-700'}`}>
+          {attendance?.pending ? `${attendance.pending} still to mark` : 'All marked'}
+          <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
+        </span>
+      </Link>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
         {isLoading ? (

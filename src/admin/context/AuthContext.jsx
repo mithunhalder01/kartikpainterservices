@@ -4,15 +4,14 @@ import { api } from '../api/client'
 const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
-  const [admin, setAdmin] = useState(null)
+  const [user, setUser] = useState(null)
   const [loading, setLoading] = useState(true)
 
   const checkSession = useCallback(async () => {
     try {
-      const me = await api.get('/auth/me')
-      setAdmin(me)
+      setUser(await api.get('/auth/me'))
     } catch {
-      setAdmin(null)
+      setUser(null)
     } finally {
       setLoading(false)
     }
@@ -20,18 +19,30 @@ export function AuthProvider({ children }) {
 
   useEffect(() => { checkSession() }, [checkSession])
 
-  const login = async (email, password) => {
-    const me = await api.post('/auth/login', { email, password })
-    setAdmin(me)
+  const login = async (identifier, password) => {
+    const me = await api.post('/auth/login', { identifier, password })
+    setUser(me)
     return me
   }
 
   const logout = async () => {
-    try { await api.post('/auth/logout') } finally { setAdmin(null) }
+    try { await api.post('/auth/logout') } finally { setUser(null) }
   }
 
+  const role = user?.role || null
+
   return (
-    <AuthContext.Provider value={{ admin, loading, login, logout, refresh: checkSession }}>
+    <AuthContext.Provider value={{
+      user,
+      admin: user,           // legacy alias — existing pages read `admin.name`
+      role,
+      isAdmin: role === 'admin',
+      isLabour: role === 'labour',
+      loading,
+      login,
+      logout,
+      refresh: checkSession,
+    }}>
       {children}
     </AuthContext.Provider>
   )

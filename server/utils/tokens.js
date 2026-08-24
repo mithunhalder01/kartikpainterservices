@@ -5,13 +5,14 @@ const ACCESS_TTL  = '15m'
 const REFRESH_TTL = '30d'
 export const REFRESH_TTL_MS = 30 * 24 * 60 * 60 * 1000
 
-export function signAccessToken(admin) {
-  return jwt.sign({ sub: admin._id.toString(), role: 'admin' }, process.env.JWT_SECRET, { expiresIn: ACCESS_TTL })
+// `role` is 'admin' (full panel) or 'labour' (read-only view of own attendance).
+export function signAccessToken(principal, role = 'admin') {
+  return jwt.sign({ sub: principal._id.toString(), role }, process.env.JWT_SECRET, { expiresIn: ACCESS_TTL })
 }
 
-export function signRefreshToken(admin) {
+export function signRefreshToken(principal, role = 'admin') {
   const jti = crypto.randomBytes(24).toString('hex')
-  const token = jwt.sign({ sub: admin._id.toString(), jti }, process.env.JWT_REFRESH_SECRET, { expiresIn: REFRESH_TTL })
+  const token = jwt.sign({ sub: principal._id.toString(), role, jti }, process.env.JWT_REFRESH_SECRET, { expiresIn: REFRESH_TTL })
   return { token, jti }
 }
 

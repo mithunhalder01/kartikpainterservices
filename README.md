@@ -132,9 +132,37 @@ Then open `http://localhost:5173/admin/login` and sign in with your `ADMIN_EMAIL
   (or via `vercel env pull` + local run) to create the admin account in the production
   database — there is no seed step in the deploy pipeline itself, by design.
 
+### Crew, attendance & letter pad
+
+Three admin-only pages sit alongside the site editors:
+
+- **Labour** — add each worker with their phone number, daily wage and joining date.
+  A worker can be *active* (shows in the attendance sheet), *inactive* (kept in history
+  but hidden from the daily sheet) or *blocked* (login revoked immediately). Deleting a
+  worker also deletes their attendance history; deactivating does not.
+- **Attendance** — *Mark Day* ticks **P** (present), **H** (half day) or **A** (absent)
+  for everyone on one date, with optional overtime hours, site and note; the *Register*
+  tab shows the whole month as a grid (click a cell to cycle P → H → A → blank) with
+  per-worker P/H/A totals, payable days (H counts as ½) and wage. **Export** downloads the
+  month as a PDF (landscape A4 register) or an Excel workbook (Register + Summary sheets).
+- **Letter Pad** — type in the box on the left and the A4 sheet on the right fills in live:
+  logo top-left, Ref/Date top-right, signature block, and a footer bar with website, phone
+  and social handles. *Download PDF* produces the same A4 page as a real, text-based PDF.
+  Letterhead details and the logo are edited on the *Letterhead* tab and saved in the database.
+
+### Labour logins
+
+Workers sign in on the same `/admin/login` page using their **phone number** (admins use
+their **email**). A labour session can only reach *My Attendance* — a read-only calendar of
+their own month, with their own totals and earnings. They can never mark or edit attendance,
+and every other admin route rejects their token server-side, not just in the UI.
+
 ### Security notes
 
-- There is exactly one admin account; there is no self-registration endpoint anywhere.
+- Admin accounts are created only by an existing admin (Settings) or the seed script;
+  labour accounts only by an admin. There is no self-registration endpoint anywhere.
+- Access tokens carry a role (`admin` or `labour`). Blocking or deactivating a worker
+  clears their refresh token, so any live session dies on its next refresh.
 - Sessions are httpOnly/Secure/SameSite=Strict cookies (not localStorage) — a 15-minute
   access token plus a rotating 30-day refresh token.
 - `/admin` is blocked in `public/robots.txt` and carries no public links from the rest of the site.
