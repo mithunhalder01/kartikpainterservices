@@ -7,43 +7,84 @@ import { useAuth } from '../context/AuthContext'
 import Modal from '../components/Modal'
 import ConfirmDialog from '../components/ConfirmDialog'
 
+const MIN_PASSWORD = 8
+
 function AddAdminModal({ open, onClose }) {
   const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [touched, setTouched] = useState(false)
+  const [serverError, setServerError] = useState('')
   const queryClient = useQueryClient()
 
+  useEffect(() => {
+    if (!open) return
+    setName(''); setEmail(''); setPassword(''); setTouched(false); setServerError('')
+  }, [open])
+
   const mutation = useMutation({
-    mutationFn: () => api.post('/admin/settings/admins', { name, email, password }),
+    mutationFn: () => api.post('/admin/settings/admins', {
+      name: name.trim(), email: email.trim().toLowerCase(), password,
+    }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['admins'] })
       toast.success('Admin created')
-      setName(''); setEmail(''); setPassword('')
       onClose()
     },
-    onError: (err) => toast.error(err.message || 'Failed to create admin'),
+    // the error stays on screen instead of vanishing with the toast
+    onError: (err) => {
+      setServerError(err.message || 'Failed to create admin')
+      toast.error(err.message || 'Failed to create admin')
+    },
   })
+
+  const nameError = !name.trim() ? 'Name is required' : ''
+  const emailError = !/^\S+@\S+\.\S+$/.test(email.trim()) ? 'Enter a valid email address' : ''
+  const passwordError = password.length < MIN_PASSWORD
+    ? `Password must be at least ${MIN_PASSWORD} characters (currently ${password.length})`
+    : ''
+  const firstError = nameError || emailError || passwordError
+
+  // the button stays clickable — a greyed-out button with no reason is why
+  // "nothing happens" when a field is wrong
+  const submit = () => {
+    setTouched(true)
+    setServerError('')
+    if (firstError) return toast.error(firstError)
+    mutation.mutate()
+  }
 
   return (
     <Modal open={open} onClose={onClose} title="Add New Admin" width="max-w-sm">
       <div className="space-y-4">
+        {serverError && (
+          <div className="text-[12.5px] text-red-700 bg-red-50 border border-red-200 rounded-md px-3 py-2">
+            {serverError}
+          </div>
+        )}
         <div>
           <label className="block text-[12px] font-medium text-text-muted mb-1.5">Name</label>
           <input value={name} onChange={(e) => setName(e.target.value)}
             className="w-full px-3 py-2 text-[13px] border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent/30" />
+          {touched && nameError && <p className="text-[11.5px] text-red-600 mt-1">{nameError}</p>}
         </div>
         <div>
           <label className="block text-[12px] font-medium text-text-muted mb-1.5">Email</label>
           <input type="email" value={email} onChange={(e) => setEmail(e.target.value)}
+            autoComplete="off"
             className="w-full px-3 py-2 text-[13px] border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent/30" />
+          {touched && emailError && <p className="text-[11.5px] text-red-600 mt-1">{emailError}</p>}
         </div>
         <div>
           <label className="block text-[12px] font-medium text-text-muted mb-1.5">Password</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)}
+          <input type="text" value={password} onChange={(e) => setPassword(e.target.value)}
+            autoComplete="new-password"
             className="w-full px-3 py-2 text-[13px] border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent/30" />
-          <p className="text-[11.5px] text-text-subtle mt-1">At least 10 characters</p>
+          <p className={`text-[11.5px] mt-1 ${touched && passwordError ? 'text-red-600' : 'text-text-subtle'}`}>
+            {touched && passwordError ? passwordError : `At least ${MIN_PASSWORD} characters`}
+          </p>
         </div>
-        <button onClick={() => mutation.mutate()} disabled={mutation.isPending || !name.trim() || !email.trim() || password.length < 10}
+        <button onClick={submit} disabled={mutation.isPending}
           className="w-full btn-accent justify-center py-2.5 text-[13px] disabled:opacity-60">
           {mutation.isPending ? 'Creating…' : 'Create Admin'}
         </button>
@@ -70,7 +111,7 @@ function ResetPasswordModal({ target, onClose }) {
   })
 
   const submit = () => {
-    if (password.length < 10) return toast.error('Password must be at least 10 characters')
+    if (password.length < MIN_PASSWORD) return toast.error(`Password must be at least ${MIN_PASSWORD} characters`)
     if (password !== confirm) return toast.error('Passwords do not match')
     mutation.mutate()
   }
@@ -86,7 +127,7 @@ function ResetPasswordModal({ target, onClose }) {
         <div>
           <label className="block text-[12px] font-medium text-text-muted mb-1.5">New password</label>
           <input type="text" value={password} onChange={(e) => setPassword(e.target.value)}
-            placeholder="At least 10 characters" autoFocus
+            placeholder={`At least ${MIN_PASSWORD} characters`} autoFocus
             className="w-full px-3 py-2 text-[13px] border border-border rounded-md focus:outline-none focus:ring-2 focus:ring-accent/30" />
         </div>
         <div>
@@ -140,11 +181,11 @@ export default function Settings() {
   const handleSubmit = (e) => {
     e.preventDefault()
     if (newPassword !== confirmPassword) return toast.error('New passwords do not match')
-    if (newPassword.length < 10) return toast.error('New password must be at least 10 characters')
+    if (newPassword.length < MIN_PASSWORD) return toast.error(`New password must be at least ${MIN_PASSWORD} characters`)
     mutation.mutate()
   }
 
-  const strength = newPassword.length >= 14 ? 'Strong' : newPassword.length >= 10 ? 'Okay' : 'Too short'
+  const strength = newPassword.length >= 14 ? 'Strong' : newPassword.length >= MIN_PASSWORD ? 'Okay' : 'Too short'
 
   return (
     <div className="max-w-lg space-y-5">

@@ -10,8 +10,8 @@ async function seed() {
   if (!ADMIN_EMAIL || !ADMIN_PASSWORD) {
     throw new Error('ADMIN_EMAIL and ADMIN_PASSWORD must be set in .env before seeding')
   }
-  if (ADMIN_PASSWORD.length < 10) {
-    throw new Error('ADMIN_PASSWORD should be at least 10 characters long')
+  if (ADMIN_PASSWORD.length < 8) {
+    throw new Error('ADMIN_PASSWORD should be at least 8 characters long')
   }
 
   await mongoose.connect(MONGODB_URI)

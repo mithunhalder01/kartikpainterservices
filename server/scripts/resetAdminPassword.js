@@ -28,7 +28,7 @@ async function run() {
     return
   }
 
-  if (ADMIN_PASSWORD.length < 10) throw new Error('ADMIN_PASSWORD should be at least 10 characters long')
+  if (ADMIN_PASSWORD.length < 8) throw new Error('ADMIN_PASSWORD should be at least 8 characters long')
 
   const email = ADMIN_EMAIL.toLowerCase().trim()
   const admin = await Admin.findOne({ email })

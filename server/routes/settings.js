@@ -9,14 +9,20 @@ import { logActivity } from '../utils/activityLog.js'
 const router = Router()
 router.use(requireAuth)
 
+// One place for the rule, so the server and the Settings form can never disagree
+// about what counts as a valid password.
+const MIN_PASSWORD = 8
+const passwordRule = z.string().min(MIN_PASSWORD).max(200)
+const TOO_SHORT = `Password must be at least ${MIN_PASSWORD} characters`
+
 const changePasswordSchema = z.object({
   currentPassword: z.string().min(1),
-  newPassword: z.string().min(10).max(200),
+  newPassword: passwordRule,
 })
 
 router.put('/password', asyncHandler(async (req, res) => {
   const parsed = changePasswordSchema.safeParse(req.body)
-  if (!parsed.success) return res.status(400).json({ error: 'New password must be at least 10 characters' })
+  if (!parsed.success) return res.status(400).json({ error: TOO_SHORT })
 
   const admin = await Admin.findById(req.admin.id)
   if (!admin) return res.status(401).json({ error: 'Not authenticated' })
@@ -40,12 +46,19 @@ router.get('/admins', asyncHandler(async (req, res) => {
 const createAdminSchema = z.object({
   name: z.string().trim().min(1).max(100),
   email: z.string().trim().toLowerCase().email(),
-  password: z.string().min(10).max(200),
+  password: passwordRule,
 })
 
 router.post('/admins', asyncHandler(async (req, res) => {
   const parsed = createAdminSchema.safeParse(req.body)
-  if (!parsed.success) return res.status(400).json({ error: 'Check name, email and password (10+ characters)' })
+  if (!parsed.success) {
+    const flat = parsed.error.flatten().fieldErrors
+    const reason = flat.password ? TOO_SHORT
+      : flat.email ? 'Enter a valid email address'
+      : flat.name ? 'Name is required'
+      : 'Check the name, email and password'
+    return res.status(400).json({ error: reason })
+  }
 
   const existing = await Admin.findOne({ email: parsed.data.email })
   if (existing) return res.status(409).json({ error: 'An admin with this email already exists' })
@@ -60,11 +73,11 @@ router.post('/admins', asyncHandler(async (req, res) => {
 /* ── Recovery: any signed-in admin can set another admin's password ──
    This is the "forgot password" path for a small two-person team — there is no
    email provider wired up, so the other admin does the reset from Settings. */
-const resetSchema = z.object({ newPassword: z.string().min(10).max(200) })
+const resetSchema = z.object({ newPassword: passwordRule })
 
 router.put('/admins/:id/password', asyncHandler(async (req, res) => {
   const parsed = resetSchema.safeParse(req.body)
-  if (!parsed.success) return res.status(400).json({ error: 'New password must be at least 10 characters' })
+  if (!parsed.success) return res.status(400).json({ error: TOO_SHORT })
 
   const target = await Admin.findById(req.params.id)
   if (!target) return res.status(404).json({ error: 'Admin not found' })
