@@ -194,8 +194,8 @@ function MarkDay({ onSaved }) {
           </button>
         )}
 
-        <div className="flex items-center gap-2 ml-auto">
-          <span className="text-[12.5px] text-text-muted hidden sm:inline">Mark everyone:</span>
+        <div className="flex items-center gap-2 w-full sm:w-auto sm:ml-auto">
+          <span className="text-[12.5px] text-text-muted">Mark everyone:</span>
           {STATUS_ORDER.map((s) => (
             <button key={s} onClick={() => bulk(s)}
               className={`px-2.5 py-1.5 text-[12px] font-semibold rounded-md border transition-colors ${STATUS_STYLE[s]} hover:brightness-95`}>
@@ -233,7 +233,7 @@ function MarkDay({ onSaved }) {
               const open = detailFor === l._id
               return (
                 <div key={l._id} className="border-b border-border last:border-0">
-                  <div className="flex items-center gap-3 px-4 py-3 hover:bg-surface/40 transition-colors">
+                  <div className="flex items-center gap-2.5 sm:gap-3 px-3 sm:px-4 py-3 hover:bg-surface/40 transition-colors">
                     <div className="w-8 h-8 rounded-full bg-accent/10 text-accent flex items-center justify-center text-[12px] font-bold shrink-0">
                       {l.name[0]?.toUpperCase()}
                     </div>
@@ -242,6 +242,12 @@ function MarkDay({ onSaved }) {
                       <p className="text-[12px] text-text-muted truncate">
                         {l.designation || 'Worker'}{l.dailyWage ? ` · ${rupee(l.dailyWage)}/day` : ''}
                       </p>
+                      {/* on phones the details toggle sits under the name — the row has no width to spare */}
+                      <button onClick={() => setDetailFor(open ? null : l._id)}
+                        className={`sm:hidden mt-1 text-[11.5px] transition-colors
+                          ${entry.overtimeHours || entry.site || entry.note ? 'text-accent font-medium' : 'text-text-subtle'}`}>
+                        {entry.overtimeHours ? `+${entry.overtimeHours}h OT` : 'Details'}
+                      </button>
                     </div>
 
                     <button onClick={() => setDetailFor(open ? null : l._id)}
@@ -267,7 +273,7 @@ function MarkDay({ onSaved }) {
                   </div>
 
                   {open && (
-                    <div className="grid sm:grid-cols-3 gap-3 px-4 pb-3.5 bg-surface/40">
+                    <div className="grid sm:grid-cols-3 gap-3 px-3 sm:px-4 pb-3.5 bg-surface/40">
                       <div>
                         <label className="block text-[11.5px] font-medium text-text-muted mb-1">Overtime (hours)</label>
                         <input value={entry.overtimeHours || ''} inputMode="numeric"
@@ -293,7 +299,7 @@ function MarkDay({ onSaved }) {
               )
             })}
 
-            <div className="flex flex-wrap items-center justify-between gap-3 px-4 py-3 border-t border-border bg-surface/50">
+            <div className="flex flex-wrap items-center justify-between gap-3 px-3 sm:px-4 py-3 border-t border-border bg-surface/50">
               <p className="text-[12.5px] text-text-muted">
                 <b className="text-text-primary">{working}</b> working · {marked} of {labours.length} marked
               </p>
@@ -467,13 +473,13 @@ export default function Attendance() {
         </div>
       </div>
 
-      <div className="flex items-center gap-1 mb-4 p-1 bg-surface rounded-xl w-fit">
+      <div className="flex items-center gap-1 mb-4 p-1 bg-surface rounded-xl w-full sm:w-fit overflow-x-auto">
         {[
           { key: 'mark', label: 'Mark Day', icon: CalendarCheck },
           { key: 'month', label: `${monthName(month)} Register`, icon: CalendarDays },
         ].map(({ key, label, icon: Icon }) => (
           <button key={key} onClick={() => setTab(key)}
-            className={`flex items-center gap-1.5 px-4 py-2 text-[13px] font-medium rounded-lg transition-colors
+            className={`flex items-center gap-1.5 px-3 sm:px-4 py-2 text-[12.5px] sm:text-[13px] font-medium rounded-lg transition-colors whitespace-nowrap
               ${tab === key ? 'bg-white text-text-primary shadow-sm' : 'text-text-muted hover:text-text-primary'}`}>
             <Icon size={15} /> {label}
           </button>

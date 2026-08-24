@@ -84,7 +84,7 @@ function ServiceFormModal({ open, onClose, editing }) {
   return (
     <Modal open={open} onClose={onClose} title={editing ? 'Edit Service' : 'Add Service'} width="max-w-2xl">
       <div className="space-y-4">
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="block text-[12px] font-medium text-text-muted mb-1.5">Title</label>
             <input value={title} onChange={(e) => {

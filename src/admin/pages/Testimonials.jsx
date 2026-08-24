@@ -57,7 +57,7 @@ function TestimonialFormModal({ open, onClose, editing }) {
           <p className="text-[12px] text-text-muted">Optional customer photo</p>
         </div>
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
             <label className="block text-[12px] font-medium text-text-muted mb-1.5">Name</label>
             <input value={name} onChange={(e) => setName(e.target.value)}

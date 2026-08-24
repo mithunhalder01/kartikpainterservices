@@ -87,7 +87,8 @@ export default function Leads() {
           Array.from({ length: 6 }).map((_, i) => <SkeletonRow key={i} cols={5} />)
         ) : data?.leads?.length ? (
           <>
-            <table className="w-full text-[13px]">
+            <div className="overflow-x-auto">
+            <table className="w-full text-[13px] min-w-[600px]">
               <thead>
                 <tr className="border-b border-border bg-surface/60 text-left">
                   <th className="px-4 py-2.5 font-semibold text-text-muted">Name</th>
@@ -110,6 +111,7 @@ export default function Leads() {
                 ))}
               </tbody>
             </table>
+            </div>
 
             {data.pages > 1 && (
               <div className="flex items-center justify-between px-4 py-3 border-t border-border">

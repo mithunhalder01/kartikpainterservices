@@ -227,6 +227,7 @@ export default function Letterpad() {
   const [listOpen, setListOpen] = useState(false)
   const [downloading, setDownloading] = useState(false)
   const [scale, setScale] = useState(1)
+  const [view, setView] = useState('write')   // phones show one pane at a time
   const wrapRef = useRef(null)
   const queryClient = useQueryClient()
 
@@ -244,7 +245,7 @@ export default function Letterpad() {
   useLayoutEffect(() => {
     const el = wrapRef.current
     if (!el) return undefined
-    const fit = () => setScale(Math.min(1, (el.clientWidth - 8) / PAGE_W))
+    const fit = () => setScale(Math.min(1, Math.max(0.2, (el.clientWidth - 8) / PAGE_W)))
     fit()
     const ro = new ResizeObserver(fit)
     ro.observe(el)
@@ -298,9 +299,38 @@ export default function Letterpad() {
   }
 
   return (
-    <div className="flex gap-4 h-[calc(100vh-140px)] min-h-[560px]">
+    <div className="flex flex-col lg:h-[calc(100vh-140px)] lg:min-h-[560px]">
+      {/* page header — stays visible in both mobile panes */}
+      <div className="flex items-center justify-between gap-3 mb-3 shrink-0">
+        <div className="min-w-0">
+          <h1 className="text-[18px] font-bold text-text-primary">Letter Pad</h1>
+          <p className="text-[12px] text-text-muted hidden sm:block">
+            A4 · preview shows page 1 — a long letter continues onto page 2 in the PDF
+          </p>
+        </div>
+        <div className="flex items-center gap-2 shrink-0">
+          <div className="flex lg:hidden items-center p-0.5 bg-surface rounded-lg">
+            {[['write', 'Write'], ['preview', 'Preview']].map(([key, text]) => (
+              <button key={key} onClick={() => setView(key)}
+                className={`px-2.5 py-1.5 text-[12px] font-medium rounded-md transition-colors
+                  ${view === key ? 'bg-white text-text-primary shadow-sm' : 'text-text-muted'}`}>
+                {text}
+              </button>
+            ))}
+          </div>
+          <button onClick={download} disabled={downloading}
+            className="btn-accent px-3 sm:px-4 py-2 text-[13px] disabled:opacity-60">
+            {downloading ? <Loader2 size={15} className="animate-spin" /> : <Download size={15} />}
+            <span className="hidden sm:inline">Download PDF</span>
+            <span className="sm:hidden">PDF</span>
+          </button>
+        </div>
+      </div>
+
+      <div className="flex-1 flex flex-col lg:flex-row gap-4 min-h-0">
       {/* editor box */}
-      <div className="w-[360px] shrink-0 flex flex-col rounded-2xl border border-border bg-white overflow-hidden">
+      <div className={`w-full lg:w-[360px] shrink-0 flex-col rounded-2xl border border-border bg-white overflow-hidden
+                       ${view === 'preview' ? 'hidden lg:flex' : 'flex'}`}>
         <div className="flex items-center gap-1 p-1.5 border-b border-border bg-surface/60 shrink-0">
           {[
             { key: 'letter', label: 'Letter', icon: FileText },
@@ -314,7 +344,7 @@ export default function Letterpad() {
           ))}
         </div>
 
-        <div className="flex-1 overflow-y-auto p-4">
+        <div className="lg:flex-1 lg:overflow-y-auto p-4">
           {tab === 'head' ? (
             <HeadEditor head={head || {}} />
           ) : (
@@ -424,28 +454,15 @@ export default function Letterpad() {
       </div>
 
       {/* preview */}
-      <div className="flex-1 flex flex-col min-w-0">
-        <div className="flex items-center justify-between gap-3 mb-3 shrink-0">
-          <div>
-            <h1 className="text-[18px] font-bold text-text-primary">Letter Pad</h1>
-            <p className="text-[12px] text-text-muted">
-            A4 · preview shows page 1 — a long letter continues onto page 2 in the PDF
-          </p>
-          </div>
-          <button onClick={download} disabled={downloading}
-            className="btn-accent px-4 py-2 text-[13px] disabled:opacity-60">
-            {downloading ? <Loader2 size={15} className="animate-spin" /> : <Download size={15} />}
-            Download PDF
-          </button>
-        </div>
-
-        <div ref={wrapRef} className="flex-1 overflow-auto rounded-2xl bg-surface border border-border p-2">
+      <div className={`flex-1 flex-col min-w-0 ${view === 'write' ? 'hidden lg:flex' : 'flex'}`}>
+        <div ref={wrapRef} className="lg:flex-1 overflow-auto rounded-2xl bg-surface border border-border p-2">
           <div style={{ width: PAGE_W * scale, height: PAGE_H * scale, margin: '0 auto' }}>
             <div style={{ transform: `scale(${scale})`, transformOrigin: 'top left' }}>
               <LetterSheet letter={letter} head={head || {}} />
             </div>
           </div>
         </div>
+      </div>
       </div>
 
       <ConfirmDialog

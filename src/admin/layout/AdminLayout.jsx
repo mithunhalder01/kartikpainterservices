@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { NavLink, Link, Outlet, useNavigate } from 'react-router-dom'
 import {
   LayoutDashboard, Users, Images, Quote, FileText, Settings, Wrench, Home,
-  ArrowLeft, LogOut, Bell, ChevronDown, HardHat, CalendarCheck, ScrollText,
+  ArrowLeft, LogOut, Bell, ChevronDown, HardHat, CalendarCheck, ScrollText, Menu, X,
 } from 'lucide-react'
 import { useAuth } from '../context/AuthContext'
 import { useQuery } from '@tanstack/react-query'
@@ -30,7 +30,7 @@ const navItemClass = ({ isActive }) => `flex items-center gap-3 h-10 px-[19px] r
   whitespace-nowrap overflow-hidden transition-colors shrink-0
   ${isActive ? 'bg-accent/10 text-accent' : 'text-text-muted hover:text-text-primary hover:bg-surface'}`
 
-const labelClass = 'opacity-0 group-hover:opacity-100 transition-opacity duration-150'
+const labelClass = 'lg:opacity-0 lg:group-hover:opacity-100 transition-opacity duration-150'
 
 function greeting() {
   const h = new Date().getHours()
@@ -42,6 +42,7 @@ function greeting() {
 export default function AdminLayout() {
   const [profileOpen, setProfileOpen] = useState(false)
   const [bellOpen, setBellOpen] = useState(false)
+  const [navOpen, setNavOpen] = useState(false)
   const { user, isAdmin, logout } = useAuth()
   const NAV = isAdmin ? ADMIN_NAV : LABOUR_NAV
   const navigate = useNavigate()
@@ -53,16 +54,34 @@ export default function AdminLayout() {
     enabled: isAdmin,
   })
 
+  // the drawer is an overlay on phones, so the page behind it must not scroll
+  useEffect(() => {
+    if (!navOpen) return undefined
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = '' }
+  }, [navOpen])
+
+  const closeNav = () => setNavOpen(false)
+
   const handleLogout = async () => {
+    closeNav()
     await logout()
     navigate('/admin/login', { replace: true })
   }
 
   return (
     <div className="h-screen bg-base flex overflow-hidden">
-      <aside className="group my-3 ml-3 flex flex-col shrink-0
-                        w-16 hover:w-60 bg-white border border-border rounded-2xl shadow-sm
-                        transition-[width] duration-200 ease-out overflow-hidden">
+      {/* backdrop — phones only */}
+      {navOpen && (
+        <div onClick={closeNav} className="fixed inset-0 z-40 bg-black/40 lg:hidden" aria-hidden="true" />
+      )}
+
+      <aside className={`group flex flex-col shrink-0 bg-white border border-border shadow-sm
+                        transition-transform duration-200 ease-out overflow-hidden
+                        fixed inset-y-0 left-0 z-50 w-64 rounded-r-2xl
+                        lg:static lg:z-auto lg:my-3 lg:ml-3 lg:rounded-2xl lg:translate-x-0
+                        lg:w-16 lg:hover:w-60 lg:transition-[width]
+                        ${navOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="h-16 flex items-center px-[19px] shrink-0">
           <div className="w-7 h-7 bg-dark rounded-lg flex items-center justify-center shrink-0">
             <span className="text-white font-bold text-[11px]">KP</span>
@@ -70,11 +89,15 @@ export default function AdminLayout() {
           <span className={`ml-3 text-[13px] font-semibold text-text-primary whitespace-nowrap ${labelClass}`}>
             {isAdmin ? 'Kartik Admin' : 'Kartik Crew'}
           </span>
+          <button onClick={closeNav}
+            className="ml-auto p-1.5 -mr-1 text-text-muted hover:text-text-primary rounded-md lg:hidden">
+            <X size={18} />
+          </button>
         </div>
 
         <nav className="flex-1 overflow-y-auto py-2 px-2 space-y-0.5">
           {NAV.map(({ to, label, icon: Icon, end }) => (
-            <NavLink key={to} to={to} end={end} className={navItemClass}>
+            <NavLink key={to} to={to} end={end} onClick={closeNav} className={navItemClass}>
               <Icon size={18} className="shrink-0" />
               <span className={labelClass}>{label}</span>
             </NavLink>
@@ -82,12 +105,12 @@ export default function AdminLayout() {
         </nav>
 
         <div className="mt-auto border-t border-border py-2 px-2 space-y-0.5 shrink-0">
-          <Link to="/" className={navItemClass({ isActive: false })}>
+          <Link to="/" onClick={closeNav} className={navItemClass({ isActive: false })}>
             <ArrowLeft size={18} className="shrink-0" />
             <span className={labelClass}>Back to Site</span>
           </Link>
           {isAdmin && (
-            <NavLink to="/admin/settings" className={navItemClass}>
+            <NavLink to="/admin/settings" onClick={closeNav} className={navItemClass}>
               <Settings size={18} className="shrink-0" />
               <span className={labelClass}>Settings</span>
             </NavLink>
@@ -105,18 +128,24 @@ export default function AdminLayout() {
       {/* Main column */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Topbar */}
-        <header className="mx-4 mt-3 mb-4 rounded-2xl bg-white border border-border
-                           shadow-[0_1px_3px_rgba(0,0,0,0.04)] h-16 flex items-center justify-between px-5 shrink-0">
-          <div>
+        <header className="mx-3 sm:mx-4 mt-3 mb-4 rounded-2xl bg-white border border-border
+                           shadow-[0_1px_3px_rgba(0,0,0,0.04)] h-16 flex items-center justify-between
+                           gap-2 px-3 sm:px-5 shrink-0">
+          <button onClick={() => setNavOpen(true)} aria-label="Open menu"
+            className="p-2 -ml-1 text-text-muted hover:text-text-primary hover:bg-surface rounded-lg transition-colors lg:hidden">
+            <Menu size={20} />
+          </button>
+
+          <div className="min-w-0 flex-1">
             <p className="text-[10px] font-semibold text-text-subtle uppercase tracking-wider mb-0.5">
               {isAdmin ? 'Admin' : 'Labour'}
             </p>
-            <p className="text-[14px] font-semibold text-text-primary leading-none">
+            <p className="text-[14px] font-semibold text-text-primary leading-none truncate">
               {greeting()}{user?.name ? `, ${user.name.split(' ')[0]}` : ''}
             </p>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 sm:gap-2 shrink-0">
             {/* Notification bell */}
             <div className={`relative ${isAdmin ? '' : 'hidden'}`}>
               <button onClick={() => { setBellOpen((o) => !o); setProfileOpen(false) }}
@@ -131,7 +160,7 @@ export default function AdminLayout() {
               </button>
 
               {bellOpen && (
-                <div className="absolute right-0 mt-2 w-80 bg-white border border-border rounded-2xl shadow-xl z-50 overflow-hidden">
+                <div className="absolute right-0 mt-2 w-[min(20rem,calc(100vw-2rem))] bg-white border border-border rounded-2xl shadow-xl z-50 overflow-hidden">
                   <div className="px-4 py-3 border-b border-border">
                     <p className="text-[13px] font-semibold text-text-primary">New Leads</p>
                   </div>
@@ -196,7 +225,7 @@ export default function AdminLayout() {
           </div>
         </header>
 
-        <main className="flex-1 px-4 pt-2 pb-4 overflow-y-auto">
+        <main className="flex-1 px-3 sm:px-4 pt-2 pb-4 overflow-y-auto">
           <Outlet />
         </main>
       </div>

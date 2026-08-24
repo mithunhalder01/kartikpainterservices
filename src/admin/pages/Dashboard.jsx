@@ -44,13 +44,13 @@ export default function Dashboard() {
           <CalendarCheck size={16} className="text-accent" />
           <span className="text-[13px] font-semibold text-text-primary">Today's attendance</span>
         </div>
-        <div className="flex items-center gap-5 text-[13px]">
+        <div className="flex flex-wrap items-center gap-x-4 gap-y-1 text-[13px]">
           <span className="text-text-muted">Crew <b className="text-text-primary">{attendance?.activeCrew ?? '—'}</b></span>
           <span className="text-text-muted">Present <b className="text-green-700">{attendance?.today?.P ?? 0}</b></span>
           <span className="text-text-muted">Half day <b className="text-amber-700">{attendance?.today?.H ?? 0}</b></span>
           <span className="text-text-muted">Absent <b className="text-red-600">{attendance?.today?.A ?? 0}</b></span>
         </div>
-        <span className={`ml-auto flex items-center gap-1 text-[12.5px] font-semibold
+        <span className={`sm:ml-auto flex items-center gap-1 text-[12.5px] font-semibold
           ${attendance?.pending ? 'text-amber-700' : 'text-green-700'}`}>
           {attendance?.pending ? `${attendance.pending} still to mark` : 'All marked'}
           <ArrowRight size={13} className="group-hover:translate-x-0.5 transition-transform" />
@@ -105,7 +105,8 @@ export default function Dashboard() {
         {isLoading ? (
           Array.from({ length: 4 }).map((_, i) => <SkeletonRow key={i} cols={4} />)
         ) : data?.recentLeads?.length ? (
-          <table className="w-full text-[13px]">
+          <div className="overflow-x-auto">
+          <table className="w-full text-[13px] min-w-[520px]">
             <tbody>
               {data.recentLeads.map((lead) => (
                 <tr key={lead._id} className="border-b border-border last:border-0">
@@ -117,6 +118,7 @@ export default function Dashboard() {
               ))}
             </tbody>
           </table>
+          </div>
         ) : (
           <EmptyState icon={Users} title="No leads yet" description="New contact form submissions will show up here." />
         )}

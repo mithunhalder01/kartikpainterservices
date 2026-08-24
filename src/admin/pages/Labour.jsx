@@ -242,7 +242,7 @@ export default function LabourPage() {
 
   return (
     <div className="max-w-6xl">
-      <div className="flex items-center justify-between gap-3 mb-5">
+      <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div>
           <h1 className="text-[20px] font-bold text-text-primary">Labour</h1>
           <p className="text-[12.5px] text-text-muted mt-0.5">Your crew — add workers, control their access, and keep records.</p>

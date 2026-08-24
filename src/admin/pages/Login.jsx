@@ -36,7 +36,6 @@ export default function Login() {
             <span className="text-dark font-bold text-[15px] tracking-tight">KP</span>
           </div>
           <h1 className="text-white text-[18px] font-semibold">Sign In</h1>
-          <p className="text-white/50 text-[12.5px] mt-1">Admin — email · Labour — phone number</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl p-6 shadow-2xl space-y-4">
@@ -58,7 +57,7 @@ export default function Login() {
                 onChange={(e) => setIdentifier(e.target.value)}
                 className="w-full pl-9 pr-3 py-2.5 text-[13px] border border-border rounded-md
                            focus:outline-none focus:ring-2 focus:ring-accent/30 focus:border-accent"
-                placeholder="you@example.com  or  9876543210"
+                placeholder="Email or phone number"
                 autoComplete="username"
               />
             </div>
@@ -84,11 +83,6 @@ export default function Login() {
               </button>
             </div>
           </div>
-
-          <p className="text-[11.5px] text-text-subtle leading-relaxed">
-            Forgot your password? Ask the other admin to sign in and reset it for you from
-            Settings → Admins. Labour should ask the office.
-          </p>
 
           <button type="submit" disabled={submitting}
             className="w-full btn-accent justify-center py-2.5 text-[13px] disabled:opacity-70">

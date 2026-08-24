@@ -167,7 +167,7 @@ export default function AboutEditor() {
                 <input type="file" accept="image/jpeg,image/png,image/webp,image/heic,image/heif,.heic,.heif" className="hidden"
                   onChange={(e) => e.target.files?.[0] && handleTeamPhoto(i, e.target.files[0])} />
               </label>
-              <div className="flex-1 grid grid-cols-3 gap-2">
+              <div className="flex-1 grid grid-cols-1 sm:grid-cols-3 gap-2">
                 <input value={m.name} onChange={(e) => {
                   const team = [...sections.team]; team[i] = { ...team[i], name: e.target.value }; set('team', team)
                 }} placeholder="Name" className="px-2.5 py-1.5 text-[12.5px] border border-border rounded-md" />
