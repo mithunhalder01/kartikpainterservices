@@ -58,6 +58,7 @@ function SectionLabel({ children }) {
 function BeforeAfterSlider() {
   const [pos, setPos] = useState(50)
   const dragging = useRef(false)
+  const gesture = useRef(null)
   const containerRef = useRef(null)
 
   const calcPos = useCallback((clientX) => {
@@ -69,9 +70,34 @@ function BeforeAfterSlider() {
   const onMouseDown  = (e) => { dragging.current = true; e.preventDefault() }
   const onMouseMove  = useCallback((e) => { if (dragging.current) calcPos(e.clientX) }, [calcPos])
   const onMouseUp    = () => { dragging.current = false }
-  const onTouchStart = () => { dragging.current = true }
-  const onTouchMove  = useCallback((e) => { if (dragging.current) calcPos(e.touches[0].clientX) }, [calcPos])
-  const onTouchEnd   = () => { dragging.current = false }
+
+  // On a phone a touch on the handle could equally be someone scrolling past the
+  // card, so the first few pixels decide: mostly sideways drags the slider,
+  // mostly up or down is left to the page.
+  const onTouchStart = (e) => {
+    const touch = e.touches[0]
+    gesture.current = { x: touch.clientX, y: touch.clientY, decided: false }
+    dragging.current = false
+  }
+
+  const onTouchMove = useCallback((e) => {
+    const start = gesture.current
+    if (!start) return
+
+    const touch = e.touches[0]
+    if (!start.decided) {
+      const dx = Math.abs(touch.clientX - start.x)
+      const dy = Math.abs(touch.clientY - start.y)
+      if (dx < 6 && dy < 6) return          // too small to read the intent yet
+      start.decided = true
+      dragging.current = dx > dy
+      if (!dragging.current) { gesture.current = null; return }
+    }
+
+    if (dragging.current) calcPos(touch.clientX)
+  }, [calcPos])
+
+  const onTouchEnd = () => { dragging.current = false; gesture.current = null }
 
   useEffect(() => {
     window.addEventListener('mousemove', onMouseMove)
@@ -90,7 +116,7 @@ function BeforeAfterSlider() {
     <div
       ref={containerRef}
       className="relative w-full h-full select-none overflow-hidden cursor-col-resize"
-      style={{ touchAction: 'none' }}
+      style={{ touchAction: 'pan-y' }}
     >
       {/* AFTER — full width behind */}
       <img
