@@ -188,7 +188,7 @@ export default function Settings() {
   const strength = newPassword.length >= 14 ? 'Strong' : newPassword.length >= MIN_PASSWORD ? 'Okay' : 'Too short'
 
   return (
-    <div className="max-w-lg space-y-5">
+    <div className="max-w-lg mx-auto space-y-5">
       <h1 className="text-[20px] font-bold text-text-primary">Settings</h1>
 
       <div className="rounded-xl border border-border bg-white p-5">

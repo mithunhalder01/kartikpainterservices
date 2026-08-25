@@ -249,7 +249,7 @@ export default function Gallery() {
   }
 
   return (
-    <div className="max-w-6xl">
+    <div className="max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-5">
         <h1 className="text-[20px] font-bold text-text-primary">Gallery</h1>
         <button onClick={() => { setEditing(null); setModalOpen(true) }}

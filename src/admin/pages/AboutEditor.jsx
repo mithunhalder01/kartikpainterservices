@@ -93,7 +93,7 @@ export default function AboutEditor() {
   if (isLoading) return <p className="text-[13px] text-text-muted">Loading…</p>
 
   return (
-    <div className="max-w-3xl space-y-5">
+    <div className="max-w-3xl mx-auto space-y-5">
       <div className="flex items-center justify-between">
         <h1 className="text-[20px] font-bold text-text-primary">About Page</h1>
         <button onClick={() => saveMutation.mutate()} disabled={saveMutation.isPending}

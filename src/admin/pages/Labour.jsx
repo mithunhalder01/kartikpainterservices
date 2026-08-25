@@ -251,7 +251,7 @@ export default function LabourPage() {
   const openEdit = (labour) => { setEditing(labour); setFormOpen(true) }
 
   return (
-    <div className="max-w-6xl">
+    <div className="max-w-6xl mx-auto">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div>
           <h1 className="text-[20px] font-bold text-text-primary">Labour</h1>

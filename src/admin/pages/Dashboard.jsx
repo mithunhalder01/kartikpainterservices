@@ -38,7 +38,7 @@ export default function Dashboard() {
   })
 
   return (
-    <div className="max-w-6xl">
+    <div className="max-w-6xl mx-auto">
       <h1 className="text-[20px] font-bold text-text-primary mb-5">Dashboard</h1>
 
       {/* the one number a contractor checks first */}

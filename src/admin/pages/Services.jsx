@@ -191,7 +191,7 @@ export default function Services() {
   })
 
   return (
-    <div className="max-w-6xl">
+    <div className="max-w-6xl mx-auto">
       <div className="flex items-center justify-between mb-5">
         <h1 className="text-[20px] font-bold text-text-primary">Services</h1>
         <button onClick={() => { setEditing(null); setModalOpen(true) }} className="btn-accent text-[13px] px-4 py-2">
