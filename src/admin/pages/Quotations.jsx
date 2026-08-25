@@ -260,7 +260,7 @@ function Editor({ existing, onDone }) {
   const profit = totals.grandTotal - totals.cost
 
   return (
-    <div className="max-w-5xl mx-auto pb-4">
+    <div className="max-w-5xl pb-4">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <button onClick={() => onDone(null)} className="flex items-center gap-1.5 text-[13px] text-text-muted hover:text-text-primary">
           <ArrowLeft size={15} /> All quotations
@@ -522,7 +522,7 @@ export default function Quotations() {
   }
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div>
           <h1 className="text-[20px] font-bold text-text-primary">Quotations</h1>

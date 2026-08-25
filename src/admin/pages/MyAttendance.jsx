@@ -52,7 +52,7 @@ export default function MyAttendance() {
   }, [data, year, month])
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-3xl">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div>
           <h1 className="text-[20px] font-bold text-text-primary">My Attendance</h1>

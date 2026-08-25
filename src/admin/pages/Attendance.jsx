@@ -458,7 +458,7 @@ export default function Attendance() {
   }, [data])
 
   return (
-    <div className="max-w-[1400px] mx-auto">
+    <div className="max-w-[1400px]">
       <div className="flex flex-wrap items-center justify-between gap-3 mb-5">
         <div>
           <h1 className="text-[20px] font-bold text-text-primary">Attendance</h1>

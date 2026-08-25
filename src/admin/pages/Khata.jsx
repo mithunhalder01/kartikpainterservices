@@ -225,7 +225,7 @@ export default function Khata() {
   const ledger = data?.ledger || []
 
   return (
-    <div className="max-w-6xl mx-auto">
+    <div className="max-w-6xl">
       <div className="mb-5">
         <h1 className="text-[20px] font-bold text-text-primary">Khata</h1>
         <p className="text-[12.5px] text-text-muted mt-0.5">Kisse kitna lena baaki hai — one place, always current.</p>
