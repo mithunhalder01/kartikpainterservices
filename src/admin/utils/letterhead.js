@@ -113,11 +113,62 @@ export function drawFooter(doc, head) {
 }
 
 /* Every page gets the same furniture, so callers only track the body cursor. */
-export function makePageFrame(doc, head, logo) {
-  const paint = () => { drawHeader(doc, head, logo); drawFooter(doc, head) }
+/* ── Designed letterhead mode ──
+   A ready-made A4 design is printed as a full-page background and the document
+   types inside the blank area the designer left. The text stays real text, so
+   it is still crisp and selectable — only the stationery is an image. */
+
+const num = (v, fallback) => (Number.isFinite(Number(v)) ? Number(v) : fallback)
+
+// Where a document may write, in millimetres from the page edges.
+export function contentBox(head = {}) {
+  if (head.useSheet) {
+    return {
+      left:   num(head.sheetLeft, 18),
+      right:  LAYOUT.pageW - num(head.sheetRight, 18),
+      top:    num(head.sheetTop, 60),
+      bottom: LAYOUT.pageH - num(head.sheetBottom, 65),
+    }
+  }
+  return {
+    left:   LAYOUT.margin,
+    right:  LAYOUT.pageW - LAYOUT.margin,
+    top:    LAYOUT.bodyTop,
+    bottom: LAYOUT.pageH - LAYOUT.footerH - 10,
+  }
+}
+
+export const boxWidth = (box) => box.right - box.left
+
+// A designed sheet usually carries its own signature line and contact strip, so
+// the document must not draw a second one over the top.
+export const sheetHasSignature = (head = {}) => !!(head.useSheet && head.sheetHasSignature)
+
+export async function prepareAssets(head = {}) {
+  if (head.useSheet) return { sheet: await loadImage(head.sheetImageUrl), logo: null }
+  return { sheet: null, logo: await loadImage(head.logoUrl) }
+}
+
+const imageFormat = (dataUrl) => (/^data:image\/(jpe?g)/i.test(dataUrl) ? 'JPEG' : 'PNG')
+
+export function makePageFrame(doc, head, assets = {}) {
+  const box = contentBox(head)
+
+  const paint = () => {
+    if (head.useSheet && assets.sheet) {
+      // the alias makes jsPDF store the sheet once, however many pages use it
+      doc.addImage(assets.sheet, imageFormat(assets.sheet), 0, 0,
+        LAYOUT.pageW, LAYOUT.pageH, 'letterhead-sheet', 'FAST')
+      return
+    }
+    drawHeader(doc, head, assets.logo)
+    drawFooter(doc, head)
+  }
+
   paint()
   return {
-    bottomLimit: LAYOUT.pageH - LAYOUT.footerH - 10,
-    newPage() { doc.addPage(); paint(); return LAYOUT.bodyTop },
+    box,
+    bottomLimit: box.bottom,
+    newPage() { doc.addPage(); paint(); return box.top },
   }
 }

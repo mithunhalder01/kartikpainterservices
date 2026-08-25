@@ -1,5 +1,6 @@
 import {
-  LAYOUT, loadImage, makePageFrame, formatLetterDate, footerLines,
+  LAYOUT, prepareAssets, makePageFrame, boxWidth, sheetHasSignature,
+  formatLetterDate, footerLines,
 } from './letterhead'
 
 // Re-exported so the letter pad page keeps importing from one place.
@@ -7,21 +8,23 @@ export { LAYOUT, formatLetterDate, footerLines }
 
 export async function downloadLetterPdf(letter, head) {
   const { jsPDF } = await import('jspdf')
-  const { pageW, margin, bodyTop, lineH } = LAYOUT
-  const contentW = pageW - margin * 2
+  const { lineH } = LAYOUT
 
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
-  const logo = await loadImage(head.logoUrl)
-  const frame = makePageFrame(doc, head, logo)
+  const frame = makePageFrame(doc, head, await prepareAssets(head))
+  const { box } = frame
+  const margin = box.left
+  const rightEdge = box.right
+  const contentW = boxWidth(box)
 
-  let y = bodyTop
+  let y = box.top + 4.5
   const need = (space) => { if (y + space > frame.bottomLimit) y = frame.newPage() }
 
   /* Ref + date, on one line under the rule */
   doc.setFont('helvetica', 'normal').setFontSize(9).setTextColor(90, 90, 90)
   if (letter.refNo) doc.text(`Ref: ${letter.refNo}`, margin, y)
   if (letter.letterDate) {
-    doc.text(`Date: ${formatLetterDate(letter.letterDate)}`, pageW - margin, y, { align: 'right' })
+    doc.text(`Date: ${formatLetterDate(letter.letterDate)}`, rightEdge, y, { align: 'right' })
   }
   if (letter.refNo || letter.letterDate) y += 10
 
@@ -77,7 +80,14 @@ export async function downloadLetterPdf(letter, head) {
     if (pIndex < paragraphs.length - 1) y += lineH * 0.7
   })
 
-  /* Signature block */
+  /* Signature block — skipped when the stationery already carries one */
+  if (sheetHasSignature(head)) {
+    const stemA = (letter.title || letter.subject || 'letter')
+      .toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 60) || 'letter'
+    doc.save(`${stemA}.pdf`)
+    return
+  }
+
   need(34)
   y += 10
   doc.setFont('helvetica', 'normal').setFontSize(10).setTextColor(30, 30, 30)

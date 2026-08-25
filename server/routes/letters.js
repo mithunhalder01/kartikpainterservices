@@ -31,6 +31,18 @@ const DEFAULT_HEAD = {
   youtube: '',
   accentColor: '#E07A3A',
   footerNote: '',
+  quotePrefix: 'KPS',
+
+  // A ready-made A4 letterhead printed as the page background. Documents then
+  // type inside the blank area, so the design is exactly what the designer made.
+  useSheet: true,
+  sheetImageUrl: '/letterhead.jpg',
+  sheetImagePublicId: '',
+  sheetTop: 60,      // mm from the top edge — below the header rule
+  sheetBottom: 65,   // mm from the bottom edge — above the signature block
+  sheetLeft: 18,
+  sheetRight: 18,
+  sheetHasSignature: true,   // the design already prints "Authorised Signature"
 }
 
 async function readHead() {
@@ -58,7 +70,21 @@ const headSchema = z.object({
   youtube:     z.string().trim().max(160).optional(),
   accentColor: z.string().trim().regex(/^#[0-9a-fA-F]{6}$/).optional(),
   footerNote:  z.string().trim().max(300).optional(),
+  quotePrefix: z.string().trim().max(12).optional(),
+
+  useSheet:      z.boolean().optional(),
+  sheetImageUrl: z.string().trim().max(500).optional(),
+  sheetTop:      z.coerce.number().min(0).max(200).optional(),
+  sheetBottom:   z.coerce.number().min(0).max(200).optional(),
+  sheetLeft:     z.coerce.number().min(0).max(100).optional(),
+  sheetRight:    z.coerce.number().min(0).max(100).optional(),
+  sheetHasSignature: z.boolean().optional(),
 })
+
+const RAW_KEYS = new Set([
+  'accentColor', 'logoUrl', 'sheetImageUrl', 'useSheet', 'sheetHasSignature',
+  'sheetTop', 'sheetBottom', 'sheetLeft', 'sheetRight',
+])
 
 router.put('/settings', asyncHandler(async (req, res) => {
   const parsed = headSchema.safeParse(req.body)
@@ -67,7 +93,7 @@ router.put('/settings', asyncHandler(async (req, res) => {
   const current = await readHead()
   const next = { ...current }
   for (const [key, value] of Object.entries(parsed.data)) {
-    next[key] = key === 'accentColor' || key === 'logoUrl' ? value : clean(value)
+    next[key] = RAW_KEYS.has(key) ? value : clean(value)
   }
 
   await SiteContent.findOneAndUpdate(
@@ -94,6 +120,29 @@ router.post('/settings/logo', handleUpload, asyncHandler(async (req, res) => {
     { upsert: true },
   )
 
+  res.json(next)
+}))
+
+router.post('/settings/sheet', handleUpload, asyncHandler(async (req, res) => {
+  if (!req.file) return res.status(400).json({ error: 'No image uploaded' })
+
+  const current = await readHead()
+  const result = await uploadImageFile(req.file, 'kartik/letterhead')
+  if (current.sheetImagePublicId) await destroyAsset(current.sheetImagePublicId)
+
+  const next = {
+    ...current,
+    sheetImageUrl: result.secure_url,
+    sheetImagePublicId: result.public_id,
+    useSheet: true,
+  }
+  await SiteContent.findOneAndUpdate(
+    { pageKey: PAGE_KEY },
+    { $set: { sections: next, updatedBy: req.admin.id } },
+    { upsert: true },
+  )
+
+  await logActivity('update', 'Letterhead', 'sheet', req.admin.id)
   res.json(next)
 }))
 

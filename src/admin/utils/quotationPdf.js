@@ -1,4 +1,6 @@
-import { LAYOUT, loadImage, drawHeader, drawFooter, hexToRgb, formatLetterDate } from './letterhead'
+import {
+  LAYOUT, prepareAssets, makePageFrame, boxWidth, sheetHasSignature, hexToRgb, formatLetterDate,
+} from './letterhead'
 import { computeTotals, lineAmount, amountInWords, rupeePdf } from './money'
 
 const KIND_LABEL = { work: '', material: 'Material', labour: 'Labour' }
@@ -50,23 +52,25 @@ export async function downloadQuotationPdf(quote, head) {
   const [{ jsPDF }, autoTableMod] = await Promise.all([import('jspdf'), import('jspdf-autotable')])
   const autoTable = autoTableMod.default || autoTableMod.autoTable
 
-  const { pageW, pageH, margin, bodyTop, footerH } = LAYOUT
-  const contentW = pageW - margin * 2
+  const { pageW } = LAYOUT
   const accent = hexToRgb(head.accentColor)
   const totals = computeTotals(quote)
 
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
-  const logo = await loadImage(head.logoUrl)
-  const frame = () => { drawHeader(doc, head, logo); drawFooter(doc, head) }
+  const page = makePageFrame(doc, head, await prepareAssets(head))
+  const { box } = page
+  const margin = box.left
+  const rightEdge = box.right
+  const contentW = boxWidth(box)
 
-  let y = bodyTop
+  let y = box.top + 4.5   // baseline, not the top of the glyphs
 
   /* Title row */
   doc.setFont('helvetica', 'bold').setFontSize(13).setTextColor(...accent)
   doc.text('QUOTATION', margin, y)
   doc.setFont('helvetica', 'normal').setFontSize(9).setTextColor(90, 90, 90)
-  if (quote.quoteNo) doc.text(`No: ${quote.quoteNo}`, pageW - margin, y - 3.5, { align: 'right' })
-  if (quote.quoteDate) doc.text(`Date: ${formatLetterDate(quote.quoteDate)}`, pageW - margin, y + 1, { align: 'right' })
+  if (quote.quoteNo) doc.text(`No: ${quote.quoteNo}`, rightEdge, y - 3, { align: 'right' })
+  if (quote.quoteDate) doc.text(`Date: ${formatLetterDate(quote.quoteDate)}`, rightEdge, y + 1.5, { align: 'right' })
   y += 8
 
   /* Customer */
@@ -96,7 +100,7 @@ export async function downloadQuotationPdf(quote, head) {
     head: [['#', 'Description', 'Qty', 'Unit', 'Rate', 'Amount']],
     body: buildBody(quote.items || []),
     startY: y,
-    margin: { left: margin, right: margin, top: bodyTop, bottom: footerH + 10 },
+    margin: { left: margin, right: pageW - rightEdge, top: box.top, bottom: LAYOUT.pageH - box.bottom },
     theme: 'grid',
     styles: { fontSize: 8.5, cellPadding: 1.8, lineColor: [225, 225, 225], lineWidth: 0.1, textColor: [35, 35, 35] },
     headStyles: { fillColor: [15, 15, 15], textColor: 255, fontSize: 8.5, halign: 'center' },
@@ -108,20 +112,18 @@ export async function downloadQuotationPdf(quote, head) {
       4: { cellWidth: 24, halign: 'right' },
       5: { cellWidth: 28, halign: 'right', fontStyle: 'bold' },
     },
-    // every page of a multi-page quote keeps the letterhead and contact bar
-    didDrawPage: () => frame(),
+    // every page of a multi-page quote repeats the stationery
+    didDrawPage: (hook) => { if (hook.pageNumber > 1) page.newPage() },
   })
 
   y = (doc.lastAutoTable?.finalY || y) + 6
 
-  const ensure = (space) => {
-    if (y + space > pageH - footerH - 10) { doc.addPage(); frame(); y = bodyTop }
-  }
+  const ensure = (space) => { if (y + space > box.bottom) y = page.newPage() }
 
   /* Totals — right-aligned block */
   ensure(40)
   const boxW = 78
-  const boxX = pageW - margin - boxW
+  const boxX = rightEdge - boxW
   const rows = [
     ['Subtotal', rupeePdf(totals.subtotal)],
     totals.discountAmount > 0 && [
@@ -134,7 +136,7 @@ export async function downloadQuotationPdf(quote, head) {
   doc.setFontSize(9).setFont('helvetica', 'normal').setTextColor(60, 60, 60)
   rows.forEach(([label, value]) => {
     doc.text(label, boxX, y)
-    doc.text(value, pageW - margin, y, { align: 'right' })
+    doc.text(value, rightEdge, y, { align: 'right' })
     y += 5
   })
 
@@ -142,7 +144,7 @@ export async function downloadQuotationPdf(quote, head) {
   doc.rect(boxX - 3, y - 1.5, boxW + 3, 9, 'F')
   doc.setFont('helvetica', 'bold').setFontSize(10.5).setTextColor(255, 255, 255)
   doc.text('Total', boxX, y + 4.5)
-  doc.text(rupeePdf(totals.grandTotal), pageW - margin, y + 4.5, { align: 'right' })
+  doc.text(rupeePdf(totals.grandTotal), rightEdge, y + 4.5, { align: 'right' })
   y += 13
 
   /* Amount in words */
@@ -175,17 +177,19 @@ export async function downloadQuotationPdf(quote, head) {
     y += 6
   }
 
-  /* Signature */
-  ensure(28)
-  y += 8
-  doc.setDrawColor(150, 150, 150).setLineWidth(0.3)
-  doc.line(pageW - margin - 55, y, pageW - margin, y)
-  y += 5
-  doc.setFont('helvetica', 'bold').setFontSize(9.5).setTextColor(30, 30, 30)
-  if (quote.signName) doc.text(quote.signName, pageW - margin, y, { align: 'right' })
-  y += 4.4
-  doc.setFont('helvetica', 'normal').setFontSize(8).setTextColor(110, 110, 110)
-  if (quote.signTitle) doc.text(quote.signTitle, pageW - margin, y, { align: 'right' })
+  /* Signature — the designed sheet prints its own, so only draw one when it does not */
+  if (!sheetHasSignature(head)) {
+    ensure(28)
+    y += 8
+    doc.setDrawColor(150, 150, 150).setLineWidth(0.3)
+    doc.line(rightEdge - 55, y, rightEdge, y)
+    y += 5
+    doc.setFont('helvetica', 'bold').setFontSize(9.5).setTextColor(30, 30, 30)
+    if (quote.signName) doc.text(quote.signName, rightEdge, y, { align: 'right' })
+    y += 4.4
+    doc.setFont('helvetica', 'normal').setFontSize(8).setTextColor(110, 110, 110)
+    if (quote.signTitle) doc.text(quote.signTitle, rightEdge, y, { align: 'right' })
+  }
 
   doc.save(quoteFileName(quote))
 }

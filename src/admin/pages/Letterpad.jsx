@@ -24,76 +24,56 @@ const BLANK = {
   closing: 'Yours faithfully,', signName: '', signTitle: '',
 }
 
-/* ── The A4 sheet. Sizes are in mm so it matches letterPdf.js one-for-one. ── */
+/* ── The A4 sheet. Sizes are in mm so it matches the PDF one-for-one. ── */
 function LetterSheet({ letter, head }) {
   const mm = (v) => `${v}mm`
   const accent = head.accentColor || '#E07A3A'
   const lines = footerLines(head)
+  const useSheet = !!head.useSheet && !!head.sheetImageUrl
+  const hasOwnSignature = useSheet && head.sheetHasSignature
 
-  return (
-    <div
-      className="bg-white shadow-[0_4px_24px_rgba(0,0,0,0.10)] relative overflow-hidden"
-      style={{ width: mm(LAYOUT.pageW), height: mm(LAYOUT.pageH), fontFamily: 'Helvetica, Arial, sans-serif', color: '#141414' }}
-    >
-      {/* header */}
-      <div className="flex items-start justify-between"
-        style={{ padding: `${mm(13)} ${mm(LAYOUT.margin)} 0` }}>
-        <div className="flex items-start" style={{ gap: mm(5) }}>
-          {head.logoUrl && (
-            <img src={head.logoUrl} alt="" style={{ height: mm(15), maxWidth: mm(48), objectFit: 'contain' }} />
-          )}
-          <div style={{ paddingTop: mm(2) }}>
-            <p style={{ fontSize: mm(5.3), fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.01em' }}>
-              {head.companyName}
-            </p>
-            {head.tagline && (
-              <p style={{ fontSize: mm(2.8), color: '#6e6e6e', marginTop: mm(1.4) }}>{head.tagline}</p>
-            )}
-            {head.gst && (
-              <p style={{ fontSize: mm(2.6), color: '#8c8c8c', marginTop: mm(1.2) }}>GSTIN: {head.gst}</p>
-            )}
-          </div>
+  const box = useSheet
+    ? {
+        left: Number(head.sheetLeft ?? 18),
+        right: Number(head.sheetRight ?? 18),
+        top: Number(head.sheetTop ?? 60),
+        bottom: Number(head.sheetBottom ?? 65),
+      }
+    : {
+        left: LAYOUT.margin,
+        right: LAYOUT.margin,
+        top: LAYOUT.bodyTop - 3.5,
+        bottom: LAYOUT.footerH + 6,
+      }
+
+  const body = (
+    <div style={{
+      position: 'absolute',
+      left: mm(box.left), right: mm(box.right),
+      top: mm(box.top), bottom: mm(box.bottom),
+      fontSize: mm(3.7), lineHeight: 1.52, overflow: 'hidden',
+    }}>
+      {(letter.refNo || letter.letterDate) && (
+        <div className="flex justify-between" style={{ fontSize: mm(3.2), color: '#5a5a5a', marginBottom: mm(6) }}>
+          <span>{letter.refNo ? `Ref: ${letter.refNo}` : ''}</span>
+          <span>{letter.letterDate ? `Date: ${formatLetterDate(letter.letterDate)}` : ''}</span>
         </div>
-      </div>
+      )}
 
-      {/* rules */}
-      <div style={{ position: 'absolute', left: mm(LAYOUT.margin), right: mm(LAYOUT.margin), top: mm(LAYOUT.ruleY) }}>
-        <div style={{ height: mm(0.9), background: accent }} />
-        <div style={{ height: mm(0.25), background: '#d7d7d7', marginTop: mm(1.1) }} />
-      </div>
+      {(letter.toName || letter.toAddress) && (
+        <div style={{ marginBottom: mm(5) }}>
+          <p>To,</p>
+          {letter.toName && <p style={{ fontWeight: 700 }}>{letter.toName}</p>}
+          {letter.toAddress && <p style={{ whiteSpace: 'pre-wrap', maxWidth: '62%' }}>{letter.toAddress}</p>}
+        </div>
+      )}
 
-      {/* body */}
-      <div style={{
-        position: 'absolute',
-        left: mm(LAYOUT.margin), right: mm(LAYOUT.margin),
-        top: mm(LAYOUT.bodyTop - 3.5), bottom: mm(LAYOUT.footerH + 6),
-        fontSize: mm(3.7), lineHeight: 1.52, overflow: 'hidden',
-      }}>
-        {(letter.refNo || letter.letterDate) && (
-          <div className="flex justify-between" style={{ fontSize: mm(3.2), color: '#5a5a5a', marginBottom: mm(6) }}>
-            <span>{letter.refNo ? `Ref: ${letter.refNo}` : ''}</span>
-            <span>{letter.letterDate ? `Date: ${formatLetterDate(letter.letterDate)}` : ''}</span>
-          </div>
-        )}
+      {letter.subject && <p style={{ fontWeight: 700, marginBottom: mm(4) }}>Subject: {letter.subject}</p>}
+      {letter.salutation && <p style={{ marginBottom: mm(3) }}>{letter.salutation}</p>}
 
-        {(letter.toName || letter.toAddress) && (
-          <div style={{ marginBottom: mm(5) }}>
-            <p>To,</p>
-            {letter.toName && <p style={{ fontWeight: 700 }}>{letter.toName}</p>}
-            {letter.toAddress && (
-              <p style={{ whiteSpace: 'pre-wrap', maxWidth: '62%' }}>{letter.toAddress}</p>
-            )}
-          </div>
-        )}
+      <div style={{ whiteSpace: 'pre-wrap' }}>{letter.body}</div>
 
-        {letter.subject && (
-          <p style={{ fontWeight: 700, marginBottom: mm(4) }}>Subject: {letter.subject}</p>
-        )}
-
-        {letter.salutation && <p style={{ marginBottom: mm(3) }}>{letter.salutation}</p>}
-
-        <div style={{ whiteSpace: 'pre-wrap' }}>{letter.body}</div>
-
+      {!hasOwnSignature && (
         <div style={{ marginTop: mm(12) }}>
           {letter.closing && <p style={{ marginBottom: mm(13) }}>{letter.closing}</p>}
           <div style={{ width: mm(55), borderTop: '0.3mm solid #969696' }} />
@@ -103,9 +83,50 @@ function LetterSheet({ letter, head }) {
             <p style={{ fontSize: mm(2.6), color: '#969696', fontStyle: 'italic', marginTop: mm(2) }}>{head.footerNote}</p>
           )}
         </div>
+      )}
+    </div>
+  )
+
+  const frame = {
+    width: mm(LAYOUT.pageW), height: mm(LAYOUT.pageH),
+    fontFamily: 'Helvetica, Arial, sans-serif', color: '#141414',
+  }
+
+  // Designed stationery: the image is the page, the text sits in its blank area.
+  if (useSheet) {
+    return (
+      <div className="bg-white shadow-[0_4px_24px_rgba(0,0,0,0.10)] relative overflow-hidden" style={frame}>
+        <img src={head.sheetImageUrl} alt=""
+          style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'fill' }} />
+        {body}
+      </div>
+    )
+  }
+
+  return (
+    <div className="bg-white shadow-[0_4px_24px_rgba(0,0,0,0.10)] relative overflow-hidden" style={frame}>
+      <div className="flex items-start justify-between" style={{ padding: `${mm(13)} ${mm(LAYOUT.margin)} 0` }}>
+        <div className="flex items-start" style={{ gap: mm(5) }}>
+          {head.logoUrl && (
+            <img src={head.logoUrl} alt="" style={{ height: mm(15), maxWidth: mm(48), objectFit: 'contain' }} />
+          )}
+          <div style={{ paddingTop: mm(2) }}>
+            <p style={{ fontSize: mm(5.3), fontWeight: 700, lineHeight: 1.1, letterSpacing: '-0.01em' }}>
+              {head.companyName}
+            </p>
+            {head.tagline && <p style={{ fontSize: mm(2.8), color: '#6e6e6e', marginTop: mm(1.4) }}>{head.tagline}</p>}
+            {head.gst && <p style={{ fontSize: mm(2.6), color: '#8c8c8c', marginTop: mm(1.2) }}>GSTIN: {head.gst}</p>}
+          </div>
+        </div>
       </div>
 
-      {/* footer bar */}
+      <div style={{ position: 'absolute', left: mm(LAYOUT.margin), right: mm(LAYOUT.margin), top: mm(LAYOUT.ruleY) }}>
+        <div style={{ height: mm(0.9), background: accent }} />
+        <div style={{ height: mm(0.25), background: '#d7d7d7', marginTop: mm(1.1) }} />
+      </div>
+
+      {body}
+
       <div style={{
         position: 'absolute', left: 0, right: 0, bottom: 0,
         height: mm(LAYOUT.footerH), background: accent, color: '#fff',
@@ -125,8 +146,9 @@ function LetterSheet({ letter, head }) {
 /* ── Letterhead editor ── */
 function HeadEditor({ head, onSaved }) {
   const [form, setForm] = useState(head)
-  const [uploading, setUploading] = useState(false)
+  const [uploading, setUploading] = useState('')
   const fileRef = useRef(null)
+  const sheetRef = useRef(null)
   const queryClient = useQueryClient()
 
   useEffect(() => { setForm(head) }, [head])
@@ -148,7 +170,7 @@ function HeadEditor({ head, onSaved }) {
 
   const uploadLogo = async (file) => {
     if (!file) return
-    setUploading(true)
+    setUploading('logo')
     try {
       const body = new FormData()
       body.append('image', file)
@@ -159,9 +181,29 @@ function HeadEditor({ head, onSaved }) {
     } catch (err) {
       toast.error(err.message || 'Upload failed')
     } finally {
-      setUploading(false)
+      setUploading('')
     }
   }
+
+  const uploadSheet = async (file) => {
+    if (!file) return
+    setUploading('sheet')
+    try {
+      const body = new FormData()
+      body.append('image', file)
+      const next = await api.post('/admin/letters/settings/sheet', body, { isForm: true })
+      setForm(next)
+      queryClient.invalidateQueries({ queryKey: ['letterhead'] })
+      toast.success('Letterhead updated')
+    } catch (err) {
+      toast.error(err.message || 'Upload failed')
+    } finally {
+      setUploading('')
+    }
+  }
+
+  const setNum = (k) => (e) => setForm((f) => ({ ...f, [k]: e.target.value }))
+  const useSheet = !!form.useSheet
 
   const rows = [
     ['companyName', 'Company name'], ['tagline', 'Tagline'], ['gst', 'GSTIN'],
@@ -169,10 +211,94 @@ function HeadEditor({ head, onSaved }) {
     ['email', 'Email'], ['address', 'Address'],
     ['instagram', 'Instagram'], ['facebook', 'Facebook'], ['youtube', 'YouTube'],
     ['footerNote', 'Small note under signature'],
+    ['quotePrefix', 'Quotation number prefix (e.g. KPS)'],
+  ]
+
+  const MARGINS = [
+    ['sheetTop', 'Top', 'Where writing starts — below the header design'],
+    ['sheetBottom', 'Bottom', 'Where writing stops — above the footer design'],
+    ['sheetLeft', 'Left', ''],
+    ['sheetRight', 'Right', ''],
   ]
 
   return (
     <div className="space-y-3.5">
+      {/* ── Designed A4 letterhead ── */}
+      <div className="rounded-xl border border-border bg-surface/50 p-3.5">
+        <label className="flex items-start gap-2.5 cursor-pointer">
+          <input type="checkbox" checked={useSheet}
+            onChange={(e) => setForm((f) => ({ ...f, useSheet: e.target.checked }))}
+            className="mt-0.5 accent-[#E07A3A] w-4 h-4" />
+          <span>
+            <span className="block text-[13px] font-medium text-text-primary">Use my designed letterhead</span>
+            <span className="block text-[12px] text-text-muted">
+              Your A4 design becomes the page. Text is still real text on top of it — crisp and selectable.
+            </span>
+          </span>
+        </label>
+
+        {useSheet && (
+          <div className="mt-3.5 space-y-3.5">
+            <div className="flex items-start gap-3">
+              <div className="w-[74px] h-[105px] rounded-md border border-border bg-white overflow-hidden shrink-0">
+                {form.sheetImageUrl && (
+                  <img src={form.sheetImageUrl} alt="" className="w-full h-full object-fill" />
+                )}
+              </div>
+              <div className="flex-1">
+                <input ref={sheetRef} type="file" accept="image/*" className="hidden"
+                  onChange={(e) => uploadSheet(e.target.files?.[0])} />
+                <button onClick={() => sheetRef.current?.click()} disabled={!!uploading}
+                  className="px-3 py-1.5 text-[12.5px] font-medium border border-border rounded-md bg-white hover:bg-surface transition-colors disabled:opacity-60">
+                  {uploading === 'sheet' ? <Loader2 size={13} className="animate-spin inline" /> : 'Replace letterhead'}
+                </button>
+                <p className="text-[11px] text-text-subtle mt-1.5 leading-relaxed">
+                  A4 shape (1:1.414), around 1000×1414 px. Crop off any shadow or border
+                  around the page first.
+                </p>
+              </div>
+            </div>
+
+            <div>
+              <p className="text-[11.5px] font-medium text-text-muted mb-1.5">
+                Writing area — millimetres from each edge
+              </p>
+              <div className="grid grid-cols-2 gap-2.5">
+                {MARGINS.map(([key, text, hint]) => (
+                  <div key={key}>
+                    <label className="block text-[11px] text-text-subtle mb-1">{text}</label>
+                    <input value={form[key] ?? ''} onChange={setNum(key)} inputMode="decimal" className={field} />
+                    {hint && <p className="text-[10.5px] text-text-subtle mt-0.5 leading-tight">{hint}</p>}
+                  </div>
+                ))}
+              </div>
+              <p className="text-[11px] text-text-subtle mt-2">
+                Watch the page on the right — the text should sit inside the blank area.
+              </p>
+            </div>
+
+            <label className="flex items-start gap-2.5 cursor-pointer">
+              <input type="checkbox" checked={!!form.sheetHasSignature}
+                onChange={(e) => setForm((f) => ({ ...f, sheetHasSignature: e.target.checked }))}
+                className="mt-0.5 accent-[#E07A3A] w-4 h-4" />
+              <span className="text-[12.5px] text-text-primary">
+                The design already prints a signature line
+                <span className="block text-[11.5px] text-text-muted">
+                  Turn on so documents do not draw a second one over it.
+                </span>
+              </span>
+            </label>
+          </div>
+        )}
+      </div>
+
+      {useSheet && (
+        <p className="text-[11.5px] text-text-subtle border-t border-border pt-3">
+          The fields below are only used when the designed letterhead is switched off —
+          except the contact details, which still fill the WhatsApp message.
+        </p>
+      )}
+
       <div>
         <label className={label}>Logo (top-left of the page)</label>
         <div className="flex items-center gap-3">
@@ -184,9 +310,9 @@ function HeadEditor({ head, onSaved }) {
           <div className="flex-1">
             <input ref={fileRef} type="file" accept="image/*" className="hidden"
               onChange={(e) => uploadLogo(e.target.files?.[0])} />
-            <button onClick={() => fileRef.current?.click()} disabled={uploading}
+            <button onClick={() => fileRef.current?.click()} disabled={!!uploading}
               className="px-3 py-1.5 text-[12.5px] font-medium border border-border rounded-md hover:bg-surface transition-colors disabled:opacity-60">
-              {uploading ? <Loader2 size={13} className="animate-spin inline" /> : 'Upload logo'}
+              {uploading === 'logo' ? <Loader2 size={13} className="animate-spin inline" /> : 'Upload logo'}
             </button>
             <p className="text-[11px] text-text-subtle mt-1">PNG with transparent background works best.</p>
           </div>

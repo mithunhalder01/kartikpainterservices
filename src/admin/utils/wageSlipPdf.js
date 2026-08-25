@@ -1,4 +1,4 @@
-import { LAYOUT, loadImage, drawHeader, drawFooter, hexToRgb } from './letterhead'
+import { LAYOUT, prepareAssets, makePageFrame, hexToRgb, sheetHasSignature } from './letterhead'
 import { rupeePdf, amountInWords } from './money'
 
 const MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
@@ -9,19 +9,20 @@ export async function downloadWageSlip({ labour, row, entries, year, month }, he
   const [{ jsPDF }, autoTableMod] = await Promise.all([import('jspdf'), import('jspdf-autotable')])
   const autoTable = autoTableMod.default || autoTableMod.autoTable
 
-  const { pageW, margin, bodyTop, footerH } = LAYOUT
+  const { pageW } = LAYOUT
   const accent = hexToRgb(head.accentColor)
 
   const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' })
-  const logo = await loadImage(head.logoUrl)
-  drawHeader(doc, head, logo)
-  drawFooter(doc, head)
+  const page = makePageFrame(doc, head, await prepareAssets(head))
+  const { box } = page
+  const margin = box.left
+  const rightEdge = box.right
 
-  let y = bodyTop
+  let y = box.top + 4.5
   doc.setFont('helvetica', 'bold').setFontSize(13).setTextColor(...accent)
   doc.text('WAGE SLIP', margin, y)
   doc.setFont('helvetica', 'normal').setFontSize(9).setTextColor(90, 90, 90)
-  doc.text(`${MONTHS[month - 1]} ${year}`, pageW - margin, y, { align: 'right' })
+  doc.text(`${MONTHS[month - 1]} ${year}`, rightEdge, y, { align: 'right' })
   y += 9
 
   doc.setTextColor(20, 20, 20).setFont('helvetica', 'bold').setFontSize(11)
@@ -53,7 +54,7 @@ export async function downloadWageSlip({ labour, row, entries, year, month }, he
     head: [['Description', 'Count', 'Amount']],
     body,
     startY: y,
-    margin: { left: margin, right: margin, bottom: footerH + 10 },
+    margin: { left: margin, right: pageW - rightEdge, bottom: LAYOUT.pageH - box.bottom },
     theme: 'grid',
     styles: { fontSize: 9, cellPadding: 2, lineColor: [225, 225, 225], lineWidth: 0.1 },
     headStyles: { fillColor: [15, 15, 15], textColor: 255, fontSize: 9 },
@@ -67,10 +68,10 @@ export async function downloadWageSlip({ labour, row, entries, year, month }, he
   y = (doc.lastAutoTable?.finalY || y) + 6
 
   doc.setFillColor(...accent)
-  doc.rect(pageW - margin - 78, y, 78, 10, 'F')
+  doc.rect(rightEdge - 78, y, 78, 10, 'F')
   doc.setFont('helvetica', 'bold').setFontSize(11).setTextColor(255, 255, 255)
-  doc.text('Net payable', pageW - margin - 75, y + 6.5)
-  doc.text(rupeePdf(row.balance), pageW - margin - 3, y + 6.5, { align: 'right' })
+  doc.text('Net payable', rightEdge - 75, y + 6.5)
+  doc.text(rupeePdf(row.balance), rightEdge - 3, y + 6.5, { align: 'right' })
   y += 15
 
   doc.setFont('helvetica', 'italic').setFontSize(8.5).setTextColor(70, 70, 70)
@@ -91,14 +92,18 @@ export async function downloadWageSlip({ labour, row, entries, year, month }, he
     y += 4
   }
 
-  /* Both sides sign the same sheet — that is the whole point of handing it over */
-  y = Math.max(y + 8, 232)
+  /* Both sides sign the same sheet — that is the whole point of handing it over.
+     A designed letterhead already prints the company side, so only the worker's
+     line is added there. */
+  y = Math.max(y + 8, box.bottom - 14)
   doc.setDrawColor(150, 150, 150).setLineWidth(0.3)
   doc.line(margin, y, margin + 55, y)
-  doc.line(pageW - margin - 55, y, pageW - margin, y)
   doc.setFont('helvetica', 'normal').setFontSize(8.5).setTextColor(110, 110, 110)
   doc.text('Worker signature', margin, y + 4.5)
-  doc.text('For ' + (head.companyName || ''), pageW - margin, y + 4.5, { align: 'right' })
+  if (!sheetHasSignature(head)) {
+    doc.line(rightEdge - 55, y, rightEdge, y)
+    doc.text('For ' + (head.companyName || ''), rightEdge, y + 4.5, { align: 'right' })
+  }
 
   const stem = `wage-slip-${labour.name}-${MONTHS[month - 1]}-${year}`
     .toLowerCase().replace(/[^a-z0-9]+/g, '-')
