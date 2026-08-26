@@ -1,17 +1,48 @@
 {
   "name": "Kartik Painter Services",
   "short_name": "Kartik Painter",
-  "description": "Best painting contractor in Noida, Greater Noida, Dadri and Ghaziabad — interior, exterior, waterproofing and texture painting.",
+  "description": "Best painting contractor in Noida, Greater Noida, Dadri and Ghaziabad \u2014 interior, exterior, waterproofing and texture painting.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#f59e0b",
   "lang": "en-IN",
-  "categories": ["business", "home improvement", "services"],
+  "categories": [
+    "business",
+    "home improvement",
+    "services"
+  ],
   "icons": [
-    { "src": "/favicon-192.png", "type": "image/png", "sizes": "192x192", "purpose": "any" },
-    { "src": "/apple-touch-icon.png", "type": "image/png", "sizes": "180x180", "purpose": "any" },
-    { "src": "/favicon.svg", "type": "image/svg+xml", "sizes": "any", "purpose": "maskable" }
+    {
+      "src": "/favicon-48.png",
+      "type": "image/png",
+      "sizes": "48x48",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-96.png",
+      "type": "image/png",
+      "sizes": "96x96",
+      "purpose": "any"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    },
+    {
+      "src": "/favicon-256.png",
+      "type": "image/png",
+      "sizes": "256x256",
+      "purpose": "any"
+    }
   ]
 }
