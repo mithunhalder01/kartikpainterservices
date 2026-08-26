@@ -33,6 +33,9 @@ const FALLBACK_WHY_CHOOSE_US = {
 /* ─── Updated phone number ─────────────────────────── */
 const PHONE = '+91 7500770667'
 const PHONE_DISPLAY = '+91 75007 70667'
+// Google Business Profile's own "write a review" shortcut
+const GOOGLE_REVIEW_URL = 'https://g.page/r/CVmuc8Z00CorEBM/review'
+
 const BEFORE_IMG = '/before-after/before.png'
 const AFTER_IMG = '/before-after/after.png'
 const BEFORE_OBJECT_POS = 'center 56%'
@@ -751,9 +754,22 @@ export default function Home() {
                 What clients say
               </h2>
             </div>
-            <div className="flex items-center gap-3 self-start md:self-auto">
-              <StarRow n={5} size={14} />
-              <span className="text-text-muted text-[13px] font-medium">4.9 / 5.0</span>
+            <div className="flex flex-col items-start md:items-end gap-3 self-start md:self-auto">
+              <a
+                href={GOOGLE_REVIEW_URL}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full
+                           border border-border text-text-primary text-[13px] font-semibold
+                           hover:border-accent hover:text-accent transition-colors"
+              >
+                <Star size={14} />
+                Write a Review
+              </a>
+              <div className="flex items-center gap-3">
+                <StarRow n={5} size={14} />
+                <span className="text-text-muted text-[13px] font-medium">4.9 / 5.0</span>
+              </div>
             </div>
           </div>
           <TestimonialSlider items={displayTestimonials.map(t => ({ ...t, loc: t.loc ?? t.location }))} />
