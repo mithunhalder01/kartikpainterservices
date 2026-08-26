@@ -229,8 +229,8 @@ export default function Home() {
   return (
     <>
       <SEO
-        title="Best Painter in Noida – ₹8/sqft | FREE Site Visit | 15+ Years"
-        description="Noida mein best painting services chahiye? Kartik Painters dete hain Interior, Exterior & Waterproofing ₹8/sqft se shuru. 15+ years experience. Aaj hi FREE Inspection & Quote payein!"
+        title="Best Painter in Noida – ₹8/sqft, Free Site Visit"
+        description="Best painter in Noida for interior, exterior, waterproofing and texture work from ₹8/sqft. Free site visit. Call +91 75007 70667."
         canonical="/"
         schema={[faqSchema, homeBreadcrumbSchema]}
       />

@@ -34,8 +34,8 @@ export default function Services() {
   return (
     <>
       <SEO
-        title="Painting Services in Noida – Interior, Exterior, Waterproofing"
-        description="Painting services in Noida: interior, exterior, waterproofing, texture and commercial painting with POP work. Free estimate from Kartik Painter Services."
+        title="Painting Services in Noida – Interior & Exterior"
+        description="Painting services in Noida — interior, exterior, waterproofing, texture, POP and commercial work. Free estimate. Call +91 75007 70667."
         canonical="/services"
         schema={[servicesSchema, servicesBreadcrumbSchema]}
         keywords="interior painting noida, exterior painting noida, waterproofing noida, texture painting noida, commercial painter noida"
