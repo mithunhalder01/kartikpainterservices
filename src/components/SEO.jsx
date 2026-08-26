@@ -319,10 +319,11 @@ export default function SEO({
       <meta property="og:description"  content={metaDesc} />
       <meta property="og:url"          content={canonicalURL} />
       <meta property="og:image"        content={imageURL} />
-      {/* Dimensions match the actual og-image.jpg (736×414). For best social display,
-          replace it with a 1200×630 image and update these values. */}
-      <meta property="og:image:width"  content="736" />
-      <meta property="og:image:height" content="414" />
+      {/* Must match the real og-image.jpg — WhatsApp and Facebook trust these
+          numbers when deciding between a large card and a small thumbnail. */}
+      <meta property="og:image:width"  content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta property="og:image:type"   content="image/jpeg" />
       <meta property="og:image:alt"    content="Kartik Painter Services – Best Painter in Noida" />
       <meta property="og:type"         content={ogType} />
       <meta property="og:site_name"    content={SITE_NAME} />
