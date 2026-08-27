@@ -1,8 +1,8 @@
 export const blogPosts = [
   {
     slug: 'painting-cost-noida-2025',
-    title: 'Painting Cost in Noida 2025 (Starting ₹8/sqft) | Full Price Guide',
-    desc: 'Noida mein painting ka kya kharcha aayega? Check latest 2025 rates for interior (₹8-15/sqft), exterior, and waterproofing. Get a FREE professional estimate today!',
+    title: 'Painting Cost in Noida 2026 – Full Price Guide',
+    desc: 'Painting rates in Noida for interior (₹8–15/sqft), exterior and waterproofing. Free written estimate. Call +91 75007 70667.',
     published: '2025-01-15',
     updated: '2026-04-26',
     image: '/og-image.jpg',
@@ -48,8 +48,8 @@ export const blogPosts = [
 
   {
     slug: 'best-paint-brands-noida',
-    title: 'Asian Paints vs Berger vs Dulux: Best Paint Brand for Noida Homes (2026)',
-    desc: 'Confused between Asian Paints, Berger and Dulux for your Noida home? Compare price, durability, finish and warranty to pick the right paint for Noida’s dust and weather.',
+    title: 'Asian Paints vs Berger vs Dulux – Which Suits Noida',
+    desc: 'Compare Asian Paints, Berger and Dulux on price, durability and warranty to pick the right paint for Noida dust and weather.',
     published: '2026-02-04',
     updated: '2026-07-14',
     image: '/living-room.jpeg',
@@ -91,8 +91,8 @@ export const blogPosts = [
 
   {
     slug: 'waterproofing-guide-noida',
-    title: 'Waterproofing in Noida Before Monsoon: Complete Homeowner’s Guide (2026)',
-    desc: 'Damp walls, seepage and leaking roofs are common in Noida after the monsoon. Learn the types of waterproofing, costs, and how to fix and prevent damp before the rains.',
+    title: 'Waterproofing in Noida Before the Monsoon – Guide',
+    desc: 'Damp walls and leaking roofs are common in Noida. Types of waterproofing, costs, and how to stop seepage before the rains.',
     published: '2026-03-10',
     updated: '2026-07-14',
     image: '/waterprofing.jpeg',
@@ -134,8 +134,8 @@ export const blogPosts = [
 
   {
     slug: 'interior-vs-exterior-paint-noida',
-    title: 'Interior vs Exterior Paint: What Noida’s Weather Really Needs',
-    desc: 'Interior and exterior paints are not interchangeable. Understand the difference in durability, finish and cost, and why using the right one saves money in Noida’s climate.',
+    title: 'Interior vs Exterior Paint – What Noida Needs',
+    desc: 'Interior and exterior paints are not interchangeable. The difference in durability, finish and cost for Noida weather.',
     published: '2026-04-02',
     updated: '2026-07-14',
     image: '/exterior-painting.jpeg',
@@ -177,8 +177,8 @@ export const blogPosts = [
 
   {
     slug: 'wall-colour-ideas-2026',
-    title: '20 Best Wall Colour Combinations for Indian Homes (2026 Trends)',
-    desc: 'Looking for wall colour ideas for your Noida home? Explore the top 2026 colour combinations for living rooms, bedrooms and kitchens — with tips to pick shades that last.',
+    title: '20 Best Wall Colour Combinations for 2026',
+    desc: 'Top 2026 wall colour combinations for living rooms, bedrooms and kitchens, with tips on picking shades that last.',
     published: '2026-05-06',
     updated: '2026-07-14',
     image: '/master-bed.jpeg',
@@ -220,8 +220,8 @@ export const blogPosts = [
 
   {
     slug: 'how-to-choose-painter-noida',
-    title: 'How to Choose a Good Painter in Noida: 7 Checks Before You Hire',
-    desc: 'Hiring a painter in Noida? Avoid inflated bills, fake paint and messy work. Use these 7 practical checks to choose a trustworthy, professional painting contractor.',
+    title: 'How to Choose a Painter in Noida – 7 Checks',
+    desc: 'Avoid inflated bills, fake paint and messy work. Seven practical checks before you hire a painting contractor in Noida.',
     published: '2026-06-08',
     updated: '2026-07-14',
     image: '/home.jpeg',
